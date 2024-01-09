@@ -22,7 +22,6 @@ public:
 	{
 		getTerminalSize();
 	}
-	~TerminalSizeWatcher() {}
 	void checkTerminalSize()
 	{
 		int newCols = cols, newLines = lines;
