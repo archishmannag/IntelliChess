@@ -8,8 +8,8 @@
 class ChessGame
 {
 private:
-	int file, rank, height, width, x, y;
-	WINDOW *movingWindow;
+	int file = 5, rank = 5, height, width, x, y;
+	WINDOW *movingWindow = NULL;
 	typedef enum
 	{
 		pawn = 1,
@@ -43,42 +43,45 @@ public:
 		initscr();
 		cbreak();
 		noecho();
-		timeout(0);
+		setlocale(LC_ALL, "");
 		keypad(stdscr, TRUE);
 
-		// Initialize moving window for selecting and moving pieces
-		movingWindow = newwin(height, width, 4 * height, 4 * width);
-
 		// Initialise board array
-		for (rank = 0; rank < 8; rank++)
-			for (file = 0; file < 8; file++)
+		for (int i = 0; i < 8; i++)
+			for (int j = 0; j < 8; j++)
 			{
-				board[rank][file].piece_color = (rank + file) % 2 ? 0 : 1 << 7;
+				board[i][j].piece_color = (i + j) % 2 ? 0 : 1 << 7;
 
-				if (rank == 1 || rank == 6)
+				if (i == 1 || i == 6)
 				{
-					board[rank][file].piece_color |= pawn;
-					board[rank][file].piece_color |= rank == 1 ? 0 : 1 << 6;
+					board[i][j].piece_color |= pawn;
+					board[i][j].piece_color |= i == 1 ? 0 : 1 << 6;
 				}
-				else if (rank == 0 || rank == 7)
+				else if (i == 0 || i == 7)
 				{
-					board[rank][file].piece_color |=
-						file == 0 || file == 7 ? piece::rook : file == 1 || file == 6 ? piece::knight
-														   : file == 2 || file == 5	  ? piece::bishop
-														   : file == 3				  ? piece::queen
-																					  : piece::king;
-					board[rank][file].piece_color |= rank == 0 ? 0 : 1 << 6;
+					board[i][j].piece_color |=
+						j == 0 || j == 7 ? piece::rook : j == 1 || j == 6 ? piece::knight
+													 : j == 2 || j == 5	  ? piece::bishop
+													 : j == 3			  ? piece::queen
+																		  : piece::king;
+					board[i][j].piece_color |= i == 0 ? 0 : 1 << 6;
 				}
 			}
 
 		refresh();
 	}
 
-	/*
-		The draw function draws the board on the screen. It calculates the terminal size and draws the board accordingly.
-	*/
+	/*	The draw function draws the board on the screen. It calculates the terminal size and draws the board accordingly. */
 	void draw()
 	{
+		// Delete current selected cell moving window.
+		if (movingWindow != NULL)
+		{
+			wborder(movingWindow, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+			wrefresh(movingWindow);
+			delwin(movingWindow);
+			movingWindow = NULL;
+		}
 		// Check terminal size
 		watcher->checkTerminalSize();
 
@@ -108,19 +111,25 @@ public:
 		init_pair(2, 2, COLOR_BLACK);
 
 		// Draw board
-		for (rank = 0; rank < 8; rank++)
-			for (file = 0; file < 8; file++)
+		for (int i = 0; i < 8; i++)
+			for (int j = 0; j < 8; j++)
 			{
-				board[rank][file].piece_color & 1 << 7 ? attron(COLOR_PAIR(1)) : attron(COLOR_PAIR(2));
-				for (int i = 0; i < height; i++)
+				board[i][j].piece_color & 1 << 7 ? attron(COLOR_PAIR(1)) : attron(COLOR_PAIR(2));
+				for (int a = 0; a < height; a++)
 				{
-					mvaddch(rank * height + i, file * width, ACS_CKBOARD);
-					for (int j = 1; j < width; j++)
+					mvaddch(i * height + a, j * width, ACS_CKBOARD);
+					for (int b = 1; b < width; b++)
 						addch(ACS_CKBOARD);
 				}
-				board[rank][file].piece_color & 1 << 7 ? attroff(COLOR_PAIR(1)) : attroff(COLOR_PAIR(2));
+				board[i][j].piece_color & 1 << 7 ? attroff(COLOR_PAIR(1)) : attroff(COLOR_PAIR(2));
 			}
+
+		// Draw selected cell moving window
+		movingWindow = newwin(height, width, rank * height, file * width);
+		wborder(movingWindow, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE, ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
+
 		refresh();
+		wrefresh(movingWindow);
 	}
 
 	void input()
@@ -134,15 +143,19 @@ public:
 		}
 		else if (ch == KEY_UP)
 		{
+			rank--;
 		}
 		else if (ch == KEY_DOWN)
 		{
+			rank++;
 		}
 		else if (ch == KEY_LEFT)
 		{
+			file--;
 		}
 		else if (ch == KEY_RIGHT)
 		{
+			file++;
 		}
 		else if (ch == ' ')
 		{
@@ -157,6 +170,5 @@ public:
 			input();
 			// process();
 		}
-		getch();
 	}
 };
