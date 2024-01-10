@@ -43,7 +43,6 @@ public:
 		initscr();
 		cbreak();
 		noecho();
-		setlocale(LC_ALL, "");
 		keypad(stdscr, TRUE);
 
 		// Initialise board array
@@ -71,7 +70,6 @@ public:
 		refresh();
 	}
 
-	/*	The draw function draws the board on the screen. It calculates the terminal size and draws the board accordingly. */
 	void draw()
 	{
 		// Delete current selected cell moving window.
