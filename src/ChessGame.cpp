@@ -157,19 +157,23 @@ public:
 		}
 		else if (ch == KEY_UP)
 		{
-			rank--;
+			if (rank > 0)
+				rank--;
 		}
 		else if (ch == KEY_DOWN)
 		{
-			rank++;
+			if (rank < 7)
+				rank++;
 		}
 		else if (ch == KEY_LEFT)
 		{
-			file--;
+			if (file > 0)
+				file--;
 		}
 		else if (ch == KEY_RIGHT)
 		{
-			file++;
+			if (file < 7)
+				file++;
 		}
 		else if (ch == ' ')
 		{
