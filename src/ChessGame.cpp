@@ -127,9 +127,20 @@ public:
 				board[i][j].piece_color & 1 << 7 ? attroff(COLOR_PAIR(1)) : attroff(COLOR_PAIR(2));
 			}
 
-		// Draw selected cell moving window
+		// Draw selected cell moving window borders
 		movingWindow = newwin(height, width, rank * height, file * width);
 		wborder(movingWindow, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE, ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
+		wbkgd(movingWindow, (board[rank][file].piece_color & 1 << 7 ? COLOR_PAIR(1) : COLOR_PAIR(2)) | A_BOLD);
+
+		// Draw selected cell moving window
+		board[rank][file].piece_color & 1 << 7 ? attron(COLOR_PAIR(3)) : attron(COLOR_PAIR(4));
+		for (int a = 0; a < height - 2; a++)
+		{
+			mvwaddch(movingWindow, a + 1, 1, ACS_CKBOARD);
+			for (int b = 1; b < width - 2; b++)
+				waddch(movingWindow, ACS_CKBOARD);
+		}
+		board[rank][file].piece_color & 1 << 7 ? attroff(COLOR_PAIR(3)) : attroff(COLOR_PAIR(4));
 
 		refresh();
 		wrefresh(movingWindow);
