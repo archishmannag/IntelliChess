@@ -103,10 +103,13 @@ public:
 
 		// Initialize board colour
 		start_color();
-		init_color(1, 933, 822, 823);
-		init_color(2, 462, 588, 337);
+		init_color(1, 933, 822, 823); // White
+		init_color(2, 462, 588, 337); // Black
+		init_color(3, 168, 682, 839); // Blue (selected cell)
 		init_pair(1, 1, COLOR_BLACK);
 		init_pair(2, 2, COLOR_BLACK);
+		init_pair(3, 3, 1);
+		init_pair(4, 3, 2);
 
 		// Draw board
 		for (int i = 0; i < 8; i++)
