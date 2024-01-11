@@ -115,6 +115,8 @@ public:
 		for (int i = 0; i < 8; i++)
 			for (int j = 0; j < 8; j++)
 			{
+				if (i == rank && j == file)
+					continue;
 				board[i][j].piece_color & 1 << 7 ? attron(COLOR_PAIR(1)) : attron(COLOR_PAIR(2));
 				for (int a = 0; a < height; a++)
 				{
