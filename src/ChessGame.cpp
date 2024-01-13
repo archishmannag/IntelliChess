@@ -4,6 +4,7 @@
 #include <wchar.h>
 #include <iostream>
 #include "TerminalSizeWatcher.cpp"
+#include "MoveHighlighter.cpp"
 
 class ChessGame
 {
@@ -24,12 +25,12 @@ private:
 	typedef enum
 	{
 		isWhitePiece = 64,
-		isPossileMove = 128
+		isHighlighted = 128
 	} pieceFlags;
 
 	typedef struct
 	{
-		uint8_t piece_color;
+		u_int8_t piece_color;
 	} square;
 
 	square board[8][8];
@@ -38,7 +39,8 @@ private:
 public:
 	ChessGame()
 	{
-		watcher = new TerminalSizeWatcher(x, y);
+		// Start the terminal size watcher function.
+		watcher = new TerminalSizeWatcher();
 		initializeScreen();
 		run();
 	}
@@ -61,6 +63,7 @@ void ChessGame::initializeScreen()
 	initscr();
 	cbreak();
 	noecho();
+	timeout(-1);
 	keypad(stdscr, TRUE);
 
 	// Initialise board array
@@ -96,8 +99,9 @@ void ChessGame::draw()
 		delwin(movingWindow);
 		movingWindow = NULL;
 	}
+	clear();
 	// Check terminal size
-	watcher->checkTerminalSize();
+	watcher->getDimensions(&x, &y);
 
 	if (x < 80 || y < 24)
 	{
@@ -143,18 +147,18 @@ void ChessGame::draw()
 
 	// Draw selected cell moving window borders
 	movingWindow = newwin(height, width, rank * height, file * width);
-	wbkgd(movingWindow, ((file + rank) % 2 ? COLOR_PAIR(1) : COLOR_PAIR(2)) | A_BOLD);
+	wbkgd(movingWindow, COLOR_PAIR(3) | A_BOLD);
 	wborder(movingWindow, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE, ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
 
 	// Draw selected cell moving window
-	(file + rank) % 2 ? attron(COLOR_PAIR(3)) : attron(COLOR_PAIR(4));
+	attron(COLOR_PAIR(3));
 	for (int a = 0; a < height - 2; a++)
 	{
 		mvwaddch(movingWindow, a + 1, 1, ACS_CKBOARD);
 		for (int b = 1; b < width - 2; b++)
 			waddch(movingWindow, ACS_CKBOARD);
 	}
-	(file + rank) % 2 ? attroff(COLOR_PAIR(3)) : attroff(COLOR_PAIR(4));
+	attroff(COLOR_PAIR(3));
 
 	refresh();
 	wrefresh(movingWindow);

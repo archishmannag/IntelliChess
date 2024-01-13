@@ -1,32 +1,29 @@
 #include <csignal>
 #include <sys/ioctl.h>
-#include <ncurses.h>
-#include <cstring>
-#include <unistd.h>
 
 class TerminalSizeWatcher
 {
 private:
-	int &cols, &lines;
-	struct winsize window;
+	int cols = -1, lines = -1;
+	struct winsize ws;
 
 	void getTerminalSize()
 	{
-		ioctl(0, TIOCGWINSZ, &window);
-		cols = window.ws_col;
-		lines = window.ws_row;
+		ioctl(0, TIOCGWINSZ, &ws);
+		cols = ws.ws_col;
+		lines = ws.ws_row;
 	}
 
 public:
-	TerminalSizeWatcher(int &c, int &l) : cols(c), lines(l)
+	TerminalSizeWatcher()
 	{
 		getTerminalSize();
 	}
-	void checkTerminalSize()
+
+	void getDimensions(int *cols, int *lines)
 	{
-		int newCols = cols, newLines = lines;
 		getTerminalSize();
-		if (newCols != cols || newLines != lines)
-			clear();
+		*cols = this->cols;
+		*lines = this->lines;
 	}
 };
