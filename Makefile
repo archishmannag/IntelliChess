@@ -17,7 +17,7 @@ VPATH = src
 OBJS = $(SRCS:.cpp=.o)
 
 # Executable
-TARGET = chess
+TARGET = chess.out
 
 # Default target
 all: $(TARGET)
