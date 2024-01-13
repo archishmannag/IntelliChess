@@ -17,5 +17,5 @@ MoveHighlighter::~MoveHighlighter()
 void MoveHighlighter::toggleHighlight(int f, int r)
 {
 	// * Test - Highlight current cell
-	(*board)[f][r].piece_color ^= 1 << 7;
+	(*board)[r][f].piece_color ^= 1 << 7;
 }

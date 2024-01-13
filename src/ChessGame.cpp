@@ -102,14 +102,16 @@ void ChessGame::draw()
 		{
 			if (i == rank && j == file)
 				continue;
-			(i + j) % 2 ? attron(COLOR_PAIR(1)) : attron(COLOR_PAIR(2));
+			board[i][j].piece_color &pieceFlags::isHighlighted ? attron(COLOR_PAIR(3)) : (i + j) % 2 ? attron(COLOR_PAIR(1))
+																									 : attron(COLOR_PAIR(2));
 			for (int a = 0; a < height; a++)
 			{
 				mvaddch(i * height + a, j * width, ACS_CKBOARD);
 				for (int b = 1; b < width; b++)
 					addch(ACS_CKBOARD);
 			}
-			(i + j) % 2 ? attroff(COLOR_PAIR(1)) : attroff(COLOR_PAIR(2));
+			board[i][j].piece_color &pieceFlags::isHighlighted ? attroff(COLOR_PAIR(3)) : (i + j) % 2 ? attroff(COLOR_PAIR(1))
+																									  : attroff(COLOR_PAIR(2));
 		}
 
 	// Draw selected cell moving window borders
