@@ -1,29 +1,20 @@
-#include <csignal>
-#include <sys/ioctl.h>
+#include "TerminalSizeWatcher.h"
 
-class TerminalSizeWatcher
+TerminalSizeWatcher::TerminalSizeWatcher()
 {
-private:
-	int cols = -1, lines = -1;
-	struct winsize ws;
+	getTerminalSize();
+}
 
-	void getTerminalSize()
-	{
-		ioctl(0, TIOCGWINSZ, &ws);
-		cols = ws.ws_col;
-		lines = ws.ws_row;
-	}
+void TerminalSizeWatcher::getTerminalSize()
+{
+	ioctl(0, TIOCGWINSZ, &ws);
+	cols = ws.ws_col;
+	lines = ws.ws_row;
+}
 
-public:
-	TerminalSizeWatcher()
-	{
-		getTerminalSize();
-	}
-
-	void getDimensions(int *cols, int *lines)
-	{
-		getTerminalSize();
-		*cols = this->cols;
-		*lines = this->lines;
-	}
-};
+void TerminalSizeWatcher::getDimensions(int *cols, int *lines)
+{
+	getTerminalSize();
+	*cols = this->cols;
+	*lines = this->lines;
+}

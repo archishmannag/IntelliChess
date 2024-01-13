@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ChessGame.cpp"
+#include "ChessGame.h"
 
 int main(int argc, char const *argv[])
 {

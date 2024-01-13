@@ -1,61 +1,28 @@
-#include <ncurses.h>
-#include <vector>
-#include <string>
-#include <wchar.h>
-#include <iostream>
-#include "TerminalSizeWatcher.cpp"
-#include "MoveHighlighter.cpp"
+#include "ChessGame.h"
 
-class ChessGame
+ChessGame::ChessGame()
 {
-private:
-	int file = 5, rank = 5, height, width, x, y;
-	WINDOW *movingWindow = NULL;
+	// Start the terminal size watcher function.
+	watcher = new TerminalSizeWatcher();
+	highlighter = new MoveHighlighter(&board);
+	initializeScreen();
+	run();
+}
 
-	typedef enum
+ChessGame::~ChessGame()
+{
+	// Delete the terminal size watcher object.
+	delete watcher;
+	// Delete the moving window.
+	if (movingWindow != NULL)
 	{
-		pawn = 1,
-		rook = 2,
-		knight = 4,
-		bishop = 8,
-		queen = 16,
-		king = 32
-	} piece;
-
-	typedef enum
-	{
-		isWhitePiece = 64,
-		isHighlighted = 128
-	} pieceFlags;
-
-	typedef struct
-	{
-		u_int8_t piece_color;
-	} square;
-
-	square board[8][8];
-	TerminalSizeWatcher *watcher;
-
-public:
-	ChessGame()
-	{
-		// Start the terminal size watcher function.
-		watcher = new TerminalSizeWatcher();
-		initializeScreen();
-		run();
+		wborder(movingWindow, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+		wrefresh(movingWindow);
+		delwin(movingWindow);
 	}
-	~ChessGame()
-	{
-		endwin();
-	}
-	void initializeScreen();
-
-	void draw();
-
-	void input();
-
-	void run();
-};
+	// Delete the ncurses screen.
+	endwin();
+}
 
 void ChessGame::initializeScreen()
 {
@@ -151,15 +118,16 @@ void ChessGame::draw()
 	wborder(movingWindow, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE, ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
 
 	// Draw selected cell moving window
-	attron(COLOR_PAIR(3));
+	board[rank][file].piece_color &pieceFlags::isHighlighted ? wattron(movingWindow, COLOR_PAIR(3)) : (file + rank) % 2 ? wattron(movingWindow, COLOR_PAIR(1))
+																														: wattron(movingWindow, COLOR_PAIR(2));
 	for (int a = 0; a < height - 2; a++)
 	{
 		mvwaddch(movingWindow, a + 1, 1, ACS_CKBOARD);
 		for (int b = 1; b < width - 2; b++)
 			waddch(movingWindow, ACS_CKBOARD);
 	}
-	attroff(COLOR_PAIR(3));
-
+	board[rank][file].piece_color &pieceFlags::isHighlighted ? wattroff(movingWindow, COLOR_PAIR(3)) : (file + rank) % 2 ? wattroff(movingWindow, COLOR_PAIR(1))
+																														 : wattroff(movingWindow, COLOR_PAIR(2));
 	refresh();
 	wrefresh(movingWindow);
 }
@@ -195,6 +163,7 @@ void ChessGame::input()
 	}
 	else if (ch == ' ')
 	{
+		highlighter->toggleHighlight(file, rank);
 	}
 }
 

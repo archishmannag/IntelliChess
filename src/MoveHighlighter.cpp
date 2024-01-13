@@ -1,11 +1,21 @@
-#include <vector>
+#include "MoveHighlighter.h"
 
-class MoveHighlighter
+MoveHighlighter::MoveHighlighter(std::vector<std::vector<square>> *b)
 {
-private:
-	uint8_t (*board)[8][8];
+	this->board = b;
+}
+MoveHighlighter::~MoveHighlighter()
+{
+}
 
-public:
-	MoveHighlighter(u_int8_t (*b)[8][8]) : board(b){};
-	~MoveHighlighter();
-};
+/*
+	This function toggles the highlighted cells based on the available moves. It takes the current cell as the input and computes the moves, then highlights them. If the cell is already highlighted, it removes the highlight.
+
+	f = Current file
+	r = Current rank
+*/
+void MoveHighlighter::toggleHighlight(int f, int r)
+{
+	// * Test - Highlight current cell
+	(*board)[f][r].piece_color ^= 1 << 7;
+}
