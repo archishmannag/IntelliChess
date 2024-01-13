@@ -10,7 +10,6 @@ class ChessGame
 private:
 	int file = 5, rank = 5, height, width, x, y;
 	WINDOW *movingWindow = NULL;
-	bool isSelected;
 
 	typedef enum
 	{
@@ -68,12 +67,10 @@ void ChessGame::initializeScreen()
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
 		{
-			board[i][j].piece_color = (i + j) % 2 ? 0 : 1 << 7;
-
 			if (i == 1 || i == 6)
 			{
-				board[i][j].piece_color |= pawn;
-				board[i][j].piece_color |= i == 1 ? 0 : 1 << 6;
+				board[i][j].piece_color |= piece::pawn;
+				board[i][j].piece_color |= i == 1 ? 0 : pieceFlags::isWhitePiece;
 			}
 			else if (i == 0 || i == 7)
 			{
@@ -82,7 +79,7 @@ void ChessGame::initializeScreen()
 												 : j == 2 || j == 5	  ? piece::bishop
 												 : j == 3			  ? piece::queen
 																	  : piece::king;
-				board[i][j].piece_color |= i == 0 ? 0 : 1 << 6;
+				board[i][j].piece_color |= i == 0 ? 0 : pieceFlags::isWhitePiece;
 			}
 		}
 
@@ -124,11 +121,9 @@ void ChessGame::draw()
 	start_color();
 	init_color(1, 933, 822, 823); // White
 	init_color(2, 462, 588, 337); // Black
-	init_color(3, 168, 682, 839); // Blue (selected cell)
 	init_pair(1, 1, COLOR_BLACK);
 	init_pair(2, 2, COLOR_BLACK);
-	init_pair(3, 3, 1);
-	init_pair(4, 3, 2);
+	init_pair(3, COLOR_BLUE, COLOR_BLACK);
 
 	// Draw board
 	for (int i = 0; i < 8; i++)
@@ -136,30 +131,30 @@ void ChessGame::draw()
 		{
 			if (i == rank && j == file)
 				continue;
-			board[i][j].piece_color & 1 << 7 ? attron(COLOR_PAIR(1)) : attron(COLOR_PAIR(2));
+			(i + j) % 2 ? attron(COLOR_PAIR(1)) : attron(COLOR_PAIR(2));
 			for (int a = 0; a < height; a++)
 			{
 				mvaddch(i * height + a, j * width, ACS_CKBOARD);
 				for (int b = 1; b < width; b++)
 					addch(ACS_CKBOARD);
 			}
-			board[i][j].piece_color & 1 << 7 ? attroff(COLOR_PAIR(1)) : attroff(COLOR_PAIR(2));
+			(i + j) % 2 ? attroff(COLOR_PAIR(1)) : attroff(COLOR_PAIR(2));
 		}
 
 	// Draw selected cell moving window borders
 	movingWindow = newwin(height, width, rank * height, file * width);
+	wbkgd(movingWindow, ((file + rank) % 2 ? COLOR_PAIR(1) : COLOR_PAIR(2)) | A_BOLD);
 	wborder(movingWindow, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE, ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
-	wbkgd(movingWindow, (board[rank][file].piece_color & 1 << 7 ? COLOR_PAIR(1) : COLOR_PAIR(2)) | A_BOLD);
 
 	// Draw selected cell moving window
-	board[rank][file].piece_color & 1 << 7 ? attron(COLOR_PAIR(3)) : attron(COLOR_PAIR(4));
+	(file + rank) % 2 ? attron(COLOR_PAIR(3)) : attron(COLOR_PAIR(4));
 	for (int a = 0; a < height - 2; a++)
 	{
 		mvwaddch(movingWindow, a + 1, 1, ACS_CKBOARD);
 		for (int b = 1; b < width - 2; b++)
 			waddch(movingWindow, ACS_CKBOARD);
 	}
-	board[rank][file].piece_color & 1 << 7 ? attroff(COLOR_PAIR(3)) : attroff(COLOR_PAIR(4));
+	(file + rank) % 2 ? attroff(COLOR_PAIR(3)) : attroff(COLOR_PAIR(4));
 
 	refresh();
 	wrefresh(movingWindow);
