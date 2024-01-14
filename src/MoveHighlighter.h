@@ -4,6 +4,22 @@
 #include <vector>
 #include <cstdint>
 
+typedef enum
+{
+	pawn = 1,
+	rook = 2,
+	knight = 4,
+	bishop = 8,
+	queen = 16,
+	king = 32
+} piece;
+
+typedef enum
+{
+	isWhitePiece = 64,
+	isHighlighted = 128
+} pieceFlags;
+
 typedef struct
 {
 	uint8_t piece_color;
