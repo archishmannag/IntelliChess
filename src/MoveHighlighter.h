@@ -28,12 +28,21 @@ typedef struct
 class MoveHighlighter
 {
 private:
+	int f, r;
 	std::vector<std::vector<square>> *board;
+
+	void pawnMoves();
+	void rookMoves();
+	void knightMoves();
+	void bishopMoves();
+	void kingMoves();
+	void noHighlight();
 
 public:
 	MoveHighlighter(std::vector<std::vector<square>> *b);
 	~MoveHighlighter();
 	void toggleHighlight(int f, int r);
+	void getCurrentPosition(int &f, int &r);
 };
 
 #endif

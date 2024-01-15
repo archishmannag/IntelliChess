@@ -33,16 +33,26 @@ void ChessGame::initializeScreen()
 	timeout(-1);
 	keypad(stdscr, TRUE);
 
+	// Initialize board colours
+	start_color();
+	init_color(1, 933, 822, 823); // White
+	init_color(2, 462, 588, 337); // Black
+	init_color(3, 969, 700, 650); // Yellow (highlighted opponent piece)
+	init_pair(1, 1, COLOR_BLACK);
+	init_pair(2, 2, COLOR_BLACK);
+	init_pair(3, COLOR_CYAN, COLOR_BLACK);
+	init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+
 	// Initialise board array
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
 		{
-			if (i == 1 || i == 6)
-			{
-				board[i][j].piece_color |= piece::pawn;
-				board[i][j].piece_color |= i == 1 ? 0 : pieceFlags::isWhitePiece;
-			}
-			else if (i == 0 || i == 7)
+			// if (i == 1 || i == 6)
+			// {
+			// 	board[i][j].piece_color |= piece::pawn;
+			// 	board[i][j].piece_color |= i == 1 ? 0 : pieceFlags::isWhitePiece;
+			// } else
+			if (i == 0 || i == 7)
 			{
 				board[i][j].piece_color |=
 					j == 0 || j == 7 ? piece::rook : j == 1 || j == 6 ? piece::knight
@@ -52,8 +62,6 @@ void ChessGame::initializeScreen()
 				board[i][j].piece_color |= i == 0 ? 0 : pieceFlags::isWhitePiece;
 			}
 		}
-
-	refresh();
 }
 
 void ChessGame::draw()
@@ -88,30 +96,43 @@ void ChessGame::draw()
 		height = width / 2;
 	}
 
-	// Initialize board colour
-	start_color();
-	init_color(1, 933, 822, 823); // White
-	init_color(2, 462, 588, 337); // Black
-	init_pair(1, 1, COLOR_BLACK);
-	init_pair(2, 2, COLOR_BLACK);
-	init_pair(3, COLOR_BLUE, COLOR_BLACK);
-
 	// Draw board
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
 		{
 			if (i == rank && j == file)
 				continue;
-			board[i][j].piece_color &pieceFlags::isHighlighted ? attron(COLOR_PAIR(3)) : (i + j) % 2 ? attron(COLOR_PAIR(1))
-																									 : attron(COLOR_PAIR(2));
+
+			int f, r;
+			highlighter->getCurrentPosition(f, r);
+			if (board[i][j].piece_color & pieceFlags::isHighlighted)
+			{
+				if (((board[i][j].piece_color ^ board[r][f].piece_color) & pieceFlags::isWhitePiece) && (board[i][j].piece_color & 0b111111))
+					attron(COLOR_PAIR(4));
+				else
+					attron(COLOR_PAIR(3));
+			}
+			else if ((i + j) % 2)
+				attron(COLOR_PAIR(2));
+			else
+				attron(COLOR_PAIR(1));
 			for (int a = 0; a < height; a++)
 			{
 				mvaddch(i * height + a, j * width, ACS_CKBOARD);
 				for (int b = 1; b < width; b++)
 					addch(ACS_CKBOARD);
 			}
-			board[i][j].piece_color &pieceFlags::isHighlighted ? attroff(COLOR_PAIR(3)) : (i + j) % 2 ? attroff(COLOR_PAIR(1))
-																									  : attroff(COLOR_PAIR(2));
+			if (board[i][j].piece_color & pieceFlags::isHighlighted)
+			{
+				if (((board[i][j].piece_color ^ board[r][f].piece_color) & pieceFlags::isWhitePiece) && (board[i][j].piece_color & 0b111111))
+					attroff(COLOR_PAIR(4));
+				else
+					attroff(COLOR_PAIR(3));
+			}
+			else if ((i + j) % 2)
+				attroff(COLOR_PAIR(2));
+			else
+				attroff(COLOR_PAIR(1));
 		}
 
 	// Draw selected cell moving window borders
@@ -120,16 +141,16 @@ void ChessGame::draw()
 	wborder(movingWindow, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE, ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
 
 	// Draw selected cell moving window
-	board[rank][file].piece_color &pieceFlags::isHighlighted ? wattron(movingWindow, COLOR_PAIR(3)) : (file + rank) % 2 ? wattron(movingWindow, COLOR_PAIR(1))
-																														: wattron(movingWindow, COLOR_PAIR(2));
+	board[rank][file].piece_color &pieceFlags::isHighlighted ? wattron(movingWindow, COLOR_PAIR(3)) : (file + rank) % 2 ? wattron(movingWindow, COLOR_PAIR(2))
+																														: wattron(movingWindow, COLOR_PAIR(1));
 	for (int a = 0; a < height - 2; a++)
 	{
 		mvwaddch(movingWindow, a + 1, 1, ACS_CKBOARD);
 		for (int b = 1; b < width - 2; b++)
 			waddch(movingWindow, ACS_CKBOARD);
 	}
-	board[rank][file].piece_color &pieceFlags::isHighlighted ? wattroff(movingWindow, COLOR_PAIR(3)) : (file + rank) % 2 ? wattroff(movingWindow, COLOR_PAIR(1))
-																														 : wattroff(movingWindow, COLOR_PAIR(2));
+	board[rank][file].piece_color &pieceFlags::isHighlighted ? wattroff(movingWindow, COLOR_PAIR(3)) : (file + rank) % 2 ? wattroff(movingWindow, COLOR_PAIR(2))
+																														 : wattroff(movingWindow, COLOR_PAIR(1));
 	refresh();
 	wrefresh(movingWindow);
 }
