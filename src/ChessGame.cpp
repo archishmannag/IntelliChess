@@ -107,7 +107,7 @@ void ChessGame::draw()
 			highlighter->getCurrentPosition(f, r);
 			if (board[i][j].piece_color & pieceFlags::isHighlighted)
 			{
-				if (((board[i][j].piece_color ^ board[r][f].piece_color) & pieceFlags::isWhitePiece) && (board[i][j].piece_color & 0b111111))
+				if ((((board[i][j].piece_color ^ board[r][f].piece_color) & pieceFlags::isWhitePiece) && (board[i][j].piece_color & 0b111111)) || board[i][j].piece_color & pieceFlags::enPassant)
 					attron(COLOR_PAIR(4));
 				else
 					attron(COLOR_PAIR(3));
@@ -124,7 +124,7 @@ void ChessGame::draw()
 			}
 			if (board[i][j].piece_color & pieceFlags::isHighlighted)
 			{
-				if (((board[i][j].piece_color ^ board[r][f].piece_color) & pieceFlags::isWhitePiece) && (board[i][j].piece_color & 0b111111))
+				if ((((board[i][j].piece_color ^ board[r][f].piece_color) & pieceFlags::isWhitePiece) && (board[i][j].piece_color & 0b111111)) || board[i][j].piece_color & pieceFlags::enPassant)
 					attroff(COLOR_PAIR(4));
 				else
 					attroff(COLOR_PAIR(3));

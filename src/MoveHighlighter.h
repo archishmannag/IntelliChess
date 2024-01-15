@@ -17,12 +17,13 @@ typedef enum
 typedef enum
 {
 	isWhitePiece = 64,
-	isHighlighted = 128
+	isHighlighted = 128,
+	enPassant = 256
 } pieceFlags;
 
 typedef struct
 {
-	uint8_t piece_color;
+	uint16_t piece_color;
 } square;
 
 class MoveHighlighter

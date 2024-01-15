@@ -67,25 +67,61 @@ void MoveHighlighter::pawnMoves()
 	{
 		if (r == 6)
 		{
-			(*board)[r - 1][f].piece_color ^= pieceFlags::isHighlighted;
-			(*board)[r - 2][f].piece_color ^= pieceFlags::isHighlighted;
+			if (!((*board)[r - 1][f].piece_color & 0b111111))
+			{
+				(*board)[r - 1][f].piece_color ^= pieceFlags::isHighlighted;
+				if (!((*board)[r - 2][f].piece_color & 0b111111))
+					(*board)[r - 2][f].piece_color ^= pieceFlags::isHighlighted;
+			}
+		}
+		else if (r == 3)
+		{
+			if (!((*board)[r - 1][f].piece_color & 0b111111))
+				(*board)[r - 1][f].piece_color ^= pieceFlags::isHighlighted;
+			if (f > 0 && (((*board)[r][f - 1].piece_color & pieceFlags::isWhitePiece) == 0) && ((*board)[r][f - 1].piece_color & piece::pawn))
+				(*board)[r - 1][f - 1].piece_color ^= pieceFlags::enPassant | pieceFlags::isHighlighted;
+			if (f < 7 && (((*board)[r][f + 1].piece_color & pieceFlags::isWhitePiece) == 0) && ((*board)[r][f + 1].piece_color & piece::pawn))
+				(*board)[r - 1][f + 1].piece_color ^= pieceFlags::enPassant | pieceFlags::isHighlighted;
 		}
 		else
 		{
-			(*board)[r - 1][f].piece_color ^= pieceFlags::isHighlighted;
+			if (!((*board)[r - 1][f].piece_color & 0b111111))
+				(*board)[r - 1][f].piece_color ^= pieceFlags::isHighlighted;
 		}
+		if (f > 0 && ((*board)[r - 1][f - 1].piece_color & pieceFlags::isWhitePiece == 0) && (*board)[r - 1][f - 1].piece_color & 0b111111)
+			(*board)[r - 1][f - 1].piece_color ^= pieceFlags::isHighlighted;
+		if (f < 7 && ((*board)[r - 1][f + 1].piece_color & pieceFlags::isWhitePiece == 0) && (*board)[r - 1][f + 1].piece_color & 0b111111)
+			(*board)[r - 1][f + 1].piece_color ^= pieceFlags::isHighlighted;
 	}
 	else
 	{
 		if (r == 1)
 		{
-			(*board)[r + 1][f].piece_color ^= pieceFlags::isHighlighted;
-			(*board)[r + 2][f].piece_color ^= pieceFlags::isHighlighted;
+			if (!((*board)[r + 1][f].piece_color & 0b111111))
+			{
+				(*board)[r + 1][f].piece_color ^= pieceFlags::isHighlighted;
+				if (!((*board)[r + 1][f].piece_color & 0b111111))
+					(*board)[r + 2][f].piece_color ^= pieceFlags::isHighlighted;
+			}
+		}
+		else if (r == 4)
+		{
+			if (!((*board)[r + 1][f].piece_color & 0b111111))
+				(*board)[r + 1][f].piece_color ^= pieceFlags::isHighlighted;
+			if (f > 0 && (((*board)[r][f - 1].piece_color & pieceFlags::isWhitePiece) != 0) && ((*board)[r][f - 1].piece_color & piece::pawn))
+				(*board)[r + 1][f - 1].piece_color ^= pieceFlags::enPassant | pieceFlags::isHighlighted;
+			if (f < 7 && (((*board)[r][f + 1].piece_color & pieceFlags::isWhitePiece) != 0) && ((*board)[r][f + 1].piece_color & piece::pawn))
+				(*board)[r + 1][f + 1].piece_color ^= pieceFlags::enPassant | pieceFlags::isHighlighted;
 		}
 		else
 		{
-			(*board)[r + 1][f].piece_color ^= pieceFlags::isHighlighted;
+			if (!((*board)[r + 1][f].piece_color & 0b111111))
+				(*board)[r + 1][f].piece_color ^= pieceFlags::isHighlighted;
 		}
+		if (f > 0 && ((*board)[r + 1][f - 1].piece_color & pieceFlags::isWhitePiece != 0) && (*board)[r + 1][f - 1].piece_color & 0b111111)
+			(*board)[r + 1][f - 1].piece_color ^= pieceFlags::isHighlighted;
+		if (f < 7 && ((*board)[r + 1][f + 1].piece_color & pieceFlags::isWhitePiece != 0) && (*board)[r + 1][f + 1].piece_color & 0b111111)
+			(*board)[r + 1][f + 1].piece_color ^= pieceFlags::isHighlighted;
 	}
 }
 
@@ -262,13 +298,13 @@ void MoveHighlighter::noHighlight()
 			(*board)[i][j].piece_color &= ~pieceFlags::isHighlighted;
 }
 /*
-	TODO: Implement normal moves
+	//TODO: Implement normal moves
 	TODO: Implement capturing moves
 	TODO: Implement check
 	TODO: Implement checkmate
 	TODO: Implement pawn promotion
 	TODO: Implement castling
-	TODO: Implement en passant
+	//TODO: Implement en passant
 	TODO: Implement stalemate
 	TODO: Implement draw
 	TODO: Implement threefold repetition
