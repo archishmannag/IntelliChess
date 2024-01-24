@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = -Wall -Wextra -pedantic -std=c++17
 
 # Libraries
-LIBS = -lncurses -lncursesw
+LIBS = -lncursesw
 
 # Source files
 SRCS = main.cpp ChessGame.cpp MoveHighlighter.cpp TerminalSizeWatcher.cpp
