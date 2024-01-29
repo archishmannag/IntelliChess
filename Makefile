@@ -13,6 +13,12 @@ SRCS = main.cpp ChessGame.cpp MoveHighlighter.cpp TerminalSizeWatcher.cpp
 # Source directories
 VPATH = src
 
+# Object directory
+ODIR = build
+
+# Executable directory
+EDIR = bin
+
 # Object files
 OBJS = $(SRCS:.cpp=.o)
 
@@ -24,12 +30,12 @@ all: $(TARGET)
 
 # Compile source files into object files
 %.o: $(VPATH)/%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $(ODIR)/$@
 
 # Link object files into executable
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LIBS)
+	$(CC) $(CFLAGS) $(ODIR)/* -o $(EDIR)/$@ $(LIBS)
 
 # Clean up object files and executable
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(ODIR)/* $(EDIR)/$(TARGET)
