@@ -1,54 +1,125 @@
 #include "../../include/clock.h"
-#include <iostream>
-#include <unistd.h>
 
-Clock::Clock()
+void Clock::startClock()
 {
-	increment = 10;
-	timeLeft = 999;
-	minute = 30;
-	second = 0;
+	whiteTimeInterval = blackTimeInterval = 0;
+	currentTurn = isWhiteTurn;
+	clockThread = std::thread(&Clock::runClock, this);
 }
 
-Clock::~Clock()
+void Clock::stopClock()
 {
+	if (isRunning)
+		isRunning = false;
+	clockThread.join();
+}
+
+void Clock::runClock()
+{
+	while (isRunning)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::lock_guard<std::mutex> lock(clockMutex);
+		decrementTimeLeft();
+
+		if (currentTurn != isWhiteTurn)
+		{
+			if (currentTurn)
+				whiteTimeInterval += increment;
+			else
+				blackTimeInterval += increment;
+		}
+		currentTurn = isWhiteTurn;
+	}
 }
 
 void Clock::decrementTimeLeft()
 {
-	if (timeLeft <= 0)
+	if (isWhiteTurn)
 	{
-		decrementTime();
-		timeLeft = 999;
+		if (whiteTimeInterval > 0)
+			whiteTimeInterval--;
+		else
+			decrementTime();
 	}
 	else
-		timeLeft -= increment;
+	{
+		if (blackTimeInterval > 0)
+			blackTimeInterval--;
+		else
+			decrementTime();
+	}
 }
 
 void Clock::decrementTime()
 {
-	if (second == 0)
+	if (isWhiteTurn)
 	{
-		second = 59;
-		minute--;
+		if (whiteSecond > 0)
+			whiteSecond--;
+		else
+		{
+			if (whiteMinute > 0)
+			{
+				whiteMinute--;
+				whiteSecond = 59;
+			}
+			else
+			{
+				whiteMinute = 0;
+				whiteSecond = 0;
+				isRunning = false;
+				isWhiteTurn = false;
+			}
+		}
 	}
 	else
 	{
-		second--;
+		if (blackSecond > 0)
+			blackSecond--;
+		else
+		{
+			if (blackMinute > 0)
+			{
+				blackMinute--;
+				blackSecond = 59;
+			}
+			else
+			{
+				blackMinute = 0;
+				blackSecond = 0;
+				isRunning = false;
+			}
+		}
 	}
 }
 
-int Clock::getMinute()
+int Clock::getWhiteMinute()
 {
-	return minute;
+	return whiteMinute;
 }
 
-int Clock::getSecond()
+int Clock::getWhiteSecond()
 {
-	return second;
+	return whiteSecond;
 }
 
-int Clock::getMilliSecond()
+int Clock::getWhiteMilliSecond()
 {
-	return timeLeft;
+	return whiteTimeInterval;
+}
+
+int Clock::getBlackMinute()
+{
+	return blackMinute;
+}
+
+int Clock::getBlackSecond()
+{
+	return blackSecond;
+}
+
+int Clock::getBlackMilliSecond()
+{
+	return blackTimeInterval;
 }
