@@ -4,39 +4,7 @@
 #include <vector>
 #include <cstdint>
 
-#ifndef PIECE_ENUM
-#define PIECE_ENUM
-
-typedef enum
-{
-	pawn = 1,
-	rook = 2,
-	knight = 4,
-	bishop = 8,
-	queen = 16,
-	king = 32,
-	isWhitePiece = 64
-} pieceFlags;
-
-typedef enum
-{
-	isHighlighted = 128,
-	isOccupied = 256,
-	canPromote = 512,
-	canEnPassant = 1024,
-	canCastle = 2048,
-	hasMoved = 4096,
-	isInCheck = 8192,
-	isInCheckmate = 16384,
-	isInStalemate = 32768
-} otherFlags;
-
-#endif
-
-typedef struct
-{
-	uint16_t state;
-} tile_t;
+#include "piece_tile.h"
 
 class Board
 {
@@ -48,7 +16,8 @@ public:
 	Board();
 	~Board();
 	void initialize();
-	std::vector<std::vector<tile_t>> &getBoard();
+	std::vector<std::vector<tile_t>> getBoard();
+	std::vector<std::vector<tile_t>> &getBoardReference();
 	int getRank();
 	int getFile();
 	void setRank(int rank);
