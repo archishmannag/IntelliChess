@@ -1,7 +1,7 @@
-#include "../../include/ChessGame.h"
+#include "../../include/game.h"
 
 int main(int argc, char const *argv[])
 {
-	ChessGame game;
+	Game game;
 	return 0;
 }
