@@ -7,7 +7,7 @@
 #include "board.h"
 #include "player.h"
 #include "clock.h"
-// #include "move.h"
+#include "mover.h"
 
 class Game
 {
@@ -15,6 +15,7 @@ private:
 	Board *board;
 	Clock *clock;
 	Player *whitePlayer, *blackPlayer;
+	Mover *mover;
 	bool isWhiteTurn, isGameOver, undoMove;
 	int scoreUpdateReturned;
 
