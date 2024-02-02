@@ -55,6 +55,7 @@ void Clock::decrementTime()
 {
 	if (isWhiteTurn)
 	{
+		whiteTimeInterval = 999;
 		if (whiteSecond > 0)
 			whiteSecond--;
 		else
@@ -69,12 +70,12 @@ void Clock::decrementTime()
 				whiteMinute = 0;
 				whiteSecond = 0;
 				isRunning = false;
-				isWhiteTurn = false;
 			}
 		}
 	}
 	else
 	{
+		blackTimeInterval = 999;
 		if (blackSecond > 0)
 			blackSecond--;
 		else
