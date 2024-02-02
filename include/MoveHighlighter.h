@@ -2,48 +2,29 @@
 #define MOVEHIGHLIGHTER_H
 
 #include <vector>
-#include <cstdint>
 
-typedef enum
-{
-	pawn = 1,
-	rook = 2,
-	knight = 4,
-	bishop = 8,
-	queen = 16,
-	king = 32
-} piece;
-
-typedef enum
-{
-	isWhitePiece = 64,
-	isHighlighted = 128,
-	enPassant = 256
-} pieceFlags;
-
-typedef struct
-{
-	uint16_t piece_color;
-} square;
+#include "board.h"
+#include "piece_tile.h"
 
 class MoveHighlighter
 {
 private:
 	int f, r;
-	std::vector<std::vector<square>> *board;
+	Board &board;
+	std::vector<std::vector<tile_t>> &boardReference;
 
-	void pawnMoves();
-	void rookMoves();
-	void knightMoves();
-	void bishopMoves();
-	void kingMoves();
-	void noHighlight();
+	void pawnMoves(int r, int f);
+	void rookMoves(int r, int f);
+	void knightMoves(int r, int f);
+	void bishopMoves(int r, int f);
+	void kingMoves(int r, int f);
+	void noEnPassant();
 
 public:
-	MoveHighlighter(std::vector<std::vector<square>> *b);
+	MoveHighlighter(Board &board);
 	~MoveHighlighter();
-	void toggleHighlight(int f, int r);
-	void getCurrentPosition(int &f, int &r);
+	void highlight(int r, int f);
+	void noHighlight();
 };
 
 #endif
