@@ -60,9 +60,9 @@ void MoveHighlighter::pawnMoves(int r, int f)
 		{
 			if (r - 1 >= 0 && (boardReference[r - 1][f].state & 0b0111111) == 0)
 				boardReference[r - 1][f].state ^= otherFlags::isHighlighted;
-			if (r - 1 >= 0 && f + 1 < 8 && (boardReference[r - 1][f + 1].state & 0b0111111) != 0 && (boardReference[r - 1][f + 1].state & pieceFlags::isWhitePiece) != (boardReference[r][f].state & pieceFlags::isWhitePiece))
+			if (r - 1 >= 0 && f + 1 < 8 && ((boardReference[r - 1][f + 1].state & 0b0111111) != 0 && (boardReference[r - 1][f + 1].state & pieceFlags::isWhitePiece) != (boardReference[r][f].state & pieceFlags::isWhitePiece) || boardReference[r - 1][f + 1].state & otherFlags::canEnPassant))
 				boardReference[r - 1][f + 1].state ^= otherFlags::isHighlighted;
-			if (r - 1 >= 0 && f - 1 >= 0 && (boardReference[r - 1][f - 1].state & 0b0111111) != 0 && (boardReference[r - 1][f - 1].state & pieceFlags::isWhitePiece) != (boardReference[r][f].state & pieceFlags::isWhitePiece))
+			if (r - 1 >= 0 && f - 1 >= 0 && ((boardReference[r - 1][f - 1].state & 0b0111111) != 0 && (boardReference[r - 1][f - 1].state & pieceFlags::isWhitePiece) != (boardReference[r][f].state & pieceFlags::isWhitePiece) || boardReference[r - 1][f + 1].state & otherFlags::canEnPassant))
 				boardReference[r - 1][f - 1].state ^= otherFlags::isHighlighted;
 		}
 		else
@@ -77,6 +77,31 @@ void MoveHighlighter::pawnMoves(int r, int f)
 				boardReference[r - 1][f + 1].state ^= otherFlags::isHighlighted;
 			if (r - 1 >= 0 && f - 1 >= 0 && (boardReference[r - 1][f - 1].state & 0b0111111) != 0 && (boardReference[r - 1][f - 1].state & pieceFlags::isWhitePiece) != (boardReference[r][f].state & pieceFlags::isWhitePiece))
 				boardReference[r - 1][f - 1].state ^= otherFlags::isHighlighted;
+		}
+	}
+	else
+	{
+		if (boardReference[r][f].state & otherFlags::hasMoved)
+		{
+			if (r + 1 < 8 && (boardReference[r + 1][f].state & 0b0111111) == 0)
+				boardReference[r + 1][f].state ^= otherFlags::isHighlighted;
+			if (r + 1 < 8 && f + 1 < 8 && ((boardReference[r + 1][f + 1].state & 0b0111111) != 0 && (boardReference[r + 1][f + 1].state & pieceFlags::isWhitePiece) != (boardReference[r][f].state & pieceFlags::isWhitePiece) || boardReference[r + 1][f + 1].state & otherFlags::canEnPassant))
+				boardReference[r + 1][f + 1].state ^= otherFlags::isHighlighted;
+			if (r + 1 < 8 && f - 1 >= 0 && ((boardReference[r + 1][f - 1].state & 0b0111111) != 0 && (boardReference[r + 1][f - 1].state & pieceFlags::isWhitePiece) != (boardReference[r][f].state & pieceFlags::isWhitePiece) || boardReference[r + 1][f + 1].state & otherFlags::canEnPassant))
+				boardReference[r + 1][f - 1].state ^= otherFlags::isHighlighted;
+		}
+		else
+		{
+			if (r + 1 < 8 && (boardReference[r + 1][f].state & 0b0111111) == 0)
+			{
+				boardReference[r + 1][f].state ^= otherFlags::isHighlighted;
+				if (r + 2 < 8 && (boardReference[r + 2][f].state & 0b0111111) == 0)
+					boardReference[r + 2][f].state ^= otherFlags::isHighlighted;
+			}
+			if (r + 1 < 8 && f + 1 < 8 && (boardReference[r + 1][f + 1].state & 0b0111111) != 0 && (boardReference[r + 1][f + 1].state & pieceFlags::isWhitePiece) != (boardReference[r][f].state & pieceFlags::isWhitePiece))
+				boardReference[r + 1][f + 1].state ^= otherFlags::isHighlighted;
+			if (r + 1 < 8 && f - 1 >= 0 && (boardReference[r + 1][f - 1].state & 0b0111111) != 0 && (boardReference[r + 1][f - 1].state & pieceFlags::isWhitePiece) != (boardReference[r][f].state & pieceFlags::isWhitePiece))
+				boardReference[r + 1][f - 1].state ^= otherFlags::isHighlighted;
 		}
 	}
 }
