@@ -20,7 +20,7 @@ class Screen
 {
 private:
 	int height, width, x, y;
-	bool isRunning;
+	bool isRunning, &isWhiteTurn;
 	WINDOW *movingWindow = NULL;
 	TerminalSizeWatcher *watcher;
 	std::thread screenThread;
@@ -34,7 +34,7 @@ private:
 	void wattrOff(WINDOW *window, int r, int f);
 
 public:
-	Screen(Board &board, Clock &clock);
+	Screen(Board &board, Clock &clock, bool &isWhiteTurn);
 	~Screen();
 };
 

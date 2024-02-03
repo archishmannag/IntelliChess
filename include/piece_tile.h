@@ -1,8 +1,6 @@
 #ifndef PIECE_E_TILE_S
 #define PIECE_E_TILE_S
 
-#define NULLTILE 65535;
-
 typedef enum
 {
 	pawn = 1,

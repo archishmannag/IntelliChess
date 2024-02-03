@@ -6,7 +6,6 @@ Mover::Mover(Board &board, bool &isWhiteTurn) : board(board), isWhiteTurn(isWhit
 	moves = 0;
 	moveStack.clear();
 	currentMove = new move_t;
-	currentMove->tile1.state = currentMove->tile2.state = NULLTILE;
 }
 
 Mover::~Mover()
@@ -19,16 +18,16 @@ int Mover::move(int rank, int file)
 {
 	tile_t currentTile = board.getBoard()[board.getRank()][board.getFile()];
 	// Select which piece to move.
-	if (~(currentMove->tile1.state) == 0)
+	if (currentMove->tile1.state == 0)
 	{
-		if ((currentTile.state & otherFlags::isOccupied) && (currentTile.state & pieceFlags::isWhitePiece == isWhiteTurn))
+		if ((currentTile.state & otherFlags::isOccupied) && (!(!(currentTile.state & pieceFlags::isWhitePiece)) == isWhiteTurn))
 		{
 			currentMove->tile1 = currentTile;
 			highlighter->highlight(currentTile.rank, currentTile.file);
 		}
 		else
 		{
-			currentMove->tile1.state = NULLTILE;
+			currentMove->tile1.state = 0;
 			highlighter->noHighlight();
 		}
 		return 0;
@@ -55,9 +54,10 @@ int Mover::move(int rank, int file)
 			moves++;
 			isWhiteTurn = !isWhiteTurn;
 			board.getBoardReference()[currentTile.rank][currentTile.file].state |= otherFlags::hasMoved;
+			board.getBoardReference()[currentMove->tile2.rank][currentMove->tile2.file] = currentMove->tile1;
+			board.getBoardReference()[currentMove->tile1.rank][currentMove->tile1.file].state &= ~(otherFlags::isOccupied | 0b111111);
 			delete currentMove;
 			currentMove = new move_t;
-			currentMove->tile1.state = currentMove->tile2.state = NULLTILE;
 			if (currentTile.state & otherFlags::canCapture)
 			{
 				switch (currentTile.state & 0b111111)
@@ -84,7 +84,7 @@ int Mover::move(int rank, int file)
 		}
 		else
 		{
-			currentMove->tile1.state = NULLTILE;
+			currentMove->tile1.state = 0;
 			highlighter->noHighlight();
 			return 0;
 		}
@@ -99,8 +99,8 @@ int Mover::undo()
 		moveStack.pop_back();
 		moves--;
 		isWhiteTurn = !isWhiteTurn;
-		board.getBoard()[lastMove.tile1.rank][lastMove.tile1.file] = lastMove.tile1;
-		board.getBoard()[lastMove.tile2.rank][lastMove.tile2.file] = lastMove.tile2;
+		board.getBoardReference()[lastMove.tile1.rank][lastMove.tile1.file] = lastMove.tile1;
+		board.getBoardReference()[lastMove.tile2.rank][lastMove.tile2.file] = lastMove.tile2;
 		if (lastMove.tile2.state & otherFlags::canCapture)
 		{
 			switch (lastMove.tile2.state & 0b111111)

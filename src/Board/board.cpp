@@ -32,19 +32,19 @@ void Board::initialize()
 		for (int j = 0; j < 8; j++)
 		{
 			if (i == 1 || i == 6)
-				board[i][j].state |= pieceFlags::pawn;
+				board[i][j].state |= pieceFlags::pawn | otherFlags::isOccupied;
 			if (i == 0 || i == 7)
 			{
 				if (j == 0 || j == 7)
-					board[i][j].state |= pieceFlags::rook | otherFlags::canCastle;
+					board[i][j].state |= pieceFlags::rook | otherFlags::canCastle | otherFlags::isOccupied;
 				if (j == 1 || j == 6)
-					board[i][j].state |= pieceFlags::knight;
+					board[i][j].state |= pieceFlags::knight | otherFlags::isOccupied;
 				if (j == 2 || j == 5)
-					board[i][j].state |= pieceFlags::bishop;
+					board[i][j].state |= pieceFlags::bishop | otherFlags::isOccupied;
 				if (j == 3)
-					board[i][j].state |= pieceFlags::queen;
+					board[i][j].state |= pieceFlags::queen | otherFlags::isOccupied;
 				if (j == 4)
-					board[i][j].state |= pieceFlags::king | otherFlags::canCastle;
+					board[i][j].state |= pieceFlags::king | otherFlags::canCastle | otherFlags::isOccupied;
 			}
 			if (i == 6 || i == 7)
 				board[i][j].state |= pieceFlags::isWhitePiece;

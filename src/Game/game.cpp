@@ -7,7 +7,7 @@ Game::Game()
 	whitePlayer = new Player(true);
 	blackPlayer = new Player(false);
 	mover = new Mover((*board), isWhiteTurn);
-	screen = new Screen((*board), (*clock));
+	screen = new Screen((*board), (*clock), isWhiteTurn);
 	isWhiteTurn = true;
 	isGameOver = undoMove = false;
 
@@ -23,6 +23,8 @@ Game::~Game()
 {
 	delete board;
 	delete clock;
+	delete mover;
+	delete screen;
 	delete whitePlayer;
 	delete blackPlayer;
 }

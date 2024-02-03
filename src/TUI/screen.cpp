@@ -1,10 +1,10 @@
 #include "../../include/screen.h"
 
-Screen::Screen(Board &board, Clock &clock) : board(board), clock(clock)
+Screen::Screen(Board &board, Clock &clock, bool &isWhiteTurn) : board(board), clock(clock), isWhiteTurn(isWhiteTurn)
 {
 	watcher = new TerminalSizeWatcher();
 	initializeScreen();
-
+	isRunning = true;
 	screenThread = std::thread(&Screen::displayScreen, this);
 }
 
@@ -65,6 +65,8 @@ void Screen::draw()
 	// Get terminal size
 	watcher->getDimensions(&x, &y);
 
+	if (!((height == (y - 2) / 8 && width == 2 * height) || (width == (x - 10) / 8 && height == width / 2)))
+		clear();
 	if (x < 80 || y < 24)
 	{
 		mvprintw(y / 2, x / 2 - 10, "Terminal size must be at least 80x24");
@@ -168,8 +170,8 @@ void Screen::draw()
 
 			attrOn(i, j);
 
-			mvaddch(i * height + height / 2, j * width + width / 2 + 2, ACS_CKBOARD);
-			for (int b = width / 2 + 3; b < width; b++)
+			mvaddch(i * height + height / 2, j * width + width / 2 + 1, ACS_CKBOARD);
+			for (int b = width / 2 + 2; b < width; b++)
 				addch(ACS_CKBOARD);
 
 			for (int a = 0; a < (height - 1) / 2; a++)
@@ -263,8 +265,8 @@ void Screen::draw()
 
 	wattrOn(movingWindow, board.getRank(), board.getFile());
 
-	mvwaddch(movingWindow, (height - 2) / 2 + 1, (width - 2) / 2 + 2, ACS_CKBOARD);
-	for (int b = 1; b < (width - 2) / 2 - 1; b++)
+	mvwaddch(movingWindow, (height - 2) / 2 + 1, (width - 2) / 2 + 1, ACS_CKBOARD);
+	for (int b = (width - 2) / 2 + 1; b < (width - 2); b++)
 		waddch(movingWindow, ACS_CKBOARD);
 
 	for (int a = 0; a < (height - 2) / 2 - 1; a++)
@@ -303,7 +305,7 @@ void Screen::wattrOn(WINDOW *window, int r, int f)
 	{
 		wattron(window, COLOR_PAIR(5));
 	}
-	else if ((b[r][f].state & otherFlags::canEnPassant) || (b[r][f].state & otherFlags::isOccupied) && ((b[r][f].state ^ b[board.getRank()][board.getFile()].state) & pieceFlags::isWhitePiece) && (b[r][f].state & otherFlags::isHighlighted))
+	else if ((b[r][f].state & otherFlags::canEnPassant) || (b[r][f].state & otherFlags::isOccupied) && (!(!(b[r][f].state & pieceFlags::isWhitePiece)) == isWhiteTurn) && (b[r][f].state & otherFlags::isHighlighted))
 	{
 		wattron(window, COLOR_PAIR(4));
 	}
@@ -324,7 +326,7 @@ void Screen::wattrOff(WINDOW *window, int r, int f)
 	{
 		wattroff(window, COLOR_PAIR(5));
 	}
-	else if ((b[r][f].state & otherFlags::canEnPassant) || (b[r][f].state & otherFlags::isOccupied) && ((b[r][f].state ^ b[board.getRank()][board.getFile()].state) & pieceFlags::isWhitePiece) && (b[r][f].state & otherFlags::isHighlighted))
+	else if ((b[r][f].state & otherFlags::canEnPassant) || (b[r][f].state & otherFlags::isOccupied) && (!((b[r][f].state ^ b[board.getRank()][board.getFile()].state) & pieceFlags::isWhitePiece)) && (b[r][f].state & otherFlags::isHighlighted))
 	{
 		wattroff(window, COLOR_PAIR(4));
 	}
