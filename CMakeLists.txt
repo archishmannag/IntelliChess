@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.12)
 project(Chess)
 
 # Add source files
-file(GLOB SOURCES "src/*/*.cpp")
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 # Add executable target
 add_executable(${PROJECT_NAME} ${SOURCES})
