@@ -48,7 +48,7 @@ void Screen::displayScreen()
 	while (isRunning)
 	{
 		draw();
-		std::this_thread::sleep_for(std::chrono::milliseconds(34));
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
 	}
 }
 
@@ -269,7 +269,7 @@ void Screen::draw()
 	for (int b = (width - 2) / 2 + 1; b < (width - 2); b++)
 		waddch(movingWindow, ACS_CKBOARD);
 
-	for (int a = 0; a < (height - 2) / 2 - 1; a++)
+	for (int a = 0; a < (height - 2) / 2; a++)
 	{
 		mvwaddch(movingWindow, (height - 2) / 2 + 2 + a, 1, ACS_CKBOARD);
 		for (int b = 1; b < width - 2; b++)
@@ -282,16 +282,16 @@ void Screen::draw()
 	if ((x - 10) > 2 * (y - 2))
 	{
 		mvprintw(y / 4, x - 7, "White");
-		mvprintw(y / 4 + 1, x - 9, "%02d:%02d:%03d", clock.getWhiteMinute(), clock.getWhiteSecond(), clock.getWhiteMilliSecond());
+		mvprintw(y / 4 + 1, x - 9, "%02d:%02d:%01d", clock.getWhiteMinute(), clock.getWhiteSecond(), clock.getWhiteMilliSecond() / 100);
 		mvprintw((3 * y) / 4, x - 7, "Black");
-		mvprintw((3 * y) / 4 + 1, x - 9, "%02d:%02d:%03d", clock.getBlackMinute(), clock.getBlackSecond(), clock.getBlackMilliSecond());
+		mvprintw((3 * y) / 4 + 1, x - 9, "%02d:%02d:%01d", clock.getBlackMinute(), clock.getBlackSecond(), clock.getBlackMilliSecond() / 100);
 	}
 	else
 	{
 		mvprintw(y - 2, x / 4 - 2, "White");
 		mvprintw(y - 2, (3 * x) / 4 - 2, "Black");
-		mvprintw(y - 1, x / 4 - 4, "%02d:%02d:%03d", clock.getWhiteMinute(), clock.getWhiteSecond(), clock.getWhiteMilliSecond());
-		mvprintw(y - 1, (3 * x) / 4 - 4, "%02d:%02d:%03d", clock.getBlackMinute(), clock.getBlackSecond(), clock.getBlackMilliSecond());
+		mvprintw(y - 1, x / 4 - 4, "%02d:%02d:%01d", clock.getWhiteMinute(), clock.getWhiteSecond(), clock.getWhiteMilliSecond() / 100);
+		mvprintw(y - 1, (3 * x) / 4 - 4, "%02d:%02d:%01d", clock.getBlackMinute(), clock.getBlackSecond(), clock.getBlackMilliSecond() / 100);
 	}
 
 	refresh();
