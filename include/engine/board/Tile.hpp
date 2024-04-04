@@ -19,18 +19,16 @@ protected:
 
 public:
 	static Tile createTile(const int coordinate, Piece *piece);
-	virtual bool isTileOccupied();
-	virtual Piece *getPiece();
+	virtual bool isTileOccupied() const;
+	virtual Piece *getPiece() const;
 };
 
 class EmptyTile : public Tile
 {
-private:
-	EmptyTile(const int coordinate) : Tile(coordinate){};
-
 public:
-	bool isTileOccupied() override;
-	Piece *getPiece() override;
+	EmptyTile(const int coordinate) : Tile(coordinate){};
+	bool isTileOccupied() const override;
+	Piece *getPiece() const override;
 };
 
 class OccupiedTile : public Tile
@@ -38,11 +36,10 @@ class OccupiedTile : public Tile
 private:
 	const Piece pieceOnTile;
 
-	OccupiedTile(const int coordinate, Piece piece) : Tile(coordinate), pieceOnTile(piece){};
-
 public:
-	bool isTileOccupied() override;
-	Piece *getPiece() override;
+	OccupiedTile(const int coordinate, Piece piece) : Tile(coordinate), pieceOnTile(piece){};
+	bool isTileOccupied() const override;
+	Piece *getPiece() const override;
 };
 
 #endif
