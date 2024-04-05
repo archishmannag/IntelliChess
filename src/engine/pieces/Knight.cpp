@@ -7,11 +7,14 @@ const std::list<Move> Knight::calculateLegalMoves(const Board board)
 	int candidateDestinationCoordinate;
 	std::list<Move> legalMoves;
 
-	for (const int currentCandidate : CANDIDATE_MOVE_COORDINATES)
+	for (const int currentCandidateOffset : CANDIDATE_MOVE_COORDINATES)
 	{
-		candidateDestinationCoordinate = this->piecePosition + currentCandidate;
-		if (true)
+		candidateDestinationCoordinate = this->piecePosition + currentCandidateOffset;
+		if (BoardUtils::isValidTileCoordinate(candidateDestinationCoordinate))
 		{
+			if (isFirstColumnExclusion(this->piecePosition, currentCandidateOffset) || isSecondColumnExclusion(this->piecePosition, currentCandidateOffset) || isSeventhColumnExclusion(this->piecePosition, currentCandidateOffset) || isEighthColumnExclusion(this->piecePosition, currentCandidateOffset))
+				continue;
+
 			const Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 
 			if (!candidateDestinationTile.isTileOccupied())
@@ -27,4 +30,24 @@ const std::list<Move> Knight::calculateLegalMoves(const Board board)
 		}
 	}
 	return legalMoves;
+}
+
+bool Knight::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)
+{
+	return BoardUtils::FIRST_COLUMN[currentPosition] && (candidateOffset == -17 || candidateOffset == -10 || candidateOffset == 6 || candidateOffset == 15);
+}
+
+bool Knight::isSecondColumnExclusion(const int currentPosition, const int candidateOffset)
+{
+	return BoardUtils::SECOND_COLUMN[currentPosition] && (candidateOffset == -10 || candidateOffset == 6);
+}
+
+bool Knight::isSeventhColumnExclusion(const int currentPosition, const int candidateOffset)
+{
+	return BoardUtils::SEVENTH_COLUMN[currentPosition] && (candidateOffset == 10 || candidateOffset == -6);
+}
+
+bool Knight::isEighthColumnExclusion(const int currentPosition, const int candidateOffset)
+{
+	return BoardUtils::EIGHTH_COLUMN[currentPosition] && (candidateOffset == 17 || candidateOffset == 10 || candidateOffset == -6 || candidateOffset == -15);
 }

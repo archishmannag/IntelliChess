@@ -20,22 +20,22 @@ Tile Tile::createTile(const int coordinate, Piece *piece)
 		return *(new OccupiedTile(coordinate, *piece));
 }
 
-bool EmptyTile::isTileOccupied()
+bool EmptyTile::isTileOccupied() const
 {
 	return false;
 }
 
-Piece *EmptyTile::getPiece()
+Piece *EmptyTile::getPiece() const
 {
 	return nullptr;
 }
 
-bool OccupiedTile::isTileOccupied()
+bool OccupiedTile::isTileOccupied() const
 {
 	return true;
 }
 
-Piece *OccupiedTile::getPiece()
+Piece *OccupiedTile::getPiece() const
 {
 	return &(Piece)(this->pieceOnTile);
 }
