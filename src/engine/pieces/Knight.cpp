@@ -1,4 +1,5 @@
 #include "../../../include/engine/pieces/Knight.hpp"
+#include "../../../include/engine/board/Move.hpp"
 
 const int Knight::CANDIDATE_MOVE_COORDINATES[] = {-17, -15, -10, -6, 6, 10, 15, 17};
 
@@ -18,14 +19,14 @@ const std::list<Move> Knight::calculateLegalMoves(const Board board)
 			const Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 
 			if (!candidateDestinationTile.isTileOccupied())
-				legalMoves.push_back(Move());
+				legalMoves.push_back(*(new MajorMove(board, *this, candidateDestinationCoordinate)));
 			else
 			{
 				Piece pieceAtDestination = *(candidateDestinationTile.getPiece());
 				Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
 
 				if (this->pieceAlliance != pieceAlliance)
-					legalMoves.push_back(Move());
+					legalMoves.push_back(*(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate)));
 			}
 		}
 	}
