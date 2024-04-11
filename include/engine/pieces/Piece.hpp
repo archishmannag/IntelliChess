@@ -1,11 +1,12 @@
-#ifndef PIIECE_H
+#ifndef PIECE_H
 #define PIECE_H
 
 #include <list>
 
 #include "../Alliance.hpp"
-#include "../board/Board.hpp"
-#include "../board/Move.hpp"
+
+class Move;
+class Board;
 
 class Piece
 {
@@ -16,7 +17,7 @@ protected:
 	Piece(const int piecePosition, const Alliance pieceAlliance) : piecePosition(piecePosition), pieceAlliance(pieceAlliance){};
 
 public:
-	virtual const std::list<Move> calculateLegalMoves(const Board board);
+	virtual const std::list<Move> calculateLegalMoves(Board &board);
 	Alliance getPieceAlliance();
 };
 

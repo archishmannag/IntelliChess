@@ -5,6 +5,8 @@
 
 #include "../pieces/Piece.hpp"
 
+class EmptyTile;
+
 class Tile
 {
 private:
