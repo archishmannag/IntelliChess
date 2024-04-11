@@ -1,5 +1,5 @@
-#ifndef ALLIANCE_H
-#define ALLIANCE_H
+#ifndef ALLIANCE_HPP
+#define ALLIANCE_HPP
 
 enum class Alliance
 {

@@ -1,5 +1,5 @@
-#ifndef BOARDUTILS_H
-#define BOARDUTILS_H
+#ifndef BOARDUTILS_HPP
+#define BOARDUTILS_HPP
 
 class BoardUtils
 {

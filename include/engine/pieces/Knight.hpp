@@ -1,5 +1,5 @@
-#ifndef KNIGHT_H
-#define KNIGHT_H
+#ifndef KNIGHT_HPP
+#define KNIGHT_HPP
 
 #include "../board/Board.hpp"
 
