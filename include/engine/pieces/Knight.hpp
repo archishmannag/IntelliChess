@@ -2,8 +2,6 @@
 #define KNIGHT_H
 
 #include "../board/Board.hpp"
-#include "../board/BoardUtils.hpp"
-#include "Piece.hpp"
 
 class Knight : public Piece
 {
@@ -18,7 +16,7 @@ private:
 public:
 	Knight(const int piecePosition, const Alliance pieceAlliance);
 
-	const std::list<Move> calculateLegalMoves(Board &board) override;
+	const std::vector<Move> calculateLegalMoves(Board &board) override;
 };
 
 #endif

@@ -1,14 +1,15 @@
 #include "../../../include/engine/pieces/Knight.hpp"
 #include "../../../include/engine/board/Move.hpp"
+#include "../../../include/engine/board/BoardUtils.hpp"
 
 Knight::Knight(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance){};
 
 const int Knight::CANDIDATE_MOVE_COORDINATES[] = {-17, -15, -10, -6, 6, 10, 15, 17};
 
-const std::list<Move> Knight::calculateLegalMoves(Board &board)
+const std::vector<Move> Knight::calculateLegalMoves(Board &board)
 {
 	int candidateDestinationCoordinate;
-	std::list<Move> legalMoves;
+	std::vector<Move> legalMoves;
 
 	for (const int currentCandidateOffset : CANDIDATE_MOVE_COORDINATES)
 	{
