@@ -12,6 +12,9 @@ const bool *BoardUtils::initColumn(int columnNumber)
 }
 
 const bool *BoardUtils::FIRST_COLUMN = BoardUtils::initColumn(0);
+const bool *BoardUtils::SECOND_COLUMN = BoardUtils::initColumn(1);
+const bool *BoardUtils::SEVENTH_COLUMN = BoardUtils::initColumn(6);
+const bool *BoardUtils::EIGHTH_COLUMN = BoardUtils::initColumn(7);
 
 bool isValidTileCoordinate(int coordinate)
 {

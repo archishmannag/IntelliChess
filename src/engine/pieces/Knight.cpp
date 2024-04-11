@@ -3,7 +3,7 @@
 
 const int Knight::CANDIDATE_MOVE_COORDINATES[] = {-17, -15, -10, -6, 6, 10, 15, 17};
 
-const std::list<Move> Knight::calculateLegalMoves(const Board board)
+const std::list<Move> Knight::calculateLegalMoves(Board &board)
 {
 	int candidateDestinationCoordinate;
 	std::list<Move> legalMoves;
