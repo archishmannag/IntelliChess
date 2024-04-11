@@ -1,6 +1,8 @@
 #include "../../../include/engine/pieces/Knight.hpp"
 #include "../../../include/engine/board/Move.hpp"
 
+Knight::Knight(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance){};
+
 const int Knight::CANDIDATE_MOVE_COORDINATES[] = {-17, -15, -10, -6, 6, 10, 15, 17};
 
 const std::list<Move> Knight::calculateLegalMoves(Board &board)

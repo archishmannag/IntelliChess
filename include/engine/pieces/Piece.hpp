@@ -14,7 +14,7 @@ protected:
 	const int piecePosition;
 	const Alliance pieceAlliance;
 
-	Piece(const int piecePosition, const Alliance pieceAlliance) : piecePosition(piecePosition), pieceAlliance(pieceAlliance){};
+	Piece(const int piecePosition, const Alliance pieceAlliance);
 
 public:
 	virtual const std::list<Move> calculateLegalMoves(Board &board);

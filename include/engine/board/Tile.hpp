@@ -17,7 +17,7 @@ private:
 protected:
 	const int tileCoordinate;
 
-	Tile(int coordinate) : tileCoordinate(coordinate){};
+	Tile(int coordinate);
 
 public:
 	static Tile createTile(const int coordinate, Piece *piece);
@@ -28,7 +28,7 @@ public:
 class EmptyTile : public Tile
 {
 public:
-	EmptyTile(const int coordinate) : Tile(coordinate){};
+	EmptyTile(const int coordinate);
 	bool isTileOccupied() const override;
 	Piece *getPiece() const override;
 };
@@ -39,7 +39,7 @@ private:
 	const Piece pieceOnTile;
 
 public:
-	OccupiedTile(const int coordinate, Piece piece) : Tile(coordinate), pieceOnTile(piece){};
+	OccupiedTile(const int coordinate, Piece piece);
 	bool isTileOccupied() const override;
 	Piece *getPiece() const override;
 };
