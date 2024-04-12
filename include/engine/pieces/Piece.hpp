@@ -13,12 +13,14 @@ class Piece
 protected:
 	const int piecePosition;
 	const Alliance pieceAlliance;
+	const bool isFirstMove;
 
 	Piece(const int piecePosition, const Alliance pieceAlliance);
 
 public:
 	virtual const std::vector<Move> calculateLegalMoves(Board &board);
-	Alliance getPieceAlliance();
+	Alliance getPieceAlliance() const;
+	bool getIsFirstMove() const;
 };
 
 #endif
