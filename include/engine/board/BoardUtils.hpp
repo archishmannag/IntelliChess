@@ -10,7 +10,7 @@ private:
 	static const bool *initColumn(int columnNumber);
 
 public:
-	static const bool *FIRST_COLUMN, *SECOND_COLUMN, *SEVENTH_COLUMN, *EIGHTH_COLUMN;
+	static const bool *FIRST_COLUMN, *SECOND_COLUMN, *SEVENTH_COLUMN, *EIGHTH_COLUMN, *SECOND_ROW, *SEVENTH_ROW;
 
 	static bool isValidTileCoordinate(int coordinate);
 };
