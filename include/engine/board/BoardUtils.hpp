@@ -4,10 +4,10 @@
 class BoardUtils
 {
 private:
-	BoardUtils() = delete;
-	~BoardUtils() = delete;
+	BoardUtils();
 
 	static const bool *initColumn(int columnNumber);
+	static const bool *initRow(int rowNumber);
 
 public:
 	static const bool *FIRST_COLUMN, *SECOND_COLUMN, *SEVENTH_COLUMN, *EIGHTH_COLUMN, *SECOND_ROW, *SEVENTH_ROW;
