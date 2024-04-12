@@ -19,6 +19,7 @@ protected:
 
 public:
 	virtual const std::vector<Move> calculateLegalMoves(Board &board);
+	int getPiecePosition() const;
 	Alliance getPieceAlliance() const;
 	bool getIsFirstMove() const;
 };
