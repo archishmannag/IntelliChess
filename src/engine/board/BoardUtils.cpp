@@ -1,43 +1,39 @@
-#include <stdexcept>
-
 #include "../../../include/engine/board/BoardUtils.hpp"
 
-BoardUtils::BoardUtils()
+namespace
 {
-	throw std::runtime_error("Cannot instantiate BoardUtils");
-}
-
-const bool *BoardUtils::initColumn(int columnNumber)
-{
-	bool *column = new bool[64];
-	do
+	const bool *initColumn(int columnNumber)
 	{
-		column[columnNumber] = true;
-		columnNumber += 8;
-	} while (columnNumber < 64);
-	return column;
-}
-
-const bool *BoardUtils::initRow(int rowNumber)
-{
-	bool *row = new bool[64];
-	int rowStart = rowNumber * 8;
-	for (int i = 0; i < 8; i++)
-	{
-		row[rowStart + i] = true;
+		bool *column = new bool[64];
+		do
+		{
+			column[columnNumber] = true;
+			columnNumber += 8;
+		} while (columnNumber < 64);
+		return column;
 	}
-	return row;
+
+	const bool *initRow(int rowNumber)
+	{
+		bool *row = new bool[64];
+		int rowStart = rowNumber * 8;
+		for (int i = 0; i < 8; i++)
+		{
+			row[rowStart + i] = true;
+		}
+		return row;
+	}
 }
 
-const bool *BoardUtils::FIRST_COLUMN = BoardUtils::initColumn(0);
-const bool *BoardUtils::SECOND_COLUMN = BoardUtils::initColumn(1);
-const bool *BoardUtils::SEVENTH_COLUMN = BoardUtils::initColumn(6);
-const bool *BoardUtils::EIGHTH_COLUMN = BoardUtils::initColumn(7);
+const bool *BoardUtils::FIRST_COLUMN = initColumn(0);
+const bool *BoardUtils::SECOND_COLUMN = initColumn(1);
+const bool *BoardUtils::SEVENTH_COLUMN = initColumn(6);
+const bool *BoardUtils::EIGHTH_COLUMN = initColumn(7);
 
-const bool *BoardUtils::SECOND_ROW = BoardUtils::initRow(1);
-const bool *BoardUtils::SEVENTH_ROW = BoardUtils::initRow(6);
+const bool *BoardUtils::SECOND_ROW = initRow(1);
+const bool *BoardUtils::SEVENTH_ROW = initRow(6);
 
-bool isValidTileCoordinate(int coordinate)
+bool BoardUtils::isValidTileCoordinate(int coordinate)
 {
 	return coordinate >= 0 && coordinate < 64;
 };

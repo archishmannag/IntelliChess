@@ -2,6 +2,7 @@
 #define TILE_HPP
 
 #include <map>
+#include <string>
 
 #include "../pieces/Piece.hpp"
 
@@ -10,27 +11,29 @@ class EmptyTile;
 class Tile
 {
 private:
-	static std::map<int, EmptyTile> initializeAllEmptyTiles();
+	static std::map<int, EmptyTile *> initializeAllEmptyTiles();
 
-	const static std::map<int, EmptyTile> EMPTY_TILES_CACHE;
+	static std::map<int, EmptyTile *> EMPTY_TILES_CACHE;
 
 protected:
 	const int tileCoordinate;
 
-	Tile(int coordinate);
+	explicit Tile(int coordinate);
 
 public:
-	static Tile createTile(const int coordinate, Piece *piece);
+	static Tile *createTile(int coordinate, Piece *piece);
 	virtual bool isTileOccupied() const;
 	virtual Piece *getPiece() const;
+	virtual std::string stringify() const;
 };
 
 class EmptyTile : public Tile
 {
 public:
-	EmptyTile(const int coordinate);
+	explicit EmptyTile(int coordinate);
 	bool isTileOccupied() const override;
 	Piece *getPiece() const override;
+	std::string stringify() const override;
 };
 
 class OccupiedTile : public Tile
@@ -39,9 +42,10 @@ private:
 	const Piece pieceOnTile;
 
 public:
-	OccupiedTile(const int coordinate, Piece piece);
+	OccupiedTile(int coordinate, Piece piece);
 	bool isTileOccupied() const override;
 	Piece *getPiece() const override;
+	std::string stringify() const override;
 };
 
 #endif

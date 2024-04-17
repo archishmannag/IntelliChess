@@ -4,11 +4,13 @@
 
 const int Rook::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-8, -1, 1, 8};
 
-Rook::Rook(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance){};
-
-const std::vector<Move> Rook::calculateLegalMoves(Board &board)
+Rook::Rook(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance)
 {
-	std::vector<Move> legalMoves;
+	this->pieceType = PieceType::ROOK;
+};
+std::vector<Move *> Rook::calculateLegalMoves(Board &board)
+{
+	std::vector<Move *> legalMoves;
 	int candidateDestinationCoordinate;
 	for (const int currentCandidateOffset : CANDIDATE_MOVE_VECTOR_COORDINATES)
 	{
@@ -22,13 +24,13 @@ const std::vector<Move> Rook::calculateLegalMoves(Board &board)
 			{
 				const Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 				if (!candidateDestinationTile.isTileOccupied())
-					legalMoves.push_back(*(new MajorMove(board, *this, candidateDestinationCoordinate)));
+					legalMoves.push_back(new MajorMove(board, *this, candidateDestinationCoordinate));
 				else
 				{
 					Piece pieceAtDestination = *(candidateDestinationTile.getPiece());
 					Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
 					if (this->pieceAlliance != pieceAlliance)
-						legalMoves.push_back(*(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate)));
+						legalMoves.push_back(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate));
 					break;
 				}
 			}

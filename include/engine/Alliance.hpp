@@ -9,9 +9,9 @@ enum class Alliance
 
 namespace AllianceUtils
 {
-	const int getDirection(const Alliance alliance);
-	const bool isWhite(const Alliance alliance);
-	const bool isBlack(const Alliance alliance);
+	int getDirection(Alliance alliance);
+	bool isWhite(Alliance alliance);
+	bool isBlack(Alliance alliance);
 }
 
 #endif

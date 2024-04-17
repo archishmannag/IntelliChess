@@ -2,14 +2,17 @@
 #include "../../../include/engine/board/Move.hpp"
 #include "../../../include/engine/board/BoardUtils.hpp"
 
-Knight::Knight(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance){};
+Knight::Knight(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance)
+{
+	this->pieceType = PieceType::KNIGHT;
+};
 
 const int Knight::CANDIDATE_MOVE_COORDINATES[] = {-17, -15, -10, -6, 6, 10, 15, 17};
 
-const std::vector<Move> Knight::calculateLegalMoves(Board &board)
+std::vector<Move *> Knight::calculateLegalMoves(Board &board)
 {
 	int candidateDestinationCoordinate;
-	std::vector<Move> legalMoves;
+	std::vector<Move *> legalMoves;
 
 	for (const int currentCandidateOffset : CANDIDATE_MOVE_COORDINATES)
 	{
@@ -22,14 +25,14 @@ const std::vector<Move> Knight::calculateLegalMoves(Board &board)
 			const Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 
 			if (!candidateDestinationTile.isTileOccupied())
-				legalMoves.push_back(*(new MajorMove(board, *this, candidateDestinationCoordinate)));
+				legalMoves.push_back(new MajorMove(board, *this, candidateDestinationCoordinate));
 			else
 			{
 				Piece pieceAtDestination = *(candidateDestinationTile.getPiece());
 				Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
 
 				if (this->pieceAlliance != pieceAlliance)
-					legalMoves.push_back(*(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate)));
+					legalMoves.push_back(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate));
 			}
 		}
 	}

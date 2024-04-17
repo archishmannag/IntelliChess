@@ -4,11 +4,14 @@
 
 const int Queen::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
-Queen::Queen(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance){};
-
-const std::vector<Move> Queen::calculateLegalMoves(Board &board)
+Queen::Queen(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance)
 {
-	std::vector<Move> legalMoves;
+	this->pieceType = PieceType::QUEEN;
+};
+
+std::vector<Move *> Queen::calculateLegalMoves(Board &board)
+{
+	std::vector<Move *> legalMoves;
 	int candidateDestinationCoordinate;
 	for (const int currentCandidateOffset : CANDIDATE_MOVE_VECTOR_COORDINATES)
 	{
@@ -22,13 +25,13 @@ const std::vector<Move> Queen::calculateLegalMoves(Board &board)
 			{
 				const Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 				if (!candidateDestinationTile.isTileOccupied())
-					legalMoves.push_back(*(new MajorMove(board, *this, candidateDestinationCoordinate)));
+					legalMoves.push_back(new MajorMove(board, *this, candidateDestinationCoordinate));
 				else
 				{
 					Piece pieceAtDestination = *(candidateDestinationTile.getPiece());
 					Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
 					if (this->pieceAlliance != pieceAlliance)
-						legalMoves.push_back(*(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate)));
+						legalMoves.push_back(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate));
 					break;
 				}
 			}
