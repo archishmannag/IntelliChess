@@ -23,23 +23,20 @@ Tile *Tile::createTile(const int coordinate, Piece *piece)
 	if (piece == nullptr)
 		return (Tile::EMPTY_TILES_CACHE.at(coordinate));
 	else
-		return new OccupiedTile(coordinate, *piece);
+		return new OccupiedTile(coordinate, piece);
 }
 
 bool Tile::isTileOccupied() const
 {
-	throw std::logic_error("Not implemented. Use derived class functions.");
-	return false;
+	throw std::logic_error("Not implemented. Use derived class functions.1");
 };
 Piece *Tile::getPiece() const
 {
-	throw std::logic_error("Not implemented. Use derived class functions.");
-	return nullptr;
+	throw std::logic_error("Not implemented. Use derived class functions.2");
 };
 std::string Tile::stringify() const
 {
-	throw std::logic_error("Not implemented. Use derived class functions.");
-	return "";
+	throw std::logic_error("Not implemented. Use derived class functions.3");
 };
 
 /* EmptyTile */
@@ -63,7 +60,7 @@ std::string EmptyTile::stringify() const
 
 /* OccupiedTile */
 
-OccupiedTile::OccupiedTile(const int coordinate, Piece piece) : Tile(coordinate), pieceOnTile(piece){};
+OccupiedTile::OccupiedTile(const int coordinate, Piece *piece) : Tile(coordinate), pieceOnTile(piece){};
 
 bool OccupiedTile::isTileOccupied() const
 {
@@ -72,7 +69,7 @@ bool OccupiedTile::isTileOccupied() const
 
 Piece *OccupiedTile::getPiece() const
 {
-	return new Piece(pieceOnTile);
+	return this->pieceOnTile;
 }
 
 std::string OccupiedTile::stringify() const

@@ -16,16 +16,16 @@ std::vector<Move *> King::calculateLegalMoves(Board &board)
 	for (const int currentCandidateOffset : CANDIDATE_MOVE_COORDINATES)
 	{
 		candidateDestinationCoordinate = this->piecePosition + currentCandidateOffset;
-		if (BoardUtils::isValidTileCoordinate(currentCandidateOffset))
+		if (BoardUtils::isValidTileCoordinate(candidateDestinationCoordinate))
 		{
 			if (isFirstColumnExclusion(this->piecePosition, currentCandidateOffset) || isEighthColumnExclusion(this->piecePosition, currentCandidateOffset))
 				continue;
-			const Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
-			if (!candidateDestinationTile.isTileOccupied())
+			const Tile *candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
+			if (!candidateDestinationTile->isTileOccupied())
 				legalMoves.push_back(new MajorMove(board, *this, candidateDestinationCoordinate));
 			else
 			{
-				const Piece pieceAtDestination = *candidateDestinationTile.getPiece();
+				const Piece pieceAtDestination = *candidateDestinationTile->getPiece();
 				if (this->pieceAlliance != pieceAtDestination.getPieceAlliance())
 					legalMoves.push_back(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate));
 			}

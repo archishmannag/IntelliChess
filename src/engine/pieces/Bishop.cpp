@@ -23,12 +23,12 @@ std::vector<Move *> Bishop::calculateLegalMoves(Board &board)
 			candidateDestinationCoordinate += currentCandidateOffset;
 			if (BoardUtils::isValidTileCoordinate(candidateDestinationCoordinate))
 			{
-				const Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
-				if (!candidateDestinationTile.isTileOccupied())
+				const Tile *candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
+				if (!candidateDestinationTile->isTileOccupied())
 					legalMoves.push_back(new MajorMove(board, *this, candidateDestinationCoordinate));
 				else
 				{
-					Piece pieceAtDestination = *(candidateDestinationTile.getPiece());
+					Piece pieceAtDestination = *(candidateDestinationTile->getPiece());
 					Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
 					if (this->pieceAlliance != pieceAlliance)
 						legalMoves.push_back(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate));

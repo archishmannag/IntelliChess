@@ -26,25 +26,27 @@ bool Piece::getIsFirstMove() const
 
 std::string Piece::stringify() const
 {
+	std::string typeString = "";
 	switch (this->pieceType)
 	{
 	case PieceType::PAWN:
-		return "P";
+		typeString += "P";
 		break;
 	case PieceType::KNIGHT:
-		return "N";
+		typeString += "N";
 		break;
 	case PieceType::BISHOP:
-		return "B";
+		typeString += "B";
 		break;
 	case PieceType::ROOK:
-		return "R";
+		typeString += "R";
 		break;
 	case PieceType::QUEEN:
-		return "Q";
+		typeString += "Q";
 		break;
 	case PieceType::KING:
-		return "K";
+		typeString += "K";
 		break;
 	}
+	return typeString;
 }

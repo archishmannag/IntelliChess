@@ -38,9 +38,9 @@ private:
 	explicit Board(BoardBuilder &builder);
 
 public:
-	[[nodiscard]] Tile getTile(int tileCoordinate) const;
+	Tile *getTile(int tileCoordinate) const;
 	static Board createStandardBoard();
-	[[nodiscard]] std::string stringify() const;
+	std::string stringify() const;
 };
 
 #endif

@@ -39,10 +39,10 @@ public:
 class OccupiedTile : public Tile
 {
 private:
-	const Piece pieceOnTile;
+	Piece *pieceOnTile;
 
 public:
-	OccupiedTile(int coordinate, Piece piece);
+	OccupiedTile(int coordinate, Piece *piece);
 	bool isTileOccupied() const override;
 	Piece *getPiece() const override;
 	std::string stringify() const override;

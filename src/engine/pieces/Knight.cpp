@@ -22,13 +22,13 @@ std::vector<Move *> Knight::calculateLegalMoves(Board &board)
 			if (isFirstColumnExclusion(this->piecePosition, currentCandidateOffset) || isSecondColumnExclusion(this->piecePosition, currentCandidateOffset) || isSeventhColumnExclusion(this->piecePosition, currentCandidateOffset) || isEighthColumnExclusion(this->piecePosition, currentCandidateOffset))
 				continue;
 
-			const Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
+			const Tile *candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 
-			if (!candidateDestinationTile.isTileOccupied())
+			if (!candidateDestinationTile->isTileOccupied())
 				legalMoves.push_back(new MajorMove(board, *this, candidateDestinationCoordinate));
 			else
 			{
-				Piece pieceAtDestination = *(candidateDestinationTile.getPiece());
+				Piece pieceAtDestination = *(candidateDestinationTile->getPiece());
 				Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
 
 				if (this->pieceAlliance != pieceAlliance)
