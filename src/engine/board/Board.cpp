@@ -28,11 +28,13 @@ Board BoardBuilder::build()
 }
 
 /* Board */
-Board::Board(BoardBuilder &builder) : gameBoard(Board::createGameBoard(builder)), whitePieces(Board::calculateActivePieces(gameBoard, Alliance::WHITE)), blackPieces(Board::calculateActivePieces(gameBoard, Alliance::BLACK))
-{
-	const std::vector<Move *> &whiteStandardLegalMoves = this->calculateLegalMoves(this->whitePieces);
-	const std::vector<Move *> &blackStandardLegalMoves = this->calculateLegalMoves(this->blackPieces);
-}
+
+/**
+ * @brief Construct a new Board object
+ *
+ * @param builder An instance of BoardBuilder used to instantiate the Board object
+ */
+Board::Board(BoardBuilder &builder) : gameBoard(Board::createGameBoard(builder)), whitePieces(Board::calculateActivePieces(gameBoard, Alliance::WHITE)), blackPieces(Board::calculateActivePieces(gameBoard, Alliance::BLACK)), whitePlayer(new WhitePlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))), blackPlayer(new BlackPlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))), currentPlayer(nullptr) {}
 
 std::vector<Move *> Board::calculateLegalMoves(const std::vector<Piece *> pieces)
 {
@@ -77,6 +79,31 @@ std::vector<Tile *> Board::createGameBoard(const BoardBuilder builder)
 Tile *Board::getTile(const int tileCoordinate) const
 {
 	return gameBoard[tileCoordinate];
+}
+
+std::vector<Piece *> Board::getWhitePieces() const
+{
+	return this->whitePieces;
+}
+
+std::vector<Piece *> Board::getBlackPieces() const
+{
+	return this->blackPieces;
+}
+
+const Player *Board::getWhitePlayer() const
+{
+	return this->whitePlayer;
+}
+
+const Player *Board::getBlackPlayer() const
+{
+	return this->blackPlayer;
+}
+
+const Player *Board::getCurrentPlayer() const
+{
+	return this->currentPlayer;
 }
 
 Board Board::createStandardBoard()

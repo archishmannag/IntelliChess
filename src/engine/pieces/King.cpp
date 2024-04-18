@@ -4,10 +4,9 @@
 
 const int King::CANDIDATE_MOVE_COORDINATES[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
-King::King(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance)
+King::King(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::KING)
 {
-	this->pieceType = PieceType::KING;
-};
+}
 
 std::vector<Move *> King::calculateLegalMoves(Board &board)
 {

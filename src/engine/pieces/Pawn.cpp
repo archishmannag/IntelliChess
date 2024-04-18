@@ -4,9 +4,8 @@
 
 const int Pawn::CANDIDATE_MOVE_COORDINATES[] = {8, 16, 7, 9};
 
-Pawn::Pawn(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance)
+Pawn::Pawn(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::PAWN)
 {
-	this->pieceType = PieceType::PAWN;
 }
 
 std::vector<Move *> Pawn::calculateLegalMoves(Board &board)

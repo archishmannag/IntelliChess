@@ -2,10 +2,9 @@
 #include "../../../include/engine/board/Move.hpp"
 #include "../../../include/engine/board/BoardUtils.hpp"
 
-Knight::Knight(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance)
+Knight::Knight(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::KNIGHT)
 {
-	this->pieceType = PieceType::KNIGHT;
-};
+}
 
 const int Knight::CANDIDATE_MOVE_COORDINATES[] = {-17, -15, -10, -6, 6, 10, 15, 17};
 

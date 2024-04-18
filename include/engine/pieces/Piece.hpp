@@ -22,18 +22,21 @@ enum class PieceType
 class Piece
 {
 protected:
-	const int piecePosition;
+	int piecePosition;
 	const Alliance pieceAlliance;
-	const bool isFirstMove;
-	PieceType pieceType;
+	bool isFirstMove;
+	const PieceType pieceType;
 
-	Piece(const int piecePosition, const Alliance pieceAlliance);
+	Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType);
 
 public:
 	virtual std::vector<Move *> calculateLegalMoves(Board &board);
+
 	int getPiecePosition() const;
 	Alliance getPieceAlliance() const;
 	bool getIsFirstMove() const;
+	PieceType getPieceType() const;
+
 	std::string stringify() const;
 };
 

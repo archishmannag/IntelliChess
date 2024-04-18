@@ -4,10 +4,9 @@
 
 const int Queen::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
-Queen::Queen(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance)
+Queen::Queen(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::QUEEN)
 {
-	this->pieceType = PieceType::QUEEN;
-};
+}
 
 std::vector<Move *> Queen::calculateLegalMoves(Board &board)
 {

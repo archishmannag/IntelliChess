@@ -4,10 +4,10 @@
 
 const int Rook::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-8, -1, 1, 8};
 
-Rook::Rook(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance)
+Rook::Rook(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::ROOK)
 {
-	this->pieceType = PieceType::ROOK;
-};
+}
+
 std::vector<Move *> Rook::calculateLegalMoves(Board &board)
 {
 	std::vector<Move *> legalMoves;

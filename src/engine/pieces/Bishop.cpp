@@ -4,10 +4,9 @@
 
 const int Bishop::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-9, -7, 7, 9};
 
-Bishop::Bishop(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance)
+Bishop::Bishop(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::BISHOP)
 {
-	this->pieceType = PieceType::BISHOP;
-};
+}
 
 std::vector<Move *> Bishop::calculateLegalMoves(Board &board)
 {

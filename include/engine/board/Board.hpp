@@ -7,6 +7,8 @@
 
 #include "Tile.hpp"
 #include "../Alliance.hpp"
+#include "../player/WhitePlayer.hpp"
+#include "../player/BlackPlayer.hpp"
 
 class Move;
 
@@ -28,9 +30,13 @@ class Board
 private:
 	friend class BoardBuilder;
 
-	const std::vector<Tile *> gameBoard;
-	const std::vector<Piece *> whitePieces;
-	const std::vector<Piece *> blackPieces;
+	const WhitePlayer *whitePlayer;
+	const BlackPlayer *blackPlayer;
+	Player *currentPlayer;
+
+	std::vector<Tile *> gameBoard;
+	std::vector<Piece *> whitePieces;
+	std::vector<Piece *> blackPieces;
 
 	std::vector<Move *> calculateLegalMoves(std::vector<Piece *> pieces);
 	static std::vector<Piece *> calculateActivePieces(std::vector<Tile *> gameBoard, Alliance alliance);
@@ -39,6 +45,11 @@ private:
 
 public:
 	Tile *getTile(int tileCoordinate) const;
+	std::vector<Piece *> getWhitePieces() const;
+	std::vector<Piece *> getBlackPieces() const;
+	const Player *getWhitePlayer() const;
+	const Player *getBlackPlayer() const;
+	const Player *getCurrentPlayer() const;
 	static Board createStandardBoard();
 	std::string stringify() const;
 };

@@ -2,7 +2,7 @@
 
 #include "../../../include/engine/pieces/Piece.hpp"
 
-Piece::Piece(const int piecePosition, const Alliance pieceAlliance) : piecePosition(piecePosition), pieceAlliance(pieceAlliance), isFirstMove(false){};
+Piece::Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType) : piecePosition(piecePosition), pieceAlliance(pieceAlliance), pieceType(pieceType), isFirstMove(false){};
 
 std::vector<Move *> Piece::calculateLegalMoves(Board &board)
 {
@@ -22,6 +22,11 @@ Alliance Piece::getPieceAlliance() const
 bool Piece::getIsFirstMove() const
 {
 	return this->isFirstMove;
+}
+
+PieceType Piece::getPieceType() const
+{
+	return this->pieceType;
 }
 
 std::string Piece::stringify() const
