@@ -24,19 +24,24 @@ std::vector<Move *> Rook::calculateLegalMoves(Board &board)
 			{
 				const Tile *candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 				if (!candidateDestinationTile->isTileOccupied())
-					legalMoves.push_back(new MajorMove(board, *this, candidateDestinationCoordinate));
+					legalMoves.push_back(new MajorMove(&board, this, candidateDestinationCoordinate));
 				else
 				{
-					Piece pieceAtDestination = *(candidateDestinationTile->getPiece());
-					Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
+					Piece *pieceAtDestination = candidateDestinationTile->getPiece();
+					Alliance pieceAlliance = pieceAtDestination->getPieceAlliance();
 					if (this->pieceAlliance != pieceAlliance)
-						legalMoves.push_back(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate));
+						legalMoves.push_back(new AttackMove(&board, this, pieceAtDestination, candidateDestinationCoordinate));
 					break;
 				}
 			}
 		}
 	}
 	return legalMoves;
+}
+
+Rook *Rook::movePiece(const Move *move) const
+{
+	return new Rook(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance());
 }
 
 bool Rook::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)

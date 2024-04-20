@@ -24,18 +24,23 @@ std::vector<Move *> Knight::calculateLegalMoves(Board &board)
 			const Tile *candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 
 			if (!candidateDestinationTile->isTileOccupied())
-				legalMoves.push_back(new MajorMove(board, *this, candidateDestinationCoordinate));
+				legalMoves.push_back(new MajorMove(&board, this, candidateDestinationCoordinate));
 			else
 			{
-				Piece pieceAtDestination = *(candidateDestinationTile->getPiece());
-				Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
+				Piece *pieceAtDestination = candidateDestinationTile->getPiece();
+				Alliance pieceAlliance = pieceAtDestination->getPieceAlliance();
 
 				if (this->pieceAlliance != pieceAlliance)
-					legalMoves.push_back(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate));
+					legalMoves.push_back(new AttackMove(&board, this, pieceAtDestination, candidateDestinationCoordinate));
 			}
 		}
 	}
 	return legalMoves;
+}
+
+Knight *Knight::movePiece(const Move *move) const
+{
+	return new Knight(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance());
 }
 
 bool Knight::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)

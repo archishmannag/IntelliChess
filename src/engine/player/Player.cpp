@@ -4,8 +4,10 @@
 #include "../../../include/engine/board/Move.hpp"
 #include "../../../include/engine/board/Board.hpp"
 #include "../../../include/engine/pieces/Piece.hpp"
+#include "../../../include/engine/pieces/King.hpp"
+#include "../../../include/engine/board/MoveTransition.hpp"
 
-Player::Player(Board *board, std::vector<Move *> playerLegalMoves, std::vector<Move *> opponentLegalMoves) : board(board), playerKing(this->establishKing()), legalMoves(playerLegalMoves), inCheck(!calculateAttacksOnTile(this->playerKing->getPiecePosition(), opponentLegalMoves).empty())
+Player::Player(Board *board) : board(board)
 {
 }
 
@@ -48,7 +50,7 @@ bool Player::isMoveLegal(const Move *move) const
 	return std::find(this->legalMoves.begin(), this->legalMoves.end(), move) != this->legalMoves.end();
 }
 
-const King *Player::getPlayerKing() const
+King *Player::getPlayerKing() const
 {
 	return this->playerKing;
 }
@@ -89,7 +91,7 @@ MoveTransition Player::makeMove(Move *move) const
 	return MoveTransition(transitionBoard, move, MoveStatus::DONE);
 }
 
-std::vector<Piece *> Player::getActivePieces()
+std::vector<Piece *> Player::getActivePieces() const
 {
 	throw std::logic_error("getActivePieces() must be overridden");
 }
@@ -100,6 +102,11 @@ Alliance Player::getPlayerAlliance() const
 }
 
 const Player *Player::getOpponent() const
+{
+	throw std::logic_error("This function must be overridden!");
+}
+
+std::vector<Move *> Player::calculateKingCastles(const std::vector<Move *> playerLegals, const std::vector<Move *> opponentLegals) const
 {
 	throw std::logic_error("This function must be overridden!");
 }

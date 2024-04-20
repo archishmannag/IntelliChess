@@ -2,9 +2,23 @@
 
 #include "../../../include/engine/pieces/Piece.hpp"
 
-Piece::Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType) : piecePosition(piecePosition), pieceAlliance(pieceAlliance), pieceType(pieceType), isFirstMove(false){};
+Piece::Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType) : piecePosition(piecePosition), pieceAlliance(pieceAlliance), isFirstMove(false), pieceType(pieceType){};
+
+bool Piece::operator==(const Piece &other)
+{
+	if (this == &other)
+		return true;
+	if (typeid(*this) != typeid(other))
+		return false;
+	return this->piecePosition == other.getPiecePosition() && this->pieceAlliance == other.getPieceAlliance() && this->pieceType == other.getPieceType() && this->isFirstMove == other.getIsFirstMove();
+}
 
 std::vector<Move *> Piece::calculateLegalMoves(Board &board)
+{
+	throw std::logic_error("This method must be overridden by a subclass.");
+}
+
+Piece *Piece::movePiece(const Move *move) const
 {
 	throw std::logic_error("This method must be overridden by a subclass.");
 }

@@ -24,19 +24,24 @@ std::vector<Move *> Bishop::calculateLegalMoves(Board &board)
 			{
 				const Tile *candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 				if (!candidateDestinationTile->isTileOccupied())
-					legalMoves.push_back(new MajorMove(board, *this, candidateDestinationCoordinate));
+					legalMoves.push_back(new MajorMove(&board, this, candidateDestinationCoordinate));
 				else
 				{
-					Piece pieceAtDestination = *(candidateDestinationTile->getPiece());
-					Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
+					Piece *pieceAtDestination = candidateDestinationTile->getPiece();
+					Alliance pieceAlliance = pieceAtDestination->getPieceAlliance();
 					if (this->pieceAlliance != pieceAlliance)
-						legalMoves.push_back(new AttackMove(board, *this, pieceAtDestination, candidateDestinationCoordinate));
+						legalMoves.push_back(new AttackMove(&board, this, pieceAtDestination, candidateDestinationCoordinate));
 					break;
 				}
 			}
 		}
 	}
 	return legalMoves;
+}
+
+Bishop *Bishop::movePiece(const Move *move) const
+{
+	return new Bishop(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance());
 }
 
 bool Bishop::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)

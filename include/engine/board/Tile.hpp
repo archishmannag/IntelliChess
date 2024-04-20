@@ -22,6 +22,7 @@ protected:
 
 public:
 	static Tile *createTile(int coordinate, Piece *piece);
+	int getTileCoordinate() const;
 	virtual bool isTileOccupied() const;
 	virtual Piece *getPiece() const;
 	virtual std::string stringify() const;

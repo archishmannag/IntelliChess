@@ -10,7 +10,9 @@ private:
 
 public:
 	Pawn(const int piecePosition, const Alliance pieceAlliance);
+
 	std::vector<Move *> calculateLegalMoves(Board &board) override;
+	Pawn *movePiece(const Move *move) const override;
 };
 
 #endif

@@ -26,14 +26,21 @@ Tile *Tile::createTile(const int coordinate, Piece *piece)
 		return new OccupiedTile(coordinate, piece);
 }
 
+int Tile::getTileCoordinate() const
+{
+	return this->tileCoordinate;
+}
+
 bool Tile::isTileOccupied() const
 {
 	throw std::logic_error("Not implemented. Use derived class functions.1");
 };
+
 Piece *Tile::getPiece() const
 {
 	throw std::logic_error("Not implemented. Use derived class functions.2");
 };
+
 std::string Tile::stringify() const
 {
 	throw std::logic_error("Not implemented. Use derived class functions.3");

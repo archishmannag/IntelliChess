@@ -30,7 +30,10 @@ protected:
 	Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType);
 
 public:
+	bool operator==(const Piece &other);
+
 	virtual std::vector<Move *> calculateLegalMoves(Board &board);
+	virtual Piece *movePiece(const Move *move) const;
 
 	int getPiecePosition() const;
 	Alliance getPieceAlliance() const;

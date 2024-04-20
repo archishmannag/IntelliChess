@@ -1,4 +1,5 @@
 #include "../../include/engine/Alliance.hpp"
+#include "../../include/engine/board/Board.hpp"
 
 int AllianceUtils::getDirection(const Alliance alliance)
 {
@@ -13,4 +14,9 @@ bool AllianceUtils::isWhite(const Alliance alliance)
 bool AllianceUtils::isBlack(const Alliance alliance)
 {
 	return alliance == Alliance::BLACK;
+}
+
+const Player *AllianceUtils::choosePlayer(const Alliance alliance, Board *board)
+{
+	return alliance == Alliance::WHITE ? board->getWhitePlayer() : board->getBlackPlayer();
 }

@@ -11,18 +11,22 @@
 #include "../player/BlackPlayer.hpp"
 
 class Move;
+class Pawn;
 
 class BoardBuilder
 {
 private:
 	Alliance nextMoveMaker;
+	Pawn *enPassantPawn = nullptr;
 
 public:
 	std::map<int, Piece *> boardConfig;
 
 	BoardBuilder setPiece(Piece *piece);
+	void setEnPassantPawn(Pawn *enPassantPawn);
 	BoardBuilder setMoveMaker(Alliance moveMaker);
-	Board build();
+	Alliance getNextMoveMaker() const;
+	Board *build();
 };
 
 class Board
@@ -30,13 +34,13 @@ class Board
 private:
 	friend class BoardBuilder;
 
-	const WhitePlayer *whitePlayer;
-	const BlackPlayer *blackPlayer;
-	Player *currentPlayer;
-
 	std::vector<Tile *> gameBoard;
 	std::vector<Piece *> whitePieces;
 	std::vector<Piece *> blackPieces;
+
+	const WhitePlayer *whitePlayer;
+	const BlackPlayer *blackPlayer;
+	Player *currentPlayer;
 
 	std::vector<Move *> calculateLegalMoves(std::vector<Piece *> pieces);
 	static std::vector<Piece *> calculateActivePieces(std::vector<Tile *> gameBoard, Alliance alliance);
@@ -49,8 +53,9 @@ public:
 	std::vector<Piece *> getBlackPieces() const;
 	const Player *getWhitePlayer() const;
 	const Player *getBlackPlayer() const;
-	const Player *getCurrentPlayer() const;
-	static Board createStandardBoard();
+	Player *getCurrentPlayer() const;
+	std::vector<Move *> getAllLegalMoves() const;
+	static Board *createStandardBoard();
 	std::string stringify() const;
 };
 
