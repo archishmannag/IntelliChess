@@ -5,13 +5,15 @@
 #include <vector>
 #include <string>
 
-#include "Tile.hpp"
 #include "../Alliance.hpp"
-#include "../player/WhitePlayer.hpp"
-#include "../player/BlackPlayer.hpp"
 
 class Move;
 class Pawn;
+class Tile;
+class Piece;
+class Player;
+class WhitePlayer;
+class BlackPlayer;
 
 class BoardBuilder
 {

@@ -1,7 +1,7 @@
 #ifndef QUEEN_HPP
 #define QUEEN_HPP
 
-#include "../board/Board.hpp"
+#include "Piece.hpp"
 
 class Queen : public Piece
 {

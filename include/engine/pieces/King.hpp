@@ -1,7 +1,7 @@
 #ifndef KING_HPP
 #define KING_HPP
 
-#include "../board/Board.hpp"
+#include "Piece.hpp"
 
 class King : public Piece
 {

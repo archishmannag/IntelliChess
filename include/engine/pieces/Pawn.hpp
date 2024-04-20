@@ -1,7 +1,7 @@
 #ifndef PAWN_HPP
 #define PAWN_HPP
 
-#include "../board/Board.hpp"
+#include "Piece.hpp"
 
 class Pawn : public Piece
 {

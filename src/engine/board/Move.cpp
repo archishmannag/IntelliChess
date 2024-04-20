@@ -1,7 +1,11 @@
 #include <stdexcept>
+
+#include "../../../include/engine/board/Board.hpp"
 #include "../../../include/engine/board/Move.hpp"
+#include "../../../include/engine/pieces/Piece.hpp"
 #include "../../../include/engine/pieces/Pawn.hpp"
 #include "../../../include/engine/pieces/Rook.hpp"
+#include "../../../include/engine/player/Player.hpp"
 
 /*Move*/
 

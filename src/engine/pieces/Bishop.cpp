@@ -1,5 +1,7 @@
 #include "../../../include/engine/pieces/Bishop.hpp"
 #include "../../../include/engine/board/Move.hpp"
+#include "../../../include/engine/board/Tile.hpp"
+#include "../../../include/engine/board/Board.hpp"
 #include "../../../include/engine/board/BoardUtils.hpp"
 
 const int Bishop::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-9, -7, 7, 9};

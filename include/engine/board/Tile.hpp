@@ -4,8 +4,7 @@
 #include <map>
 #include <string>
 
-#include "../pieces/Piece.hpp"
-
+class Piece;
 class EmptyTile;
 
 class Tile

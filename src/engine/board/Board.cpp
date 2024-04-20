@@ -1,6 +1,5 @@
-#include <cctype>
-
 #include "../../../include/engine/board/Board.hpp"
+#include "../../../include/engine/pieces/Piece.hpp"
 #include "../../../include/engine/pieces/Pawn.hpp"
 #include "../../../include/engine/pieces/Rook.hpp"
 #include "../../../include/engine/pieces/Knight.hpp"
@@ -8,6 +7,9 @@
 #include "../../../include/engine/pieces/Queen.hpp"
 #include "../../../include/engine/pieces/King.hpp"
 #include "../../../include/engine/board/Move.hpp"
+#include "../../../include/engine/board/Tile.hpp"
+#include "../../../include/engine/player/WhitePlayer.hpp"
+#include "../../../include/engine/player/BlackPlayer.hpp"
 
 /* BoardBuilder */
 BoardBuilder BoardBuilder::setPiece(Piece *piece)

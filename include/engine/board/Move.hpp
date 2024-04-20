@@ -1,7 +1,8 @@
 #ifndef MOVE_HPP
 #define MOVE_HPP
+
 #include <typeinfo>
-#include "Board.hpp"
+#include <string>
 
 enum class MoveStatus
 {
@@ -10,6 +11,7 @@ enum class MoveStatus
 	LEAVES_PLAYER_IN_CHECK
 };
 
+class Board;
 class Piece;
 class Rook;
 
