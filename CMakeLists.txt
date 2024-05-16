@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Project name
-project(Chess)
+project(Chess VERSION 1.0.0 DESCRIPTION "Chess game" LANGUAGES CXX)
 
 # Add source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -37,4 +37,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE include PRIVATE ${SFML_DIR}/.
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -std=c++17)
 
 # Add install target
-install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+if(UNIX)
+	install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+endif(UNIX)
