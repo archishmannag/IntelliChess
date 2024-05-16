@@ -2,7 +2,7 @@
 
 #include "../../../include/engine/pieces/Piece.hpp"
 
-Piece::Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType) : piecePosition(piecePosition), pieceAlliance(pieceAlliance), isFirstMove(false), pieceType(pieceType){};
+Piece::Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType, bool isFirstMove) : piecePosition(piecePosition), pieceAlliance(pieceAlliance), isFirstMove(isFirstMove), pieceType(pieceType){};
 
 bool Piece::operator==(const Piece &other)
 {
@@ -41,6 +41,26 @@ bool Piece::getIsFirstMove() const
 PieceType Piece::getPieceType() const
 {
 	return this->pieceType;
+}
+
+int Piece::getPieceValue() const
+{
+	switch (this->pieceType)
+	{
+	case PieceType::PAWN:
+		return 100;
+	case PieceType::KNIGHT:
+	case PieceType::BISHOP:
+		return 300;
+	case PieceType::ROOK:
+		return 500;
+	case PieceType::QUEEN:
+		return 900;
+	case PieceType::KING:
+		return 10000;
+	default:
+		throw std::runtime_error("Invalid piece type");
+	}
 }
 
 std::string Piece::stringify() const

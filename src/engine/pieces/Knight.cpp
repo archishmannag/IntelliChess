@@ -4,7 +4,11 @@
 #include "../../../include/engine/board/Board.hpp"
 #include "../../../include/engine/board/BoardUtils.hpp"
 
-Knight::Knight(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::KNIGHT)
+Knight::Knight(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::KNIGHT, true)
+{
+}
+
+Knight::Knight(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::KNIGHT, isFirstMove)
 {
 }
 

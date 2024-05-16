@@ -6,7 +6,11 @@
 
 const int Queen::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
-Queen::Queen(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::QUEEN)
+Queen::Queen(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::QUEEN, true)
+{
+}
+
+Queen::Queen(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::QUEEN, isFirstMove)
 {
 }
 

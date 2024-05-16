@@ -13,6 +13,7 @@ private:
 
 public:
 	Rook(const int piecePosition, const Alliance pieceAlliance);
+	Rook(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove);
 
 	std::vector<Move *> calculateLegalMoves(Board &board) override;
 	Rook *movePiece(const Move *move) const override;

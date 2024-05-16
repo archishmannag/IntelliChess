@@ -27,7 +27,7 @@ protected:
 	bool isFirstMove;
 	const PieceType pieceType;
 
-	Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType);
+	Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType, bool isFirstMove);
 
 public:
 	bool operator==(const Piece &other);
@@ -40,6 +40,7 @@ public:
 	bool getIsFirstMove() const;
 	PieceType getPieceType() const;
 
+	int getPieceValue() const;
 	std::string stringify() const;
 };
 

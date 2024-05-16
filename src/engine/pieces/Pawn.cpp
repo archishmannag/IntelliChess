@@ -6,7 +6,11 @@
 
 const int Pawn::CANDIDATE_MOVE_COORDINATES[] = {8, 16, 7, 9};
 
-Pawn::Pawn(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::PAWN)
+Pawn::Pawn(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::PAWN, true)
+{
+}
+
+Pawn::Pawn(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::PAWN, isFirstMove)
 {
 }
 
@@ -27,7 +31,7 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 			behindCandidateDestinationCoordinate = this->piecePosition + (AllianceUtils::getDirection(this->pieceAlliance) * 8);
 			if (!board.getTile(behindCandidateDestinationCoordinate)->isTileOccupied() && !board.getTile(candidateDestinationCoordinate)->isTileOccupied())
 			{
-				legalMoves.push_back(new MajorMove(&board, this, candidateDestinationCoordinate));
+				legalMoves.push_back(new PawnJump(&board, this, candidateDestinationCoordinate));
 			}
 		}
 		else if (currentCandidateOffset == 7 && !((BoardUtils::EIGHTH_COLUMN[this->piecePosition] && AllianceUtils::isWhite(this->pieceAlliance)) || (BoardUtils::FIRST_COLUMN[this->piecePosition] && AllianceUtils::isBlack(this->pieceAlliance))))
@@ -36,7 +40,7 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 			{
 				Piece *pieceOnCandidate = board.getTile(candidateDestinationCoordinate)->getPiece();
 				if (this->pieceAlliance != pieceOnCandidate->getPieceAlliance())
-					legalMoves.push_back(new AttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
+					legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
 			}
 		}
 		else if (currentCandidateOffset == 9 && !((BoardUtils::EIGHTH_COLUMN[this->piecePosition] && AllianceUtils::isBlack(this->pieceAlliance)) || (BoardUtils::FIRST_COLUMN[this->piecePosition] && AllianceUtils::isWhite(this->pieceAlliance))))
@@ -45,7 +49,7 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 			{
 				Piece *pieceOnCandidate = board.getTile(candidateDestinationCoordinate)->getPiece();
 				if (this->pieceAlliance != pieceOnCandidate->getPieceAlliance())
-					legalMoves.push_back(new AttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
+					legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
 			}
 		}
 	}

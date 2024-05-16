@@ -6,7 +6,11 @@
 
 const int King::CANDIDATE_MOVE_COORDINATES[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
-King::King(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::KING)
+King::King(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::KING, true)
+{
+}
+
+King::King(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::KING, isFirstMove)
 {
 }
 

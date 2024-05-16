@@ -13,6 +13,7 @@ private:
 
 public:
 	King(const int piecePosition, const Alliance pieceAlliance);
+	King(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove);
 
 	std::vector<Move *> calculateLegalMoves(Board &board) override;
 	King *movePiece(const Move *move) const override;

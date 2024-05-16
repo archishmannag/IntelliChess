@@ -13,6 +13,7 @@ private:
 
 public:
 	Bishop(const int piecePosition, const Alliance pieceAlliance);
+	Bishop(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove);
 
 	std::vector<Move *> calculateLegalMoves(Board &board) override;
 	Bishop *movePiece(const Move *move) const override;

@@ -6,7 +6,11 @@
 
 const int Rook::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-8, -1, 1, 8};
 
-Rook::Rook(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::ROOK)
+Rook::Rook(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::ROOK, true)
+{
+}
+
+Rook::Rook(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::ROOK, isFirstMove)
 {
 }
 

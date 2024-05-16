@@ -15,6 +15,7 @@ private:
 
 public:
 	Knight(const int piecePosition, const Alliance pieceAlliance);
+	Knight(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove);
 
 	std::vector<Move *> calculateLegalMoves(Board &board) override;
 	Knight *movePiece(const Move *move) const override;

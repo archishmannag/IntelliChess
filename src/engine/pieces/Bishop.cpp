@@ -6,7 +6,11 @@
 
 const int Bishop::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-9, -7, 7, 9};
 
-Bishop::Bishop(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::BISHOP)
+Bishop::Bishop(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::BISHOP, true)
+{
+}
+
+Bishop::Bishop(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::BISHOP, isFirstMove)
 {
 }
 
