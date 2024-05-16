@@ -6,3 +6,8 @@ MoveStatus MoveTransition::getMoveStatus() const
 {
 	return this->moveStatus;
 }
+
+Board *MoveTransition::getTransitionBoard() const
+{
+	return const_cast<Board *>(this->transitionBoard);
+}

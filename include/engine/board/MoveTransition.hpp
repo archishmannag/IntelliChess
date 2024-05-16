@@ -13,5 +13,6 @@ private:
 public:
 	MoveTransition(const Board *transitionBoard, const Move *move, const MoveStatus moveStatus);
 	MoveStatus getMoveStatus() const;
+	Board *getTransitionBoard() const;
 };
 #endif
