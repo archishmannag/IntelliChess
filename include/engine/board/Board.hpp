@@ -20,13 +20,15 @@ class BoardBuilder
 private:
 	Alliance nextMoveMaker;
 	Pawn *enPassantPawn = nullptr;
+	const Move *transitionMove;
 
 public:
 	std::map<int, Piece *> boardConfig;
 
-	BoardBuilder setPiece(Piece *piece);
+	void setPiece(Piece *piece);
 	void setEnPassantPawn(Pawn *enPassantPawn);
-	BoardBuilder setMoveMaker(Alliance moveMaker);
+	void setMoveMaker(Alliance moveMaker);
+	void setMoveTransition(const Move *transitionMove);
 	Alliance getNextMoveMaker() const;
 	Board *build();
 };

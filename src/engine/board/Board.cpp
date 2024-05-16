@@ -12,10 +12,10 @@
 #include "../../../include/engine/player/BlackPlayer.hpp"
 
 /* BoardBuilder */
-BoardBuilder BoardBuilder::setPiece(Piece *piece)
+void BoardBuilder::setPiece(Piece *piece)
 {
 	this->boardConfig[piece->getPiecePosition()] = piece;
-	return *this;
+	return;
 }
 
 void BoardBuilder::setEnPassantPawn(Pawn *enPassantPawn)
@@ -23,10 +23,16 @@ void BoardBuilder::setEnPassantPawn(Pawn *enPassantPawn)
 	this->enPassantPawn = enPassantPawn;
 }
 
-BoardBuilder BoardBuilder::setMoveMaker(const Alliance moveMaker)
+void BoardBuilder::setMoveMaker(const Alliance moveMaker)
 {
 	this->nextMoveMaker = moveMaker;
-	return *this;
+	return;
+}
+
+void BoardBuilder::setMoveTransition(const Move *transitionMove)
+{
+	this->transitionMove = transitionMove;
+	return;
 }
 
 Alliance BoardBuilder::getNextMoveMaker() const
@@ -46,7 +52,12 @@ Board *BoardBuilder::build()
  *
  * @param builder An instance of BoardBuilder used to instantiate the Board object
  */
-Board::Board(BoardBuilder &builder) : gameBoard(Board::createGameBoard(builder)), whitePieces(Board::calculateActivePieces(gameBoard, Alliance::WHITE)), blackPieces(Board::calculateActivePieces(gameBoard, Alliance::BLACK)), whitePlayer(new WhitePlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))), blackPlayer(new BlackPlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))), currentPlayer(const_cast<Player *>(AllianceUtils::choosePlayer(builder.getNextMoveMaker(), this))) {}
+Board::Board(BoardBuilder &builder) : gameBoard(Board::createGameBoard(builder)),
+									  whitePieces(Board::calculateActivePieces(gameBoard, Alliance::WHITE)),
+									  blackPieces(Board::calculateActivePieces(gameBoard, Alliance::BLACK)),
+									  whitePlayer(new WhitePlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))),
+									  blackPlayer(new BlackPlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))),
+									  currentPlayer(const_cast<Player *>(AllianceUtils::choosePlayer(builder.getNextMoveMaker(), this))) {}
 
 std::vector<Move *> Board::calculateLegalMoves(const std::vector<Piece *> pieces)
 {
@@ -120,9 +131,11 @@ Player *Board::getCurrentPlayer() const
 
 std::vector<Move *> Board::getAllLegalMoves() const
 {
-	std::vector<Move *> allLegalMoves;
-	allLegalMoves.insert(allLegalMoves.end(), this->whitePlayer->getLegalMoves().begin(), this->whitePlayer->getLegalMoves().end());
-	allLegalMoves.insert(allLegalMoves.end(), this->blackPlayer->getLegalMoves().begin(), this->blackPlayer->getLegalMoves().end());
+	std::vector<Move *> allLegalMoves,
+		whiteLegalMoves = this->whitePlayer->getLegalMoves(),
+		blackLegalMoves = this->blackPlayer->getLegalMoves();
+	allLegalMoves.insert(allLegalMoves.end(), whiteLegalMoves.begin(), whiteLegalMoves.end());
+	allLegalMoves.insert(allLegalMoves.end(), blackLegalMoves.begin(), blackLegalMoves.end());
 	return allLegalMoves;
 }
 
