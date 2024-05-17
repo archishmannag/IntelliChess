@@ -20,7 +20,7 @@ class BoardBuilder
 private:
 	Alliance nextMoveMaker;
 	Pawn *enPassantPawn = nullptr;
-	const Move *transitionMove;
+	const Move *transitionMove = nullptr;
 
 public:
 	std::map<int, Piece *> boardConfig;
@@ -30,6 +30,7 @@ public:
 	void setMoveMaker(Alliance moveMaker);
 	void setMoveTransition(const Move *transitionMove);
 	Alliance getNextMoveMaker() const;
+	Pawn *getEnPassantPawn() const;
 	Board *build();
 };
 
@@ -37,6 +38,8 @@ class Board
 {
 private:
 	friend class BoardBuilder;
+
+	Pawn *enPassantPawn = nullptr;
 
 	std::vector<Tile *> gameBoard;
 	std::vector<Piece *> whitePieces;
@@ -59,6 +62,7 @@ public:
 	const Player *getBlackPlayer() const;
 	Player *getCurrentPlayer() const;
 	std::vector<Move *> getAllLegalMoves() const;
+	Pawn *getEnPassantPawn() const;
 	static Board *createStandardBoard();
 	std::string stringify() const;
 };

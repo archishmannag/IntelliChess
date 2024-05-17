@@ -13,6 +13,7 @@ enum class Alliance
 namespace AllianceUtils
 {
 	int getDirection(Alliance alliance);
+	int getOppositeDirection(Alliance alliance);
 	bool isWhite(Alliance alliance);
 	bool isBlack(Alliance alliance);
 	const Player *choosePlayer(Alliance alliance, Board *board);

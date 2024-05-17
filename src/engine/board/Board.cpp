@@ -12,6 +12,7 @@
 #include "../../../include/engine/player/BlackPlayer.hpp"
 
 /* BoardBuilder */
+
 void BoardBuilder::setPiece(Piece *piece)
 {
 	this->boardConfig[piece->getPiecePosition()] = piece;
@@ -40,6 +41,11 @@ Alliance BoardBuilder::getNextMoveMaker() const
 	return this->nextMoveMaker;
 }
 
+Pawn *BoardBuilder::getEnPassantPawn() const
+{
+	return this->enPassantPawn;
+}
+
 Board *BoardBuilder::build()
 {
 	return new Board(*this);
@@ -53,6 +59,7 @@ Board *BoardBuilder::build()
  * @param builder An instance of BoardBuilder used to instantiate the Board object
  */
 Board::Board(BoardBuilder &builder) : gameBoard(Board::createGameBoard(builder)),
+									  enPassantPawn(builder.getEnPassantPawn()),
 									  whitePieces(Board::calculateActivePieces(gameBoard, Alliance::WHITE)),
 									  blackPieces(Board::calculateActivePieces(gameBoard, Alliance::BLACK)),
 									  whitePlayer(new WhitePlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))),
@@ -137,6 +144,11 @@ std::vector<Move *> Board::getAllLegalMoves() const
 	allLegalMoves.insert(allLegalMoves.end(), whiteLegalMoves.begin(), whiteLegalMoves.end());
 	allLegalMoves.insert(allLegalMoves.end(), blackLegalMoves.begin(), blackLegalMoves.end());
 	return allLegalMoves;
+}
+
+Pawn *Board::getEnPassantPawn() const
+{
+	return this->enPassantPawn;
 }
 
 Board *Board::createStandardBoard()
