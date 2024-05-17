@@ -37,7 +37,7 @@ std::vector<Move *> Knight::calculateLegalMoves(Board &board)
 				Alliance pieceAlliance = pieceAtDestination->getPieceAlliance();
 
 				if (this->pieceAlliance != pieceAlliance)
-					legalMoves.push_back(new AttackMove(&board, this, pieceAtDestination, candidateDestinationCoordinate));
+					legalMoves.push_back(new MajorAttackMove(&board, this, pieceAtDestination, candidateDestinationCoordinate));
 			}
 		}
 	}

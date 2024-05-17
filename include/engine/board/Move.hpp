@@ -21,12 +21,12 @@ protected:
 	const Board *board;
 	const Piece *movedPiece;
 	const int destinationCoordinate;
+	const bool isFirstMove;
 
+	Move(Board *board, int destinationCoordinate);
 	Move(Board *board, Piece *movedPiece, int destinationCoordinate);
 
 public:
-	static const Move *NULL_MOVE;
-
 	virtual bool operator==(const Move &other) const;
 
 	int getDestinationCoordinate() const;
@@ -43,6 +43,9 @@ class MajorMove : public Move
 {
 public:
 	MajorMove(Board *board, Piece *movedPiece, int destinationCoordinate);
+
+	bool operator==(const Move &other) const override;
+	std::string stringify() const override;
 };
 
 class AttackMove : public Move
@@ -58,22 +61,36 @@ public:
 	Piece *getAttackedPiece() const override;
 };
 
+class MajorAttackMove : public AttackMove
+{
+public:
+	MajorAttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate);
+	bool operator==(const Move &other) const override;
+	std::string stringify() const override;
+};
+
 class PawnMove : public Move
 {
 public:
 	PawnMove(Board *board, Piece *movedPiece, int destinationCoordinate);
+	bool operator==(const Move &other) const override;
+	std::string stringify() const override;
 };
 
 class PawnAttackMove : public AttackMove
 {
 public:
 	PawnAttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate);
+	bool operator==(const Move &other) const override;
+	std::string stringify() const override;
 };
 
 class PawnEnPassantAttackMove : public PawnAttackMove
 {
 public:
 	PawnEnPassantAttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate);
+	Board *execute() const override;
+	bool operator==(const Move &other) const override;
 };
 
 class PawnJump : public Move
@@ -81,6 +98,7 @@ class PawnJump : public Move
 public:
 	PawnJump(Board *board, Piece *movedPiece, int destinationCoordinate);
 	Board *execute() const override;
+	std::string stringify() const override;
 };
 
 class CastleMove : public Move
@@ -92,6 +110,7 @@ protected:
 
 public:
 	CastleMove(Board *board, Piece *movedPiece, int destinationCoordinate, Rook *castleRook, int castleRookStart, int castleRookDestination);
+	bool operator==(const Move &other) const override;
 	Rook *getCastleRook() const;
 	bool isCastlingMove() const override;
 	Board *execute() const override;
@@ -101,6 +120,7 @@ class KingSideCastleMove : public CastleMove
 {
 public:
 	KingSideCastleMove(Board *board, Piece *movedPiece, int destinationCoordinate, Rook *castleRook, int castleRookStart, int castleRookDestination);
+	bool operator==(const Move &other) const override;
 	std::string stringify() const override;
 };
 
@@ -108,6 +128,7 @@ class QueenSideCastleMove : public CastleMove
 {
 public:
 	QueenSideCastleMove(Board *board, Piece *movedPiece, int destinationCoordinate, Rook *castleRook, int castleRookStart, int castleRookDestination);
+	bool operator==(const Move &other) const override;
 	std::string stringify() const override;
 };
 
@@ -116,6 +137,7 @@ class NullMove : public Move
 public:
 	NullMove();
 	Board *execute() const override;
+	std::string stringify() const override;
 };
 
 namespace MoveFactory

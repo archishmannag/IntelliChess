@@ -25,7 +25,7 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 			continue;
 
 		if (currentCandidateOffset == 8 && !board.getTile(candidateDestinationCoordinate)->isTileOccupied())
-			legalMoves.push_back(new MajorMove(&board, this, candidateDestinationCoordinate));
+			legalMoves.push_back(new PawnMove(&board, this, candidateDestinationCoordinate));
 		else if (currentCandidateOffset == 16 && this->getIsFirstMove() && ((BoardUtils::SECOND_ROW[this->piecePosition] && AllianceUtils::isBlack(this->pieceAlliance)) || (BoardUtils::SEVENTH_ROW[this->piecePosition] && AllianceUtils::isWhite(this->pieceAlliance))))
 		{
 			behindCandidateDestinationCoordinate = this->piecePosition + (AllianceUtils::getDirection(this->pieceAlliance) * 8);
@@ -42,6 +42,12 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 				if (this->pieceAlliance != pieceOnCandidate->getPieceAlliance())
 					legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
 			}
+			else if (board.getEnPassantPawn() != nullptr && board.getEnPassantPawn()->getPiecePosition() == this->piecePosition + AllianceUtils::getOppositeDirection(this->pieceAlliance))
+			{
+				auto pieceOnCandidate = board.getEnPassantPawn();
+				if (this->pieceAlliance != pieceOnCandidate->getPieceAlliance())
+					legalMoves.push_back(new PawnEnPassantAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
+			}
 		}
 		else if (currentCandidateOffset == 9 && !((BoardUtils::EIGHTH_COLUMN[this->piecePosition] && AllianceUtils::isBlack(this->pieceAlliance)) || (BoardUtils::FIRST_COLUMN[this->piecePosition] && AllianceUtils::isWhite(this->pieceAlliance))))
 		{
@@ -50,6 +56,12 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 				Piece *pieceOnCandidate = board.getTile(candidateDestinationCoordinate)->getPiece();
 				if (this->pieceAlliance != pieceOnCandidate->getPieceAlliance())
 					legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
+			}
+			else if (board.getEnPassantPawn() != nullptr && board.getEnPassantPawn()->getPiecePosition() == this->piecePosition - AllianceUtils::getOppositeDirection(this->pieceAlliance))
+			{
+				auto pieceOnCandidate = board.getEnPassantPawn();
+				if (this->pieceAlliance != pieceOnCandidate->getPieceAlliance())
+					legalMoves.push_back(new PawnEnPassantAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
 			}
 		}
 	}

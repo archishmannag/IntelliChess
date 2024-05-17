@@ -32,7 +32,7 @@ std::vector<Move *> King::calculateLegalMoves(Board &board)
 			{
 				Piece *pieceAtDestination = candidateDestinationTile->getPiece();
 				if (this->pieceAlliance != pieceAtDestination->getPieceAlliance())
-					legalMoves.push_back(new AttackMove(&board, this, pieceAtDestination, candidateDestinationCoordinate));
+					legalMoves.push_back(new MajorAttackMove(&board, this, pieceAtDestination, candidateDestinationCoordinate));
 			}
 		}
 	}
