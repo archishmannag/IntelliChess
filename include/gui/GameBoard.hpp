@@ -2,11 +2,24 @@
 #define GAMEBOARD_HPP
 
 #include <vector>
+#include <memory>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
+#define WINDOW_WIDTH 960
+#define WINDOW_HEIGHT 700
+#define TILE_HEIGHT 70
+#define TILE_WIDTH 70
+
 class Board;
-class MenuBar;
+class Tile;
+class Piece;
+class menu_bar;
+class TakenPiecesBlock;
+class GameHistoryBlock;
+class game_setup;
+class Move;
+enum class player_type;
 
 class TileBlock
 {
@@ -23,12 +36,28 @@ public:
 	void setTileRectFillColor(sf::Color color);
 };
 
+class MoveLog
+{
+private:
+	std::vector<Move *> moves;
+
+public:
+	std::vector<Move *> getMoves() const;
+	int getMovesCount() const;
+	void addMove(Move *move);
+	Move *removeMove(int index);
+	void removeMove(Move *move);
+	void clearMoves();
+};
+
 class GameBoard
 {
 private:
 	// Window and event
 	sf::RenderWindow *window;
 	sf::Event event;
+	sf::RectangleShape bg;
+	sf::View currentMainView;
 
 	// Window scale
 	sf::Vector2f windowScale;
@@ -37,20 +66,45 @@ private:
 	sf::Vector2i mousePosition;
 
 	// Main board, textures and sprites
+	sf::RectangleShape boardRect;
 	std::vector<TileBlock> tileBlocks;
 	sf::Texture blackPawnTexture, whitePawnTexture, blackKnightTexture, whiteKnightTexture, blackBishopTexture, whiteBishopTexture, blackKingTexture, whiteKingTexture, blackRookTexture, whiteRookTexture, blackQueenTexture, whiteQueenTexture;
 	sf::Sprite blackPawnSprite, whitePawnSprite, blackKnightSprite, whiteKnightSprite, blackBishopSprite, whiteBishopSprite, blackKingSprite, whiteKingSprite, blackRookSprite, whiteRookSprite, blackQueenSprite, whiteQueenSprite;
 
 	// Menu bar
-	MenuBar *menuBar;
+	std::unique_ptr<menu_bar> menuBar;
 
+	// Taken pieces
+	std::unique_ptr<TakenPiecesBlock> takenPiecesBlock;
+
+	// Game history
+	std::unique_ptr<GameHistoryBlock> gameHistoryBlock;
+
+	// Game setup
+	std::unique_ptr<game_setup> gameSetup;
+	bool is_game_setup_open = false;
+
+	// Move log
+	MoveLog moveLog;
 	Board *board;
+	Tile *sourceTile, *destinationTile;
+	Piece *movedPiece;
 
-	void init();
+	// Pawn Promotion
+	sf::RectangleShape pawnPromotionRect;
+	bool pawnPromotion = false;
+
+	friend bool isPawnPromotable(GameBoard &gameBoard);
+
+		void init();
 	void processEvents();
 	void updateMousePosition();
+	void scaleBoard();
 	void renderTileBlocks();
+	void renderPawnPromotionOptionPane();
 	void updateTileBlocks();
+	std::vector<int> legalMoveDestinations();
+	void moveHandler(sf::Vector2i mousePosition);
 
 public:
 	GameBoard();
@@ -59,5 +113,7 @@ public:
 	void update();
 	void render();
 };
+
+bool isPawnPromotable(GameBoard &gameBoard);
 
 #endif
