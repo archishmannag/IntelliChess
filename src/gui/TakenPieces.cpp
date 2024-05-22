@@ -1,51 +1,51 @@
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
-#include "../../include/gui/TakenPieces.hpp"
-#include "../../include/gui/GameBoard.hpp"
-#include "../../include/engine/board/Move.hpp"
-#include "../../include/engine/pieces/Piece.hpp"
-#include "../../include/engine/Alliance.hpp"
+
+#include <gui/TakenPieces.hpp>
+#include <gui/GameBoard.hpp>
+#include <engine/board/Move.hpp>
+#include <engine/pieces/Piece.hpp>
+#include <engine/Alliance.hpp>
 
 TakenPiecesBlock::TakenPiecesBlock()
 {
 	if (
-		!this->blackPawnTexture.loadFromFile("../resources/pieces/blackPawn.png") ||
-		!this->whitePawnTexture.loadFromFile("../resources/pieces/whitePawn.png") ||
-		!this->blackKingTexture.loadFromFile("../resources/pieces/blackKing.png") ||
-		!this->whiteKingTexture.loadFromFile("../resources/pieces/whiteKing.png") ||
-		!this->blackBishopTexture.loadFromFile("../resources/pieces/blackBishop.png") ||
-		!this->whiteBishopTexture.loadFromFile("../resources/pieces/whiteBishop.png") ||
-		!this->blackKnightTexture.loadFromFile("../resources/pieces/blackKnight.png") ||
-		!this->whiteKnightTexture.loadFromFile("../resources/pieces/whiteKnight.png") ||
-		!this->blackRookTexture.loadFromFile("../resources/pieces/blackRook.png") ||
-		!this->whiteRookTexture.loadFromFile("../resources/pieces/whiteRook.png") ||
-		!this->blackQueenTexture.loadFromFile("../resources/pieces/blackQueen.png") ||
-		!this->whiteQueenTexture.loadFromFile("../resources/pieces/whiteQueen.png"))
+		!blackPawnTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackPawn.png") ||
+		!whitePawnTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whitePawn.png") ||
+		!blackKingTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackKing.png") ||
+		!whiteKingTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteKing.png") ||
+		!blackBishopTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackBishop.png") ||
+		!whiteBishopTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteBishop.png") ||
+		!blackKnightTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackKnight.png") ||
+		!whiteKnightTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteKnight.png") ||
+		!blackRookTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackRook.png") ||
+		!whiteRookTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteRook.png") ||
+		!blackQueenTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackQueen.png") ||
+		!whiteQueenTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteQueen.png"))
 	{
-		std::cerr << "Error loading textures" << std::endl;
-		exit(EXIT_FAILURE);
+		throw std::runtime_error("Failed to load piece textures");
 	}
 
-	this->blackPawnTexture.setSmooth(true);
-	this->whitePawnTexture.setSmooth(true);
-	this->blackKingTexture.setSmooth(true);
-	this->whiteKingTexture.setSmooth(true);
-	this->blackBishopTexture.setSmooth(true);
-	this->whiteBishopTexture.setSmooth(true);
-	this->blackKnightTexture.setSmooth(true);
-	this->whiteKnightTexture.setSmooth(true);
-	this->blackRookTexture.setSmooth(true);
-	this->whiteRookTexture.setSmooth(true);
-	this->blackQueenTexture.setSmooth(true);
-	this->whiteQueenTexture.setSmooth(true);
+	blackPawnTexture.setSmooth(true);
+	whitePawnTexture.setSmooth(true);
+	blackKingTexture.setSmooth(true);
+	whiteKingTexture.setSmooth(true);
+	blackBishopTexture.setSmooth(true);
+	whiteBishopTexture.setSmooth(true);
+	blackKnightTexture.setSmooth(true);
+	whiteKnightTexture.setSmooth(true);
+	blackRookTexture.setSmooth(true);
+	whiteRookTexture.setSmooth(true);
+	blackQueenTexture.setSmooth(true);
+	whiteQueenTexture.setSmooth(true);
 
-	this->takenPieceAreaRect.setSize(sf::Vector2f(1.5f * TILE_WIDTH, 8 * TILE_HEIGHT));
-	this->takenPieceAreaRect.setPosition(0, 75);
-	this->takenPieceAreaRect.setFillColor(sf::Color(253, 245, 230));
+	takenPieceAreaRect.setSize(sf::Vector2f(1.5f * TILE_WIDTH, 8 * TILE_HEIGHT));
+	takenPieceAreaRect.setPosition(0, 75);
+	takenPieceAreaRect.setFillColor(sf::Color(253, 245, 230));
 
-	this->blackPieceAreaPosition = sf::Vector2f(this->takenPieceAreaRect.getPosition());
-	this->whitePieceAreaPosition = sf::Vector2f(this->takenPieceAreaRect.getPosition() + sf::Vector2f(0, 4 * TILE_HEIGHT));
+	blackPieceAreaPosition = sf::Vector2f(takenPieceAreaRect.getPosition());
+	whitePieceAreaPosition = sf::Vector2f(takenPieceAreaRect.getPosition() + sf::Vector2f(0, 4 * TILE_HEIGHT));
 }
 
 void TakenPiecesBlock::redo(MoveLog &moveLog)
@@ -84,47 +84,47 @@ void TakenPiecesBlock::redo(MoveLog &moveLog)
 	std::sort(blackTakenPieces.begin(), blackTakenPieces.end(), [](Piece *a, Piece *b) -> bool
 			  { return a->getPieceValue() > b->getPieceValue(); });
 
-	sf::Vector2f position = this->whitePieceAreaPosition + sf::Vector2f(0.125f * TILE_WIDTH, 0);
+	sf::Vector2f position = whitePieceAreaPosition + sf::Vector2f(0.125f * TILE_WIDTH, 0);
 	for (const auto piece : whiteTakenPieces)
 	{
 		sf::Sprite sprite;
 		switch (piece->getPieceType())
 		{
 		case PieceType::KING:
-			sprite.setTexture(this->whiteKingTexture);
+			sprite.setTexture(whiteKingTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->whiteKingSprites.push_back(sprite);
+			whiteKingSprites.push_back(sprite);
 			break;
 		case PieceType::QUEEN:
-			sprite.setTexture(this->whiteQueenTexture);
+			sprite.setTexture(whiteQueenTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->whiteQueenSprites.push_back(sprite);
+			whiteQueenSprites.push_back(sprite);
 			break;
 		case PieceType::ROOK:
-			sprite.setTexture(this->whiteRookTexture);
+			sprite.setTexture(whiteRookTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->whiteRookSprites.push_back(sprite);
+			whiteRookSprites.push_back(sprite);
 			break;
 		case PieceType::BISHOP:
-			sprite.setTexture(this->whiteBishopTexture);
+			sprite.setTexture(whiteBishopTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->whiteBishopSprites.push_back(sprite);
+			whiteBishopSprites.push_back(sprite);
 			break;
 		case PieceType::KNIGHT:
-			sprite.setTexture(this->whiteKnightTexture);
+			sprite.setTexture(whiteKnightTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->whiteKnightSprites.push_back(sprite);
+			whiteKnightSprites.push_back(sprite);
 			break;
 		case PieceType::PAWN:
-			sprite.setTexture(this->whitePawnTexture);
+			sprite.setTexture(whitePawnTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->whitePawnSprites.push_back(sprite);
+			whitePawnSprites.push_back(sprite);
 			break;
 		default:
 			throw std::runtime_error("Invalid piece type");
@@ -135,47 +135,47 @@ void TakenPiecesBlock::redo(MoveLog &moveLog)
 			position.x += TILE_WIDTH * 0.75f;
 	}
 
-	position = this->blackPieceAreaPosition + sf::Vector2f(0.125f * TILE_WIDTH, 0);
+	position = blackPieceAreaPosition + sf::Vector2f(0.125f * TILE_WIDTH, 0);
 	for (const auto piece : blackTakenPieces)
 	{
 		sf::Sprite sprite;
 		switch (piece->getPieceType())
 		{
 		case PieceType::KING:
-			sprite.setTexture(this->blackKingTexture);
+			sprite.setTexture(blackKingTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->blackKingSprites.push_back(sprite);
+			blackKingSprites.push_back(sprite);
 			break;
 		case PieceType::QUEEN:
-			sprite.setTexture(this->blackQueenTexture);
+			sprite.setTexture(blackQueenTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->blackQueenSprites.push_back(sprite);
+			blackQueenSprites.push_back(sprite);
 			break;
 		case PieceType::ROOK:
-			sprite.setTexture(this->blackRookTexture);
+			sprite.setTexture(blackRookTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->blackRookSprites.push_back(sprite);
+			blackRookSprites.push_back(sprite);
 			break;
 		case PieceType::BISHOP:
-			sprite.setTexture(this->blackBishopTexture);
+			sprite.setTexture(blackBishopTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->blackBishopSprites.push_back(sprite);
+			blackBishopSprites.push_back(sprite);
 			break;
 		case PieceType::KNIGHT:
-			sprite.setTexture(this->blackKnightTexture);
+			sprite.setTexture(blackKnightTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->blackKnightSprites.push_back(sprite);
+			blackKnightSprites.push_back(sprite);
 			break;
 		case PieceType::PAWN:
-			sprite.setTexture(this->blackPawnTexture);
+			sprite.setTexture(blackPawnTexture);
 			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
-			this->blackPawnSprites.push_back(sprite);
+			blackPawnSprites.push_back(sprite);
 			break;
 		default:
 			throw std::runtime_error("Invalid piece type");
@@ -189,29 +189,29 @@ void TakenPiecesBlock::redo(MoveLog &moveLog)
 
 void TakenPiecesBlock::draw(sf::RenderWindow &window)
 {
-	window.draw(this->takenPieceAreaRect);
-	for (const auto &sprite : this->blackPawnSprites)
+	window.draw(takenPieceAreaRect);
+	for (const auto &sprite : blackPawnSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->whitePawnSprites)
+	for (const auto &sprite : whitePawnSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->blackKnightSprites)
+	for (const auto &sprite : blackKnightSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->whiteKnightSprites)
+	for (const auto &sprite : whiteKnightSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->blackBishopSprites)
+	for (const auto &sprite : blackBishopSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->whiteBishopSprites)
+	for (const auto &sprite : whiteBishopSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->blackRookSprites)
+	for (const auto &sprite : blackRookSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->whiteRookSprites)
+	for (const auto &sprite : whiteRookSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->blackQueenSprites)
+	for (const auto &sprite : blackQueenSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->whiteQueenSprites)
+	for (const auto &sprite : whiteQueenSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->blackKingSprites)
+	for (const auto &sprite : blackKingSprites)
 		window.draw(sprite);
-	for (const auto &sprite : this->whiteKingSprites)
+	for (const auto &sprite : whiteKingSprites)
 		window.draw(sprite);
 }
