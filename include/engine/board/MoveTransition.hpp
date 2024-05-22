@@ -1,7 +1,9 @@
 #ifndef MOVETRANSITION_HPP
 #define MOVETRANSITION_HPP
 
-#include "Move.hpp"
+class Move;
+class Board;
+enum class MoveStatus;
 
 class MoveTransition
 {

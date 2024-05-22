@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-#include "../Alliance.hpp"
+#include <engine/Alliance.hpp>
 
 class Move;
 class Pawn;

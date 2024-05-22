@@ -1,7 +1,7 @@
 #ifndef ROOK_HPP
 #define ROOK_HPP
 
-#include "Piece.hpp"
+#include <engine/pieces/Piece.hpp>
 
 class Rook : public Piece
 {
