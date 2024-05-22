@@ -111,3 +111,8 @@ std::vector<Move *> Player::calculateKingCastles(const std::vector<Move *> playe
 {
 	throw std::logic_error("This function must be overridden!");
 }
+
+std::string Player::stringify() const
+{
+	throw std::logic_error("This function must be overridden!");
+}

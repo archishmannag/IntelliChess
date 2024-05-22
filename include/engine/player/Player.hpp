@@ -38,6 +38,7 @@ public:
 	virtual Alliance getPlayerAlliance() const;
 	virtual const Player *getOpponent() const;
 	virtual std::vector<Move *> calculateKingCastles(const std::vector<Move *> playerLegals, const std::vector<Move *> opponentLegals) const;
+	virtual std::string stringify() const;
 };
 
 #endif

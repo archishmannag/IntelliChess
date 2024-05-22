@@ -13,6 +13,7 @@ public:
 	Alliance getPlayerAlliance() const override;
 	const Player *getOpponent() const override;
 	std::vector<Move *> calculateKingCastles(const std::vector<Move *> playerLegals, const std::vector<Move *> opponentLegals) const override;
+	std::string stringify() const override;
 };
 
 #endif

@@ -54,3 +54,8 @@ std::vector<Move *> WhitePlayer::calculateKingCastles(const std::vector<Move *> 
 	}
 	return kingCastles;
 }
+
+std::string WhitePlayer::stringify() const
+{
+	return std::string("White");
+}
