@@ -1,7 +1,6 @@
 #ifndef MOVE_HPP
 #define MOVE_HPP
 
-#include <typeinfo>
 #include <string>
 
 enum class MoveStatus
@@ -14,6 +13,7 @@ enum class MoveStatus
 class Board;
 class Piece;
 class Rook;
+class Pawn;
 
 class Move
 {
@@ -32,6 +32,7 @@ public:
 	int getDestinationCoordinate() const;
 	int getCurrentCoordinate() const;
 	Piece *getMovedPiece() const;
+	Board *getBoard() const;
 	virtual bool isAttack() const;
 	virtual bool isCastlingMove() const;
 	virtual Piece *getAttackedPiece() const;
@@ -59,6 +60,23 @@ public:
 	AttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate);
 	bool isAttack() const override;
 	Piece *getAttackedPiece() const override;
+};
+
+class PawnPromotion : public Move
+{
+private:
+	Move *inputMove;
+	Pawn *promotedPawn;
+	Piece *promotedPiece;
+
+public:
+	PawnPromotion(Move *inputMove, Piece *promotedPiece);
+	bool operator==(const Move &other) const override;
+	Board *execute() const override;
+	bool isAttack() const override;
+	Piece *getAttackedPiece() const override;
+	Piece *getPromotedPiece() const;
+	std::string stringify() const override;
 };
 
 class MajorAttackMove : public AttackMove
@@ -140,9 +158,12 @@ public:
 	std::string stringify() const override;
 };
 
+enum class PieceType;
+
 namespace MoveFactory
 {
-	Move *createMove(Board *board, int currectCoordinate, int destinationCoordinate);
+	Move *createMove(Board *board, int currentCoordinate, int destinationCoordinate);
+	Move *createMove(Board *board, int currentCoordinate, int destinationCoordinate, PieceType promotedPieceType);
 } // namespace MoveFactory
 
 #endif

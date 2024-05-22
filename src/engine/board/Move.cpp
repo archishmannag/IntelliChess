@@ -38,6 +38,11 @@ Piece *Move::getMovedPiece() const
 	return const_cast<Piece *>(this->movedPiece);
 }
 
+Board *Move::getBoard() const
+{
+	return const_cast<Board *>(this->board);
+}
+
 bool Move::isAttack() const
 {
 	return false;
@@ -114,6 +119,53 @@ bool AttackMove::isAttack() const
 Piece *AttackMove::getAttackedPiece() const
 {
 	return const_cast<Piece *>(this->attackedPiece);
+}
+
+/*PawnPromotion*/
+
+PawnPromotion::PawnPromotion(Move *inputMove, Piece *promotedPiece) : Move(inputMove->getBoard(), inputMove->getMovedPiece(), inputMove->getDestinationCoordinate()), inputMove(inputMove), promotedPawn(dynamic_cast<Pawn *>(inputMove->getMovedPiece())), promotedPiece(promotedPiece) {}
+
+bool PawnPromotion::operator==(const Move &other) const
+{
+	if (this == &other)
+		return true;
+	if (const PawnPromotion *otherPawnPromotion = dynamic_cast<const PawnPromotion *>(&other))
+		return Move::operator==(other) /*&& *getPromotedPawn() == *otherPawnPromotion->getPromotedPawn()*/;
+	return false;
+}
+
+Board *PawnPromotion::execute() const
+{
+	Board *pawnMovedBoard = this->inputMove->execute();
+	BoardBuilder builder;
+	for (const auto piece : pawnMovedBoard->getCurrentPlayer()->getActivePieces())
+		if (!this->promotedPawn->operator==(*piece))
+			builder.setPiece(piece);
+	for (const auto piece : pawnMovedBoard->getCurrentPlayer()->getOpponent()->getActivePieces())
+		builder.setPiece(piece);
+	builder.setPiece(this->promotedPiece->movePiece(this));
+	builder.setMoveMaker(pawnMovedBoard->getCurrentPlayer()->getPlayerAlliance());
+	return builder.build();
+}
+
+bool PawnPromotion::isAttack() const
+{
+	return this->inputMove->isAttack();
+}
+
+Piece *PawnPromotion::getAttackedPiece() const
+{
+	return this->inputMove->getAttackedPiece();
+}
+
+Piece *PawnPromotion::getPromotedPiece() const
+{
+	return this->promotedPiece;
+}
+
+std::string PawnPromotion::stringify() const
+{
+	return inputMove->stringify() + '=' + promotedPiece->stringify();
 }
 
 /*MajorAttackMove*/
@@ -321,11 +373,26 @@ std::string NullMove::stringify() const
 
 /*Namespace MoveFactory*/
 
-Move *MoveFactory::createMove(Board *board, int currectCoordinate, int destinationCoordinate)
+Move *MoveFactory::createMove(Board *board, int currentCoordinate, int destinationCoordinate)
 {
 	Move *selectedMove = nullptr;
 	for (const auto move : board->getAllLegalMoves())
-		if (move->getCurrentCoordinate() == currectCoordinate && move->getDestinationCoordinate() == destinationCoordinate)
+		if (move->getCurrentCoordinate() == currentCoordinate && move->getDestinationCoordinate() == destinationCoordinate)
+		{
+			selectedMove = move;
+			break;
+		}
+	return selectedMove;
+}
+
+Move *MoveFactory::createMove(Board *board, int currentCoordinate, int destinationCoordinate, PieceType promotedPieceType)
+{
+	Move *selectedMove = nullptr;
+	for (const auto move : board->getAllLegalMoves())
+		if (move->getCurrentCoordinate() == currentCoordinate &&
+			move->getDestinationCoordinate() == destinationCoordinate &&
+			typeid(*move) == typeid(PawnPromotion) &&
+			dynamic_cast<PawnPromotion *>(move)->getPromotedPiece()->getPieceType() == promotedPieceType)
 		{
 			selectedMove = move;
 			break;
