@@ -1,10 +1,10 @@
-#include "../../../include/engine/player/BlackPlayer.hpp"
-#include "../../../include/engine/board/Move.hpp"
-#include "../../../include/engine/board/Tile.hpp"
-#include "../../../include/engine/board/Board.hpp"
-#include "../../../include/engine/pieces/Piece.hpp"
-#include "../../../include/engine/pieces/King.hpp"
-#include "../../../include/engine/pieces/Rook.hpp"
+#include <engine/player/BlackPlayer.hpp>
+#include <engine/board/Move.hpp>
+#include <engine/board/Tile.hpp>
+#include <engine/board/Board.hpp>
+#include <engine/pieces/Piece.hpp>
+#include <engine/pieces/King.hpp>
+#include <engine/pieces/Rook.hpp>
 
 BlackPlayer::BlackPlayer(Board *board, std::vector<Move *> whiteStandardLegalMoves, std::vector<Move *> blackStandardLegalMoves) : Player(board)
 {

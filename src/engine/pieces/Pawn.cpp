@@ -1,8 +1,12 @@
-#include "../../../include/engine/pieces/Pawn.hpp"
-#include "../../../include/engine/board/Move.hpp"
-#include "../../../include/engine/board/Tile.hpp"
-#include "../../../include/engine/board/Board.hpp"
-#include "../../../include/engine/board/BoardUtils.hpp"
+#include <engine/pieces/Pawn.hpp>
+#include <engine/pieces/Queen.hpp>
+#include <engine/pieces/Rook.hpp>
+#include <engine/pieces/Knight.hpp>
+#include <engine/pieces/Bishop.hpp>
+#include <engine/board/Move.hpp>
+#include <engine/board/Tile.hpp>
+#include <engine/board/Board.hpp>
+#include <engine/board/BoardUtils.hpp>
 
 const int Pawn::CANDIDATE_MOVE_COORDINATES[] = {8, 16, 7, 9};
 

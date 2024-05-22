@@ -1,8 +1,8 @@
-#include "../../../include/engine/pieces/Rook.hpp"
-#include "../../../include/engine/board/Move.hpp"
-#include "../../../include/engine/board/Tile.hpp"
-#include "../../../include/engine/board/Board.hpp"
-#include "../../../include/engine/board/BoardUtils.hpp"
+#include <engine/pieces/Rook.hpp>
+#include <engine/board/Move.hpp>
+#include <engine/board/Tile.hpp>
+#include <engine/board/Board.hpp>
+#include <engine/board/BoardUtils.hpp>
 
 const int Rook::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-8, -1, 1, 8};
 

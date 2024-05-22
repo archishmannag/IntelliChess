@@ -1,15 +1,15 @@
-#include "../../../include/engine/board/Board.hpp"
-#include "../../../include/engine/pieces/Piece.hpp"
-#include "../../../include/engine/pieces/Pawn.hpp"
-#include "../../../include/engine/pieces/Rook.hpp"
-#include "../../../include/engine/pieces/Knight.hpp"
-#include "../../../include/engine/pieces/Bishop.hpp"
-#include "../../../include/engine/pieces/Queen.hpp"
-#include "../../../include/engine/pieces/King.hpp"
-#include "../../../include/engine/board/Move.hpp"
-#include "../../../include/engine/board/Tile.hpp"
-#include "../../../include/engine/player/WhitePlayer.hpp"
-#include "../../../include/engine/player/BlackPlayer.hpp"
+#include <engine/board/Board.hpp>
+#include <engine/pieces/Piece.hpp>
+#include <engine/pieces/Pawn.hpp>
+#include <engine/pieces/Rook.hpp>
+#include <engine/pieces/Knight.hpp>
+#include <engine/pieces/Bishop.hpp>
+#include <engine/pieces/Queen.hpp>
+#include <engine/pieces/King.hpp>
+#include <engine/board/Move.hpp>
+#include <engine/board/Tile.hpp>
+#include <engine/player/WhitePlayer.hpp>
+#include <engine/player/BlackPlayer.hpp>
 
 /* BoardBuilder */
 

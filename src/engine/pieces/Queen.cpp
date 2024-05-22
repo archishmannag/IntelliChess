@@ -1,8 +1,8 @@
-#include "../../../include/engine/pieces/Queen.hpp"
-#include "../../../include/engine/board/Move.hpp"
-#include "../../../include/engine/board/Tile.hpp"
-#include "../../../include/engine/board/Board.hpp"
-#include "../../../include/engine/board/BoardUtils.hpp"
+#include <engine/pieces/Queen.hpp>
+#include <engine/board/Move.hpp>
+#include <engine/board/Tile.hpp>
+#include <engine/board/Board.hpp>
+#include <engine/board/BoardUtils.hpp>
 
 const int Queen::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 

@@ -1,8 +1,8 @@
-#include "../../../include/engine/pieces/King.hpp"
-#include "../../../include/engine/board/Move.hpp"
-#include "../../../include/engine/board/Tile.hpp"
-#include "../../../include/engine/board/Board.hpp"
-#include "../../../include/engine/board/BoardUtils.hpp"
+#include <engine/pieces/King.hpp>
+#include <engine/board/Move.hpp>
+#include <engine/board/Tile.hpp>
+#include <engine/board/Board.hpp>
+#include <engine/board/BoardUtils.hpp>
 
 const int King::CANDIDATE_MOVE_COORDINATES[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 

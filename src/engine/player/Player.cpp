@@ -1,11 +1,12 @@
 #include <stdexcept>
 #include <algorithm>
-#include "../../../include/engine/player/Player.hpp"
-#include "../../../include/engine/board/Move.hpp"
-#include "../../../include/engine/board/Board.hpp"
-#include "../../../include/engine/pieces/Piece.hpp"
-#include "../../../include/engine/pieces/King.hpp"
-#include "../../../include/engine/board/MoveTransition.hpp"
+
+#include <engine/player/Player.hpp>
+#include <engine/board/Move.hpp>
+#include <engine/board/Board.hpp>
+#include <engine/pieces/Piece.hpp>
+#include <engine/pieces/King.hpp>
+#include <engine/board/MoveTransition.hpp>
 
 Player::Player(Board *board) : board(board)
 {

@@ -1,12 +1,12 @@
 #include <stdexcept>
 
-#include "../../../include/engine/board/Board.hpp"
-#include "../../../include/engine/board/BoardUtils.hpp"
-#include "../../../include/engine/board/Move.hpp"
-#include "../../../include/engine/pieces/Piece.hpp"
-#include "../../../include/engine/pieces/Pawn.hpp"
-#include "../../../include/engine/pieces/Rook.hpp"
-#include "../../../include/engine/player/Player.hpp"
+#include <engine/board/Board.hpp>
+#include <engine/board/BoardUtils.hpp>
+#include <engine/board/Move.hpp>
+#include <engine/pieces/Piece.hpp>
+#include <engine/pieces/Pawn.hpp>
+#include <engine/pieces/Rook.hpp>
+#include <engine/player/Player.hpp>
 
 /*Move*/
 

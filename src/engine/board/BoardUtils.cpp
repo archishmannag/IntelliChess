@@ -1,4 +1,4 @@
-#include "../../../include/engine/board/BoardUtils.hpp"
+#include <engine/board/BoardUtils.hpp>
 
 namespace
 {

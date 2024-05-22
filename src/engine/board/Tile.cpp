@@ -1,8 +1,8 @@
 #include <stdexcept>
 
-#include "../../../include/engine/board/Tile.hpp"
-#include "../../../include/engine/Alliance.hpp"
-#include "../../../include/engine/pieces/Piece.hpp"
+#include <engine/board/Tile.hpp>
+#include <engine/Alliance.hpp>
+#include <engine/pieces/Piece.hpp>
 
 /* Tile */
 

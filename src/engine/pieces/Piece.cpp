@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "../../../include/engine/pieces/Piece.hpp"
+#include <engine/pieces/Piece.hpp>
 
 Piece::Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType, bool isFirstMove) : piecePosition(piecePosition), pieceAlliance(pieceAlliance), isFirstMove(isFirstMove), pieceType(pieceType){};
 
