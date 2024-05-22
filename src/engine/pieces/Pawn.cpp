@@ -29,7 +29,17 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 			continue;
 
 		if (currentCandidateOffset == 8 && !board.getTile(candidateDestinationCoordinate)->isTileOccupied())
-			legalMoves.push_back(new PawnMove(&board, this, candidateDestinationCoordinate));
+		{
+			if (AllianceUtils::isPawnPromotionSquare(this->pieceAlliance, candidateDestinationCoordinate))
+			{
+				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this->pieceAlliance)));
+				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Rook(candidateDestinationCoordinate, this->pieceAlliance)));
+				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Knight(candidateDestinationCoordinate, this->pieceAlliance)));
+				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Bishop(candidateDestinationCoordinate, this->pieceAlliance)));
+			}
+			else
+				legalMoves.push_back(new PawnMove(&board, this, candidateDestinationCoordinate));
+		}
 		else if (currentCandidateOffset == 16 && this->getIsFirstMove() && ((BoardUtils::SECOND_ROW[this->piecePosition] && AllianceUtils::isBlack(this->pieceAlliance)) || (BoardUtils::SEVENTH_ROW[this->piecePosition] && AllianceUtils::isWhite(this->pieceAlliance))))
 		{
 			behindCandidateDestinationCoordinate = this->piecePosition + (AllianceUtils::getDirection(this->pieceAlliance) * 8);
@@ -44,7 +54,17 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 			{
 				Piece *pieceOnCandidate = board.getTile(candidateDestinationCoordinate)->getPiece();
 				if (this->pieceAlliance != pieceOnCandidate->getPieceAlliance())
-					legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
+				{
+					if (AllianceUtils::isPawnPromotionSquare(this->pieceAlliance, candidateDestinationCoordinate))
+					{
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this->pieceAlliance)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Rook(candidateDestinationCoordinate, this->pieceAlliance)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Knight(candidateDestinationCoordinate, this->pieceAlliance)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Bishop(candidateDestinationCoordinate, this->pieceAlliance)));
+					}
+					else
+						legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
+				}
 			}
 			else if (board.getEnPassantPawn() != nullptr && board.getEnPassantPawn()->getPiecePosition() == this->piecePosition + AllianceUtils::getOppositeDirection(this->pieceAlliance))
 			{
@@ -59,7 +79,17 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 			{
 				Piece *pieceOnCandidate = board.getTile(candidateDestinationCoordinate)->getPiece();
 				if (this->pieceAlliance != pieceOnCandidate->getPieceAlliance())
-					legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
+				{
+					if (AllianceUtils::isPawnPromotionSquare(this->pieceAlliance, candidateDestinationCoordinate))
+					{
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this->pieceAlliance)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Rook(candidateDestinationCoordinate, this->pieceAlliance)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Knight(candidateDestinationCoordinate, this->pieceAlliance)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Bishop(candidateDestinationCoordinate, this->pieceAlliance)));
+					}
+					else
+						legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
+				}
 			}
 			else if (board.getEnPassantPawn() != nullptr && board.getEnPassantPawn()->getPiecePosition() == this->piecePosition - AllianceUtils::getOppositeDirection(this->pieceAlliance))
 			{

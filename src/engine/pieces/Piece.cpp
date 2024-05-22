@@ -8,9 +8,11 @@ bool Piece::operator==(const Piece &other)
 {
 	if (this == &other)
 		return true;
-	if (typeid(*this) != typeid(other))
-		return false;
-	return this->piecePosition == other.getPiecePosition() && this->pieceAlliance == other.getPieceAlliance() && this->pieceType == other.getPieceType() && this->isFirstMove == other.getIsFirstMove();
+	else
+		return this->piecePosition == other.getPiecePosition() &&
+			   this->pieceAlliance == other.getPieceAlliance() &&
+			   this->pieceType == other.getPieceType() &&
+			   this->isFirstMove == other.getIsFirstMove();
 }
 
 std::vector<Move *> Piece::calculateLegalMoves(Board &board)
