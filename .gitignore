@@ -40,8 +40,5 @@
 # Build directory
 build
 
-# Old files from previous builds, which will be removed
-holup
-
 # Exclude the lib directory from these rules to ship the library files
 !/lib/
