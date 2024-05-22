@@ -35,11 +35,21 @@ namespace
 
 std::array<bool, 64> BoardUtils::FIRST_COLUMN = initColumn(0);
 std::array<bool, 64> BoardUtils::SECOND_COLUMN = initColumn(1);
+std::array<bool, 64> BoardUtils::THIRD_COLUMN = initColumn(2);
+std::array<bool, 64> BoardUtils::FOURTH_COLUMN = initColumn(3);
+std::array<bool, 64> BoardUtils::FIFTH_COLUMN = initColumn(4);
+std::array<bool, 64> BoardUtils::SIXTH_COLUMN = initColumn(5);
 std::array<bool, 64> BoardUtils::SEVENTH_COLUMN = initColumn(6);
 std::array<bool, 64> BoardUtils::EIGHTH_COLUMN = initColumn(7);
 
+std::array<bool, 64> BoardUtils::FIRST_ROW = initRow(0);
 std::array<bool, 64> BoardUtils::SECOND_ROW = initRow(1);
+std::array<bool, 64> BoardUtils::THIRD_ROW = initRow(2);
+std::array<bool, 64> BoardUtils::FOURTH_ROW = initRow(3);
+std::array<bool, 64> BoardUtils::FIFTH_ROW = initRow(4);
+std::array<bool, 64> BoardUtils::SIXTH_ROW = initRow(5);
 std::array<bool, 64> BoardUtils::SEVENTH_ROW = initRow(6);
+std::array<bool, 64> BoardUtils::EIGHTH_ROW = initRow(7);
 
 std::array<std::string, 64> BoardUtils::ALGEBRAIC_NOTATION = BoardUtils::initializeAlgebraicNotation();
 std::map<std::string, int> BoardUtils::POSITION_TO_COORDINATE = BoardUtils::initializePositionToCoordinateMap();

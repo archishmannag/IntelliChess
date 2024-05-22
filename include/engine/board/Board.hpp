@@ -58,6 +58,7 @@ public:
 	Tile *getTile(int tileCoordinate) const;
 	std::vector<Piece *> getWhitePieces() const;
 	std::vector<Piece *> getBlackPieces() const;
+	std::vector<Piece *> getAllPieces() const;
 	const Player *getWhitePlayer() const;
 	const Player *getBlackPlayer() const;
 	Player *getCurrentPlayer() const;

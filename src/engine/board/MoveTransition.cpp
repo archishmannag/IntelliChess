@@ -9,6 +9,11 @@ MoveStatus MoveTransition::getMoveStatus() const
 	return this->moveStatus;
 }
 
+Move *MoveTransition::getMove() const
+{
+	return const_cast<Move *>(this->move);
+}
+
 Board *MoveTransition::getTransitionBoard() const
 {
 	return const_cast<Board *>(this->transitionBoard);

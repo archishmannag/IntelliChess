@@ -53,13 +53,8 @@ Board *BoardBuilder::build()
 
 /* Board */
 
-/**
- * @brief Construct a new Board object
- *
- * @param builder An instance of BoardBuilder used to instantiate the Board object
- */
-Board::Board(BoardBuilder &builder) : gameBoard(Board::createGameBoard(builder)),
-									  enPassantPawn(builder.getEnPassantPawn()),
+Board::Board(BoardBuilder &builder) : enPassantPawn(builder.getEnPassantPawn()),
+									  gameBoard(Board::createGameBoard(builder)),
 									  whitePieces(Board::calculateActivePieces(gameBoard, Alliance::WHITE)),
 									  blackPieces(Board::calculateActivePieces(gameBoard, Alliance::BLACK)),
 									  whitePlayer(new WhitePlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))),
@@ -119,6 +114,14 @@ std::vector<Piece *> Board::getWhitePieces() const
 std::vector<Piece *> Board::getBlackPieces() const
 {
 	return this->blackPieces;
+}
+
+std::vector<Piece *> Board::getAllPieces() const
+{
+	std::vector<Piece *> allPieces;
+	allPieces.insert(allPieces.end(), this->whitePieces.begin(), this->whitePieces.end());
+	allPieces.insert(allPieces.end(), this->blackPieces.begin(), this->blackPieces.end());
+	return allPieces;
 }
 
 const Player *Board::getWhitePlayer() const
