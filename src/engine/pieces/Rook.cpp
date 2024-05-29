@@ -6,10 +6,6 @@
 
 const int Rook::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-8, -1, 1, 8};
 
-Rook::Rook(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::ROOK, true)
-{
-}
-
 Rook::Rook(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::ROOK, isFirstMove)
 {
 }
@@ -47,7 +43,7 @@ std::vector<Move *> Rook::calculateLegalMoves(Board &board)
 
 Rook *Rook::movePiece(const Move *move) const
 {
-	return new Rook(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance());
+	return new Rook(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance(), false);
 }
 
 bool Rook::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)

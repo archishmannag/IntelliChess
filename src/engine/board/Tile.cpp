@@ -35,17 +35,17 @@ int Tile::getTileCoordinate() const
 
 bool Tile::isTileOccupied() const
 {
-	throw std::logic_error("Not implemented. Use derived class functions.1");
+	throw std::logic_error("Not implemented. Use derived class functions.");
 };
 
 Piece *Tile::getPiece() const
 {
-	throw std::logic_error("Not implemented. Use derived class functions.2");
+	throw std::logic_error("Not implemented. Use derived class functions.");
 };
 
 std::string Tile::stringify() const
 {
-	throw std::logic_error("Not implemented. Use derived class functions.3");
+	throw std::logic_error("Not implemented. Use derived class functions.");
 };
 
 /* EmptyTile */

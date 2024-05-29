@@ -10,14 +10,17 @@ enum class player_type
 	COMPUTER
 };
 
+std::string to_string(player_type player);
+
 class Player;
 class GameBoard;
 
 class game_setup
 {
 private:
-	player_type white_player, black_player;
-	int depth;
+	player_type white_player = player_type::HUMAN,
+				black_player = player_type::HUMAN;
+	unsigned int depth;
 
 	sf::RectangleShape game_setup_rect;
 	sf::Font font;
@@ -29,18 +32,17 @@ private:
 	sf::RectangleShape depth_field_rect;
 	sf::VertexArray depth_increment, depth_decrement;
 
-	std::function<void(const player_type &, const player_type &, const int)> setup_game;
-	std::function<void()> cancel_game;
+	std::function<void()> notify_parent;
 
 public:
-	game_setup(std::function<void(const player_type &, const player_type &, const int)> setup_game, std::function<void()> cancel_game);
+	game_setup(std::function<void()> notify_parent);
 	void update(sf::Event event, sf::Vector2i mousePosition);
 	void draw(sf::RenderWindow &window);
 
 	bool is_AI_player(Player *player) const;
 	player_type get_white_player_type() const;
 	player_type get_black_player_type() const;
-	int get_search_depth() const;
+	unsigned int get_search_depth() const;
 };
 
 #endif

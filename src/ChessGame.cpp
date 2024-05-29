@@ -1,15 +1,23 @@
 #include <iostream>
 
-#include "../include/engine/board/Board.hpp"
-#include "../include/gui/GameBoard.hpp"
+#include <gui/GameBoard.hpp>
 
 int main(int argc, char *argv[])
 {
-	GameBoard gameBoard;
-	while (gameBoard.isRunning())
+	try
 	{
-		gameBoard.render();
-		gameBoard.update();
+		GameBoard gameBoard;
+		while (gameBoard.isRunning())
+		{
+			gameBoard.render();
+			gameBoard.update();
+		}
 	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << '\n';
+		return 1;
+	}
+
 	return 0;
 }

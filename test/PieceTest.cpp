@@ -17,8 +17,6 @@
 #include <engine/pieces/Rook.hpp>
 #include <engine/player/Player.hpp>
 
-#include <gui/GameBoard.hpp>
-
 TEST(PieceTest, testMiddleQueenOnEmptyBoard)
 {
 	BoardBuilder builder;

@@ -28,9 +28,10 @@ public:
 	void setPiece(Piece *piece);
 	void setEnPassantPawn(Pawn *enPassantPawn);
 	void setMoveMaker(Alliance moveMaker);
-	void setMoveTransition(const Move *transitionMove);
+	void setTransitionMove(const Move *transitionMove);
 	Alliance getNextMoveMaker() const;
 	Pawn *getEnPassantPawn() const;
+	Move *getTransitionMove() const;
 	Board *build();
 };
 
@@ -40,6 +41,7 @@ private:
 	friend class BoardBuilder;
 
 	Pawn *enPassantPawn = nullptr;
+	Move *transitionMove = nullptr;
 
 	std::vector<Tile *> gameBoard;
 	std::vector<Piece *> whitePieces;

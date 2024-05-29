@@ -4,10 +4,6 @@
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
 
-Knight::Knight(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::KNIGHT, true)
-{
-}
-
 Knight::Knight(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::KNIGHT, isFirstMove)
 {
 }
@@ -46,7 +42,7 @@ std::vector<Move *> Knight::calculateLegalMoves(Board &board)
 
 Knight *Knight::movePiece(const Move *move) const
 {
-	return new Knight(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance());
+	return new Knight(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance(), false);
 }
 
 bool Knight::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)

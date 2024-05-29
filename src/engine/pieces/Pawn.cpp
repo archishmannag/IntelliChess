@@ -10,10 +10,6 @@
 
 const int Pawn::CANDIDATE_MOVE_COORDINATES[] = {8, 16, 7, 9};
 
-Pawn::Pawn(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::PAWN, true)
-{
-}
-
 Pawn::Pawn(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::PAWN, isFirstMove)
 {
 }
@@ -32,10 +28,10 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 		{
 			if (AllianceUtils::isPawnPromotionSquare(this->pieceAlliance, candidateDestinationCoordinate))
 			{
-				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this->pieceAlliance)));
-				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Rook(candidateDestinationCoordinate, this->pieceAlliance)));
-				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Knight(candidateDestinationCoordinate, this->pieceAlliance)));
-				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Bishop(candidateDestinationCoordinate, this->pieceAlliance)));
+				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this->pieceAlliance, false)));
+				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Rook(candidateDestinationCoordinate, this->pieceAlliance, false)));
+				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Knight(candidateDestinationCoordinate, this->pieceAlliance, false)));
+				legalMoves.push_back(new PawnPromotion(new PawnMove(&board, this, candidateDestinationCoordinate), new Bishop(candidateDestinationCoordinate, this->pieceAlliance, false)));
 			}
 			else
 				legalMoves.push_back(new PawnMove(&board, this, candidateDestinationCoordinate));
@@ -57,10 +53,10 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 				{
 					if (AllianceUtils::isPawnPromotionSquare(this->pieceAlliance, candidateDestinationCoordinate))
 					{
-						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this->pieceAlliance)));
-						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Rook(candidateDestinationCoordinate, this->pieceAlliance)));
-						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Knight(candidateDestinationCoordinate, this->pieceAlliance)));
-						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Bishop(candidateDestinationCoordinate, this->pieceAlliance)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this->pieceAlliance, false)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Rook(candidateDestinationCoordinate, this->pieceAlliance, false)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Knight(candidateDestinationCoordinate, this->pieceAlliance, false)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Bishop(candidateDestinationCoordinate, this->pieceAlliance, false)));
 					}
 					else
 						legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
@@ -82,10 +78,10 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 				{
 					if (AllianceUtils::isPawnPromotionSquare(this->pieceAlliance, candidateDestinationCoordinate))
 					{
-						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this->pieceAlliance)));
-						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Rook(candidateDestinationCoordinate, this->pieceAlliance)));
-						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Knight(candidateDestinationCoordinate, this->pieceAlliance)));
-						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Bishop(candidateDestinationCoordinate, this->pieceAlliance)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this->pieceAlliance, false)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Rook(candidateDestinationCoordinate, this->pieceAlliance, false)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Knight(candidateDestinationCoordinate, this->pieceAlliance, false)));
+						legalMoves.push_back(new PawnPromotion(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate), new Bishop(candidateDestinationCoordinate, this->pieceAlliance, false)));
 					}
 					else
 						legalMoves.push_back(new PawnAttackMove(&board, this, pieceOnCandidate, candidateDestinationCoordinate));
@@ -104,5 +100,5 @@ std::vector<Move *> Pawn::calculateLegalMoves(Board &board)
 
 Pawn *Pawn::movePiece(const Move *move) const
 {
-	return new Pawn(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance());
+	return new Pawn(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance(), false);
 }

@@ -14,8 +14,7 @@ private:
 	static bool isEighthColumnExclusion(const int currentPosition, const int candidateOffset);
 
 public:
-	Knight(const int piecePosition, const Alliance pieceAlliance);
-	Knight(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove);
+	Knight(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove = true);
 
 	std::vector<Move *> calculateLegalMoves(Board &board) override;
 	Knight *movePiece(const Move *move) const override;

@@ -6,11 +6,7 @@
 
 const int King::CANDIDATE_MOVE_COORDINATES[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
-King::King(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::KING, true)
-{
-}
-
-King::King(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::KING, isFirstMove)
+King::King(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove, const bool isCastled) : Piece(piecePosition, pieceAlliance, PieceType::KING, isFirstMove), isCastled(isCastled)
 {
 }
 
@@ -41,7 +37,12 @@ std::vector<Move *> King::calculateLegalMoves(Board &board)
 
 King *King::movePiece(const Move *move) const
 {
-	return new King(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance());
+	return new King(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance(), false, move->isCastlingMove());
+}
+
+bool King::getIsCastled() const
+{
+	return this->isCastled;
 }
 
 bool King::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)

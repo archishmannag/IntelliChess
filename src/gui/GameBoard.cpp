@@ -1,7 +1,10 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <memory>
 #include <algorithm>
 #include <stdexcept>
+#include <future>
+#include <functional>
 
 #include <gui/GameBoard.hpp>
 #include <gui/Menu.hpp>
@@ -16,6 +19,8 @@
 #include <engine/board/MoveTransition.hpp>
 #include <engine/player/Player.hpp>
 #include <engine/pieces/King.hpp>
+#include <engine/player/ai/MoveStrategy.hpp>
+#include <engine/player/ai/MiniMax.hpp>
 
 /* TileBlock */
 
@@ -54,6 +59,12 @@ void TileBlock::setTileRectFillColor(sf::Color color)
 }
 
 /* MoveLog */
+
+MoveLog::~MoveLog()
+{
+	for (auto move : this->moves)
+		delete move;
+}
 
 std::vector<Move *> MoveLog::getMoves() const
 {
@@ -105,7 +116,6 @@ GameBoard::~GameBoard()
 	delete this->board;
 	delete this->sourceTile;
 	delete this->destinationTile;
-	delete this->movedPiece;
 	delete this->window;
 }
 
@@ -140,17 +150,15 @@ void GameBoard::init()
 
 	this->gameHistoryBlock = std::make_unique<GameHistoryBlock>();
 
-	gameSetup = std::make_unique<game_setup>([this](player_type white_player_type, player_type black_player_type, int depth) -> void
-											 { this->is_game_setup_open = false; },
-											 [this]() -> void
+	gameSetup = std::make_unique<game_setup>([this]() -> void
 											 {
-												 this->is_game_setup_open = false;
-											 });
+												this->is_game_setup_open = false;
+												observe(); });
+
+	ai = std::make_unique<ai_move_generator>(this);
 
 	for (int i = 0; i < 64; i++)
-	{
 		this->tileBlocks.push_back(TileBlock(i));
-	}
 
 	if (
 		!this->blackPawnTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackPawn.png") ||
@@ -374,6 +382,7 @@ void GameBoard::moveHandler(sf::Vector2i mousePosition)
 							{
 								this->board = transition.getTransitionBoard();
 								this->moveLog.addMove(move);
+								is_move_made = true;
 								this->takenPiecesBlock->redo(this->moveLog);
 								this->gameHistoryBlock->redo(this->board, this->moveLog);
 							}
@@ -394,6 +403,7 @@ void GameBoard::moveHandler(sf::Vector2i mousePosition)
 							{
 								this->board = transition.getTransitionBoard();
 								this->moveLog.addMove(move);
+								is_move_made = true;
 								this->takenPiecesBlock->redo(this->moveLog);
 								this->gameHistoryBlock->redo(this->board, this->moveLog);
 							}
@@ -407,12 +417,33 @@ void GameBoard::moveHandler(sf::Vector2i mousePosition)
 	}
 }
 
+void GameBoard::observe()
+{
+	// std::cout << to_string(gameSetup->get_white_player_type()) << " vs " << to_string(gameSetup->get_black_player_type()) << std::endl;
+	is_move_made = false;
+	if (board->getCurrentPlayer()->isInCheckMate())
+	{
+		std::cout << "Checkmate!" << std::endl;
+	}
+	else if (board->getCurrentPlayer()->isInStaleMate())
+	{
+		std::cout << "Stalemate!" << std::endl;
+	}
+	else if (gameSetup->is_AI_player(board->getCurrentPlayer()) &&
+			 !board->getCurrentPlayer()->isInCheckMate() &&
+			 !board->getCurrentPlayer()->isInStaleMate())
+	{
+		std::cout << board->getCurrentPlayer()->stringify() << " is thinking..." << std::endl;
+		ai->run();
+	}
+}
+
 bool isPawnPromotable(GameBoard &gameBoard)
 {
 	if (gameBoard.movedPiece->getPieceAlliance() == Alliance::WHITE)
-		return BoardUtils::FIRST_ROW[gameBoard.destinationTile->getTileCoordinate()];
+		return BoardUtils::SECOND_ROW[gameBoard.sourceTile->getTileCoordinate()] && BoardUtils::FIRST_ROW[gameBoard.destinationTile->getTileCoordinate()];
 	else
-		return BoardUtils::EIGHTH_ROW[gameBoard.destinationTile->getTileCoordinate()];
+		return BoardUtils::SEVENTH_ROW[gameBoard.sourceTile->getTileCoordinate()] && BoardUtils::EIGHTH_ROW[gameBoard.destinationTile->getTileCoordinate()];
 }
 
 void GameBoard::updateMousePosition()
@@ -454,7 +485,11 @@ std::vector<int> GameBoard::legalMoveDestinations()
 	std::vector<int> moveDestinations;
 	if (movedPiece != nullptr && movedPiece->getPieceAlliance() == this->board->getCurrentPlayer()->getPlayerAlliance())
 	{
-		for (const auto move : this->movedPiece->calculateLegalMoves(*this->board))
+		auto legalMoves = this->board->getCurrentPlayer()->getLegalMoves();
+		legalMoves.erase(std::remove_if(legalMoves.begin(), legalMoves.end(), [this](Move *move)
+										{ return !(*move->getMovedPiece() == *this->movedPiece); }),
+						 legalMoves.end());
+		for (const auto move : legalMoves)
 			moveDestinations.push_back(move->getDestinationCoordinate());
 	}
 	return moveDestinations;
@@ -463,6 +498,8 @@ std::vector<int> GameBoard::legalMoveDestinations()
 void GameBoard::update()
 {
 	processEvents();
+	if (is_move_made)
+		observe();
 	updateMousePosition();
 	updateTileBlocks();
 }
@@ -616,4 +653,35 @@ void GameBoard::render()
 		gameSetup->draw(*this->window);
 
 	this->window->display();
+}
+
+/* GameBoard::ai_move_generator */
+
+GameBoard::ai_move_generator::ai_move_generator(GameBoard *parent) : parent(parent) {}
+
+void GameBoard::ai_move_generator::run()
+{
+	auto future = std::async(std::launch::async, [this]
+							 { return this->get_best_move(); });
+	auto best_move = future.get();
+	done(best_move);
+}
+
+Move *GameBoard::ai_move_generator::get_best_move()
+{
+	std::unique_ptr<MoveStrategy> mini_max = std::make_unique<MiniMax>(parent->gameSetup->get_search_depth());
+	Move *best_move = mini_max->execute(parent->board);
+	return best_move;
+}
+
+void GameBoard::ai_move_generator::done(Move *best_move)
+{
+	parent->board = parent->board->getCurrentPlayer()->makeMove(best_move).getTransitionBoard();
+	parent->moveLog.addMove(best_move);
+	parent->takenPiecesBlock->redo(parent->moveLog);
+	parent->gameHistoryBlock->redo(parent->board, parent->moveLog);
+	parent->render();
+	parent->update();
+	if (parent->isRunning())
+		parent->is_move_made = true;
 }

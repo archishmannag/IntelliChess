@@ -6,10 +6,6 @@
 
 const int Queen::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
-Queen::Queen(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::QUEEN, true)
-{
-}
-
 Queen::Queen(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::QUEEN, isFirstMove)
 {
 }
@@ -47,7 +43,7 @@ std::vector<Move *> Queen::calculateLegalMoves(Board &board)
 
 Queen *Queen::movePiece(const Move *move) const
 {
-	return new Queen(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance());
+	return new Queen(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance(), false);
 }
 
 bool Queen::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)

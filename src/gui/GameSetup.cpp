@@ -2,7 +2,20 @@
 #include <engine/player/Player.hpp>
 #include <engine/Alliance.hpp>
 
-game_setup::game_setup(std::function<void(const player_type &, const player_type &, const int)> setup_game, std::function<void()> cancel_game) : setup_game(setup_game), cancel_game(cancel_game)
+std::string to_string(player_type player)
+{
+	switch (player)
+	{
+	case player_type::HUMAN:
+		return "Human";
+	case player_type::COMPUTER:
+		return "Computer";
+	default:
+		return "Unknown";
+	}
+}
+
+game_setup::game_setup(std::function<void()> notify_parent) : notify_parent(notify_parent)
 {
 	if (!font.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/fonts/arial.ttf"))
 		throw std::runtime_error("Failed to load font!");
@@ -116,22 +129,22 @@ void game_setup::update(sf::Event event, sf::Vector2i mousePosition)
 {
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left)
 	{
-		if (white_human.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+		if (white_human.getGlobalBounds().contains(mousePosition.x, mousePosition.y) || white_human_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
 		{
 			white_human.setFillColor(sf::Color(200, 200, 200, 100));
 			white_computer.setFillColor(sf::Color::White);
 		}
-		else if (white_computer.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+		else if (white_computer.getGlobalBounds().contains(mousePosition.x, mousePosition.y) || white_computer_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
 		{
 			white_human.setFillColor(sf::Color::White);
 			white_computer.setFillColor(sf::Color(200, 200, 200, 100));
 		}
-		else if (black_human.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+		else if (black_human.getGlobalBounds().contains(mousePosition.x, mousePosition.y) || black_human_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
 		{
 			black_human.setFillColor(sf::Color(200, 200, 200, 100));
 			black_computer.setFillColor(sf::Color::White);
 		}
-		else if (black_computer.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+		else if (black_computer.getGlobalBounds().contains(mousePosition.x, mousePosition.y) || black_computer_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
 		{
 			black_human.setFillColor(sf::Color::White);
 			black_computer.setFillColor(sf::Color(200, 200, 200, 100));
@@ -151,11 +164,14 @@ void game_setup::update(sf::Event event, sf::Vector2i mousePosition)
 			white_player = white_human.getFillColor() == sf::Color(200, 200, 200, 100) ? player_type::HUMAN : player_type::COMPUTER;
 			black_player = black_human.getFillColor() == sf::Color(200, 200, 200, 100) ? player_type::HUMAN : player_type::COMPUTER;
 			depth = std::stoi(depth_entered_text.getString().toAnsiString());
-			setup_game(white_player, black_player, depth);
+			notify_parent();
 		}
 		else if (cancel_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
 		{
-			cancel_game();
+			white_player = player_type::HUMAN;
+			black_player = player_type::HUMAN;
+			depth = 6;
+			notify_parent();
 		}
 	}
 	else if (event.type == sf::Event::TextEntered)
@@ -216,7 +232,7 @@ player_type game_setup::get_black_player_type() const
 	return black_player;
 }
 
-int game_setup::get_search_depth() const
+unsigned int game_setup::get_search_depth() const
 {
 	return depth;
 }

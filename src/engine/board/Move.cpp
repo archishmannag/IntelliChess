@@ -71,7 +71,7 @@ Board *Move::execute() const
 	// Move the moved piece to the destination coordinate
 	builder.setPiece(this->movedPiece->movePiece(this));
 	builder.setMoveMaker(this->board->getCurrentPlayer()->getOpponent()->getPlayerAlliance());
-	builder.setMoveTransition(this);
+	builder.setTransitionMove(this);
 	return builder.build();
 }
 
@@ -130,7 +130,7 @@ bool PawnPromotion::operator==(const Move &other) const
 	if (this == &other)
 		return true;
 	if (const PawnPromotion *otherPawnPromotion = dynamic_cast<const PawnPromotion *>(&other))
-		return Move::operator==(other) /*&& *getPromotedPawn() == *otherPawnPromotion->getPromotedPawn()*/;
+		return Move::operator==(other) && *getPromotedPiece() == *otherPawnPromotion->getPromotedPiece();
 	return false;
 }
 
@@ -145,6 +145,7 @@ Board *PawnPromotion::execute() const
 		builder.setPiece(piece);
 	builder.setPiece(this->promotedPiece->movePiece(this));
 	builder.setMoveMaker(pawnMovedBoard->getCurrentPlayer()->getPlayerAlliance());
+	builder.setTransitionMove(this);
 	return builder.build();
 }
 
@@ -238,7 +239,7 @@ Board *PawnEnPassantAttackMove::execute() const
 			builder.setPiece(piece);
 	builder.setPiece(this->movedPiece->movePiece(this));
 	builder.setMoveMaker(this->board->getCurrentPlayer()->getOpponent()->getPlayerAlliance());
-	builder.setMoveTransition(this);
+	builder.setTransitionMove(this);
 	return builder.build();
 }
 
@@ -270,7 +271,7 @@ Board *PawnJump::execute() const
 	builder.setPiece(movedPawn);
 	builder.setEnPassantPawn(movedPawn);
 	builder.setMoveMaker(this->board->getCurrentPlayer()->getOpponent()->getPlayerAlliance());
-	builder.setMoveTransition(this);
+	builder.setTransitionMove(this);
 	return builder.build();
 }
 
@@ -315,9 +316,9 @@ Board *CastleMove::execute() const
 	// Move the moved piece (King) to the destination coordinate
 	builder.setPiece(this->movedPiece->movePiece(this));
 	// Move the castle rook to the destination coordinate
-	builder.setPiece(new Rook(this->castleRook->getPiecePosition(), this->castleRook->getPieceAlliance()));
+	builder.setPiece(new Rook(this->castleRookDestination, this->castleRook->getPieceAlliance(), false));
 	builder.setMoveMaker(this->board->getCurrentPlayer()->getOpponent()->getPlayerAlliance());
-	builder.setMoveTransition(this);
+	builder.setTransitionMove(this);
 	return builder.build();
 }
 
@@ -363,7 +364,7 @@ NullMove::NullMove() : Move(nullptr, -1){};
 
 Board *NullMove::execute() const
 {
-	throw std::invalid_argument("Cannot execute the null move!");
+	throw std::logic_error("Cannot execute the null move!");
 }
 
 std::string NullMove::stringify() const

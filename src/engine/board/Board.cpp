@@ -30,7 +30,7 @@ void BoardBuilder::setMoveMaker(const Alliance moveMaker)
 	return;
 }
 
-void BoardBuilder::setMoveTransition(const Move *transitionMove)
+void BoardBuilder::setTransitionMove(const Move *transitionMove)
 {
 	this->transitionMove = transitionMove;
 	return;
@@ -46,6 +46,11 @@ Pawn *BoardBuilder::getEnPassantPawn() const
 	return this->enPassantPawn;
 }
 
+Move *BoardBuilder::getTransitionMove() const
+{
+	return const_cast<Move *>(this->transitionMove);
+}
+
 Board *BoardBuilder::build()
 {
 	return new Board(*this);
@@ -54,6 +59,7 @@ Board *BoardBuilder::build()
 /* Board */
 
 Board::Board(BoardBuilder &builder) : enPassantPawn(builder.getEnPassantPawn()),
+									  transitionMove(builder.getTransitionMove()),
 									  gameBoard(Board::createGameBoard(builder)),
 									  whitePieces(Board::calculateActivePieces(gameBoard, Alliance::WHITE)),
 									  blackPieces(Board::calculateActivePieces(gameBoard, Alliance::BLACK)),

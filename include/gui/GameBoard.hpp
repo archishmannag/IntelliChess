@@ -3,8 +3,10 @@
 
 #include <vector>
 #include <memory>
+#include <thread>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 
 #define WINDOW_WIDTH 960
 #define WINDOW_HEIGHT 700
@@ -42,6 +44,7 @@ private:
 	std::vector<Move *> moves;
 
 public:
+	~MoveLog();
 	std::vector<Move *> getMoves() const;
 	int getMovesCount() const;
 	void addMove(Move *move);
@@ -83,6 +86,7 @@ private:
 	// Game setup
 	std::unique_ptr<game_setup> gameSetup;
 	bool is_game_setup_open = false;
+	bool is_move_made = false;
 
 	// Move log
 	MoveLog moveLog;
@@ -96,7 +100,7 @@ private:
 
 	friend bool isPawnPromotable(GameBoard &gameBoard);
 
-		void init();
+	void init();
 	void processEvents();
 	void updateMousePosition();
 	void scaleBoard();
@@ -105,6 +109,21 @@ private:
 	void updateTileBlocks();
 	std::vector<int> legalMoveDestinations();
 	void moveHandler(sf::Vector2i mousePosition);
+	void observe();
+
+	class ai_move_generator
+	{
+	public:
+		ai_move_generator(GameBoard *parent);
+		void run();
+		void done(Move *best_move);
+		Move *get_best_move();
+
+	private:
+		GameBoard *parent;
+	};
+
+	std::unique_ptr<ai_move_generator> ai;
 
 public:
 	GameBoard();

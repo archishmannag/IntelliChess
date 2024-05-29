@@ -33,7 +33,7 @@ const Player *BlackPlayer::getOpponent() const
 std::vector<Move *> BlackPlayer::calculateKingCastles(const std::vector<Move *> playerLegals, const std::vector<Move *> opponentLegals) const
 {
 	std::vector<Move *> kingCastles;
-	if (this->playerKing->getIsFirstMove() && !this->isInCheck())
+	if (this->playerKing->getIsFirstMove() && !this->isInCheck() && !isCastled())
 	{
 		// Black king side castle
 		if (!this->board->getTile(5)->isTileOccupied() && !this->board->getTile(6)->isTileOccupied())

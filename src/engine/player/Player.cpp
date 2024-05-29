@@ -78,7 +78,7 @@ bool Player::isInStaleMate() const
 
 bool Player::isCastled() const
 {
-	return false;
+	return playerKing->getIsCastled();
 }
 
 MoveTransition Player::makeMove(Move *move) const

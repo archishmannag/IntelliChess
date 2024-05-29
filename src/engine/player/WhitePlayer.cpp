@@ -9,10 +9,10 @@
 WhitePlayer::WhitePlayer(Board *board, std::vector<Move *> whiteStandardLegalMoves, std::vector<Move *> blackStandardLegalMoves) : Player(board)
 {
 	this->playerKing = establishKing();
-	this->legalMoves = whiteStandardLegalMoves;
+	this->inCheck = !calculateAttacksOnTile(this->playerKing->getPiecePosition(), blackStandardLegalMoves).empty();
 	std::vector<Move *> kingCastleMoves = calculateKingCastles(whiteStandardLegalMoves, blackStandardLegalMoves);
 	whiteStandardLegalMoves.insert(whiteStandardLegalMoves.end(), kingCastleMoves.begin(), kingCastleMoves.end());
-	this->inCheck = !calculateAttacksOnTile(this->playerKing->getPiecePosition(), blackStandardLegalMoves).empty();
+	this->legalMoves = whiteStandardLegalMoves;
 }
 
 std::vector<Piece *> WhitePlayer::getActivePieces() const
@@ -33,7 +33,7 @@ const Player *WhitePlayer::getOpponent() const
 std::vector<Move *> WhitePlayer::calculateKingCastles(const std::vector<Move *> playerLegals, const std::vector<Move *> opponentLegals) const
 {
 	std::vector<Move *> kingCastles;
-	if (this->playerKing->getIsFirstMove() && !this->isInCheck())
+	if (this->playerKing->getIsFirstMove() && !this->isInCheck() && !isCastled())
 	{
 		// White king side castle
 		if (!this->board->getTile(61)->isTileOccupied() && !this->board->getTile(62)->isTileOccupied())

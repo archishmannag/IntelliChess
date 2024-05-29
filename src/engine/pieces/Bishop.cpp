@@ -6,10 +6,6 @@
 
 const int Bishop::CANDIDATE_MOVE_VECTOR_COORDINATES[] = {-9, -7, 7, 9};
 
-Bishop::Bishop(const int piecePosition, const Alliance pieceAlliance) : Piece(piecePosition, pieceAlliance, PieceType::BISHOP, true)
-{
-}
-
 Bishop::Bishop(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::BISHOP, isFirstMove)
 {
 }
@@ -47,7 +43,7 @@ std::vector<Move *> Bishop::calculateLegalMoves(Board &board)
 
 Bishop *Bishop::movePiece(const Move *move) const
 {
-	return new Bishop(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance());
+	return new Bishop(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance(), false);
 }
 
 bool Bishop::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)

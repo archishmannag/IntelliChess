@@ -55,7 +55,7 @@ menu_bar::menu_bar(sf::RenderWindow &window, callback_functions_t callback_funct
 
 	// Option submenu
 	{
-		option_menu_rect.setSize(sf::Vector2f(190, 151));
+		option_menu_rect.setSize(sf::Vector2f(190, 126)); // 151
 		option_menu_rect.setFillColor(sf::Color(200, 200, 200));
 		option_menu_rect.setPosition(70, 25);
 
@@ -65,35 +65,35 @@ menu_bar::menu_bar(sf::RenderWindow &window, callback_functions_t callback_funct
 		new_game_text.setFillColor(sf::Color::Black);
 		new_game_text.setPosition(75, 26);
 
-		undo_move_text.setFont(font);
-		undo_move_text.setString("Undo Move");
-		undo_move_text.setCharacterSize(18);
-		undo_move_text.setFillColor(sf::Color::Black);
-		undo_move_text.setPosition(75, 51);
-
 		evaluate_board_text.setFont(font);
 		evaluate_board_text.setString("Evaluate Board");
 		evaluate_board_text.setCharacterSize(18);
 		evaluate_board_text.setFillColor(sf::Color::Black);
-		evaluate_board_text.setPosition(75, 76);
+		evaluate_board_text.setPosition(75, 51);
 
 		escape_analysis_score_text.setFont(font);
 		escape_analysis_score_text.setString("Escape Analysis Score");
 		escape_analysis_score_text.setCharacterSize(18);
 		escape_analysis_score_text.setFillColor(sf::Color::Black);
-		escape_analysis_score_text.setPosition(75, 101);
+		escape_analysis_score_text.setPosition(75, 76);
 
 		current_state_text.setFont(font);
 		current_state_text.setString("Current State");
 		current_state_text.setCharacterSize(18);
 		current_state_text.setFillColor(sf::Color::Black);
-		current_state_text.setPosition(75, 126);
+		current_state_text.setPosition(75, 101);
 
 		setup_game_text.setFont(font);
 		setup_game_text.setString("Setup Game");
 		setup_game_text.setCharacterSize(18);
 		setup_game_text.setFillColor(sf::Color::Black);
-		setup_game_text.setPosition(75, 151);
+		setup_game_text.setPosition(75, 126);
+
+		undo_move_text.setFont(font);
+		undo_move_text.setString("Undo Move");
+		undo_move_text.setCharacterSize(18);
+		undo_move_text.setFillColor(sf::Color::Black);
+		undo_move_text.setPosition(75, 151);
 	}
 }
 
@@ -118,8 +118,8 @@ void menu_bar::update_menu_bar(sf::Event event, sf::Vector2i mousePosition)
 			option_menu_open = false;
 			if (new_game_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
 				callback_functions.new_game();
-			else if (undo_move_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
-				callback_functions.undo_move();
+			// else if (undo_move_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+			// 	callback_functions.undo_move();
 			else if (evaluate_board_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
 				callback_functions.evaluate_board();
 			else if (escape_analysis_score_text.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
@@ -170,7 +170,7 @@ void menu_bar::draw(sf::RenderWindow &window)
 	{
 		window.draw(option_menu_rect);
 		window.draw(new_game_text);
-		window.draw(undo_move_text);
+		// window.draw(undo_move_text);
 		window.draw(evaluate_board_text);
 		window.draw(escape_analysis_score_text);
 		window.draw(current_state_text);
