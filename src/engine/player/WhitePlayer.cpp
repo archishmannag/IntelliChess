@@ -6,56 +6,57 @@
 #include <engine/pieces/King.hpp>
 #include <engine/pieces/Rook.hpp>
 
-WhitePlayer::WhitePlayer(Board *board, std::vector<Move *> whiteStandardLegalMoves, std::vector<Move *> blackStandardLegalMoves) : Player(board)
+white_player::white_player(std::shared_ptr<board> b, std::vector<std::shared_ptr<move>> wslm, std::vector<std::shared_ptr<move>> bslm)
+	: player(b)
 {
-	this->playerKing = establishKing();
-	this->inCheck = !calculateAttacksOnTile(this->playerKing->getPiecePosition(), blackStandardLegalMoves).empty();
-	std::vector<Move *> kingCastleMoves = calculateKingCastles(whiteStandardLegalMoves, blackStandardLegalMoves);
-	whiteStandardLegalMoves.insert(whiteStandardLegalMoves.end(), kingCastleMoves.begin(), kingCastleMoves.end());
-	this->legalMoves = whiteStandardLegalMoves;
+	player_king_ = establish_king();
+	checked_ = !calculate_attacks_on_tile(player_king_->get_piece_position(), bslm).empty();
+	std::vector<std::shared_ptr<move>> king_castle_moves = calculate_king_castles(bslm);
+	wslm.insert(wslm.end(), king_castle_moves.begin(), king_castle_moves.end());
+	legal_moves_ = wslm;
 }
 
-std::vector<Piece *> WhitePlayer::getActivePieces() const
+std::vector<std::shared_ptr<piece>> white_player::get_active_pieces() const
 {
-	return this->board->getWhitePieces();
+	return board_.lock()->get_white_pieces();
 }
 
-Alliance WhitePlayer::getPlayerAlliance() const
+alliance white_player::get_player_alliance() const
 {
-	return Alliance::WHITE;
+	return alliance::white;
 }
 
-const Player *WhitePlayer::getOpponent() const
+std::weak_ptr<player> white_player::get_opponent() const
 {
-	return this->board->getBlackPlayer();
+	return board_.lock()->get_black_player();
 }
 
-std::vector<Move *> WhitePlayer::calculateKingCastles(const std::vector<Move *> playerLegals, const std::vector<Move *> opponentLegals) const
+std::vector<std::shared_ptr<move>> white_player::calculate_king_castles(const std::vector<std::shared_ptr<move>> &ol) const
 {
-	std::vector<Move *> kingCastles;
-	if (this->playerKing->getIsFirstMove() && !this->isInCheck() && !isCastled())
+	std::vector<std::shared_ptr<move>> king_castles;
+	if (player_king_->is_first_move() && !is_in_check() && !is_castled())
 	{
 		// White king side castle
-		if (!this->board->getTile(61)->isTileOccupied() && !this->board->getTile(62)->isTileOccupied())
+		if (!board_.lock()->get_tile(61)->is_tile_occupied() && !board_.lock()->get_tile(62)->is_tile_occupied())
 		{
-			Tile *rookTile = this->board->getTile(63);
-			if (rookTile->isTileOccupied() && rookTile->getPiece()->getIsFirstMove() && rookTile->getPiece()->getPieceType() == PieceType::ROOK)
-				if (calculateAttacksOnTile(61, opponentLegals).empty() && calculateAttacksOnTile(62, opponentLegals).empty())
-					kingCastles.push_back(new KingSideCastleMove(this->board, this->playerKing, 62, dynamic_cast<Rook *>(rookTile->getPiece()), rookTile->getTileCoordinate(), 61));
+			std::shared_ptr<tile> rook_tile = board_.lock()->get_tile(63);
+			if (rook_tile->is_tile_occupied() && rook_tile->get_piece()->is_first_move() && rook_tile->get_piece()->get_piece_type() == piece_type::rook)
+				if (calculate_attacks_on_tile(61, ol).empty() && calculate_attacks_on_tile(62, ol).empty())
+					king_castles.push_back(std::make_shared<king_side_castle_move>(board_.lock(), player_king_, 62, std::dynamic_pointer_cast<rook>(rook_tile->get_piece()), rook_tile->get_tile_coordinate(), 61));
 		}
 		// White queen side castle
-		if (!this->board->getTile(59)->isTileOccupied() && !this->board->getTile(58)->isTileOccupied() && !this->board->getTile(57)->isTileOccupied())
+		if (!board_.lock()->get_tile(59)->is_tile_occupied() && !board_.lock()->get_tile(58)->is_tile_occupied() && !board_.lock()->get_tile(57)->is_tile_occupied())
 		{
-			Tile *rookTile = this->board->getTile(56);
-			if (rookTile->isTileOccupied() && rookTile->getPiece()->getIsFirstMove() && rookTile->getPiece()->getPieceType() == PieceType::ROOK)
-				if (calculateAttacksOnTile(59, opponentLegals).empty() && calculateAttacksOnTile(58, opponentLegals).empty() && calculateAttacksOnTile(57, opponentLegals).empty())
-					kingCastles.push_back(new QueenSideCastleMove(this->board, this->playerKing, 58, dynamic_cast<Rook *>(rookTile->getPiece()), rookTile->getTileCoordinate(), 59));
+			std::shared_ptr<tile> rook_tile = board_.lock()->get_tile(56);
+			if (rook_tile->is_tile_occupied() && rook_tile->get_piece()->is_first_move() && rook_tile->get_piece()->get_piece_type() == piece_type::rook)
+				if (calculate_attacks_on_tile(59, ol).empty() && calculate_attacks_on_tile(58, ol).empty() && calculate_attacks_on_tile(57, ol).empty())
+					king_castles.push_back(std::make_shared<queen_side_castle_move>(board_.lock(), player_king_, 58, std::dynamic_pointer_cast<rook>(rook_tile->get_piece()), rook_tile->get_tile_coordinate(), 59));
 		}
 	}
-	return kingCastles;
+	return king_castles;
 }
 
-std::string WhitePlayer::stringify() const
+std::string white_player::stringify() const
 {
 	return std::string("White");
 }

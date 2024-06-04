@@ -3,70 +3,79 @@
 
 #include <map>
 #include <vector>
+#include <array>
 #include <string>
+#include <memory>
 
 #include <engine/Alliance.hpp>
 
-class Move;
-class Pawn;
-class Tile;
-class Piece;
-class Player;
-class WhitePlayer;
-class BlackPlayer;
+class move;
+class pawn;
+class tile;
+class piece;
+class player;
+class white_player;
+class black_player;
+class board;
 
-class BoardBuilder
+class board_builder
 {
 private:
-	Alliance nextMoveMaker;
-	Pawn *enPassantPawn = nullptr;
-	const Move *transitionMove = nullptr;
+	alliance next_move_maker_;
+	std::shared_ptr<board> previous_board_ = nullptr;
+	std::shared_ptr<pawn> en_passant_pawn_ = nullptr;
+	std::shared_ptr<move> transition_move_ = nullptr;
 
 public:
-	std::map<int, Piece *> boardConfig;
+	std::map<int, std::shared_ptr<piece>> board_config_;
 
-	void setPiece(Piece *piece);
-	void setEnPassantPawn(Pawn *enPassantPawn);
-	void setMoveMaker(Alliance moveMaker);
-	void setTransitionMove(const Move *transitionMove);
-	Alliance getNextMoveMaker() const;
-	Pawn *getEnPassantPawn() const;
-	Move *getTransitionMove() const;
-	Board *build();
+	void set_previous_board(std::shared_ptr<board> pb);
+	void set_piece(std::shared_ptr<piece> p);
+	void set_en_passant_pawn(std::shared_ptr<pawn> ep);
+	void set_move_maker(alliance mm);
+	void set_transition_move(std::shared_ptr<move> tm);
+	std::shared_ptr<board> get_previous_board() const;
+	alliance get_next_move_maker() const;
+	std::shared_ptr<pawn> get_en_passant_pawn() const;
+	std::shared_ptr<move> get_transition_move() const;
+	std::shared_ptr<board> build();
 };
 
-class Board
+class board : public std::enable_shared_from_this<board>
 {
 private:
-	friend class BoardBuilder;
+	friend class board_builder;
 
-	Pawn *enPassantPawn = nullptr;
-	Move *transitionMove = nullptr;
+	std::shared_ptr<board> previous_board_ = nullptr;
 
-	std::vector<Tile *> gameBoard;
-	std::vector<Piece *> whitePieces;
-	std::vector<Piece *> blackPieces;
+	std::shared_ptr<pawn> en_passant_pawn_ = nullptr;
+	std::shared_ptr<move> transition_move_ = nullptr;
 
-	const WhitePlayer *whitePlayer;
-	const BlackPlayer *blackPlayer;
-	Player *currentPlayer;
+	std::array<std::shared_ptr<tile>, 64> game_board_;
+	std::vector<std::shared_ptr<piece>> white_pieces_;
+	std::vector<std::shared_ptr<piece>> black_pieces_;
 
-	std::vector<Move *> calculateLegalMoves(std::vector<Piece *> pieces);
-	static std::vector<Piece *> calculateActivePieces(std::vector<Tile *> gameBoard, Alliance alliance);
-	static std::vector<Tile *> createGameBoard(BoardBuilder builder);
-	explicit Board(BoardBuilder &builder);
+	std::shared_ptr<white_player> white_player_;
+	std::shared_ptr<black_player> black_player_;
+	std::weak_ptr<player> current_player_;
+
+	std::vector<std::shared_ptr<move>> calculate_legal_moves(const std::vector<std::shared_ptr<piece>> &P);
+	static std::vector<std::shared_ptr<piece>> calculate_active_pieces(const std::array<std::shared_ptr<tile>, 64> &gb, alliance a);
+	static std::array<std::shared_ptr<tile>, 64> create_game_board(const board_builder &b);
+	void initialize_game_board(const board_builder &b);
 
 public:
-	Tile *getTile(int tileCoordinate) const;
-	std::vector<Piece *> getWhitePieces() const;
-	std::vector<Piece *> getBlackPieces() const;
-	std::vector<Piece *> getAllPieces() const;
-	const Player *getWhitePlayer() const;
-	const Player *getBlackPlayer() const;
-	Player *getCurrentPlayer() const;
-	std::vector<Move *> getAllLegalMoves() const;
-	Pawn *getEnPassantPawn() const;
-	static Board *createStandardBoard();
+	std::shared_ptr<board> get_previous_board() const;
+	std::shared_ptr<tile> get_tile(int tc) const;
+	const std::vector<std::shared_ptr<piece>> &get_white_pieces() const;
+	const std::vector<std::shared_ptr<piece>> &get_black_pieces() const;
+	const std::vector<std::shared_ptr<piece>> get_all_pieces() const;
+	std::shared_ptr<player> get_white_player() const;
+	std::shared_ptr<player> get_black_player() const;
+	std::shared_ptr<player> get_current_player() const;
+	std::vector<std::shared_ptr<move>> get_all_legal_moves() const;
+	std::shared_ptr<pawn> get_en_passant_pawn() const;
+	static std::shared_ptr<board> create_standard_board();
 	std::string stringify() const;
 };
 

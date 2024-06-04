@@ -6,50 +6,48 @@
 #include <array>
 #include <vector>
 
-class Board;
-class MoveLog;
+class board;
+class move_log;
 
-class HistoryRow
+class history_row
 {
 private:
-	sf::Vector2f position;
-	sf::Text whiteMove, blackMove;
-	sf::RectangleShape bottomDividerRect;
+	sf::Text white_move_, black_move_;
+	sf::RectangleShape bottom_divider_rect_;
 
 public:
-	HistoryRow(sf::Font &font);
-	void setPosition(sf::Vector2f position);
-	void setWhiteMove(std::string move);
-	void setBlackMove(std::string move);
-	sf::Vector2f getPosition() const;
-	std::string getWhiteMove();
-	std::string getBlackMove();
+	history_row(sf::Font &font);
+	void set_position(sf::Vector2f position);
+	void set_white_move(std::string move);
+	void set_black_move(std::string move);
+	sf::Vector2f get_position() const;
+	std::string get_white_move();
+	std::string get_black_move();
 	void draw(sf::RenderWindow &window);
 };
 
-class GameHistoryBlock
+class game_history_block
 {
 private:
-	sf::Vector2f scale, mouseOffset;
-	sf::RectangleShape gameHistoryAreaRect, scrollBarRect, dividerRect;
-	std::vector<HistoryRow> historyRows;
+	sf::Vector2f mouse_offset_;
+	sf::RectangleShape game_history_area_rect_, scroll_bar_rect_, divider_rect_;
+	std::vector<history_row> history_rows_;
 	sf::Font font;
-	std::array<sf::Text, 2> playerNames;
+	std::array<sf::Text, 2> player_names_;
 	sf::View view;
-	float scrollPercentageTop, scrollPercentageBottom;
-	bool scrollBarClicked;
+	float scroll_percentage_top_, scroll_percentage_bottom_;
+	bool scroll_bar_clicked_;
 
 	void update(sf::RenderWindow &window);
-	void updateScrollPercentage(sf::Vector2f windowSize);
-	std::string calculateCheckAndCheckMate(Board *board);
+	void update_scroll_percentage(sf::Vector2f window_size);
 
 public:
-	GameHistoryBlock();
-	sf::View getView() const;
-	void mouseWheelScrolled(sf::Event::MouseWheelScrollEvent &event, sf::Vector2f windowSize);
-	void scrollBarScrolled(sf::Event::MouseButtonEvent &event, bool buttonClickedOrReleased);
+	game_history_block();
+	sf::View get_view() const;
+	void mouse_wheel_scrolled(sf::Event::MouseWheelScrollEvent &event, sf::Vector2f window_size);
+	void scroll_bar_scrolled(sf::Event::MouseButtonEvent &event, bool button_clicked_or_released);
 	void scroll(sf::RenderWindow &window);
-	void redo(Board *board, MoveLog &moveLog);
+	void redo(board *b, move_log &ml);
 	void draw(sf::RenderWindow &window);
 };
 

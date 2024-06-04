@@ -6,11 +6,11 @@
 #include <future>
 #include <functional>
 
-#include <gui/GameBoard.hpp>
 #include <gui/Menu.hpp>
 #include <gui/TakenPieces.hpp>
 #include <gui/GameHistory.hpp>
 #include <gui/GameSetup.hpp>
+#include <gui/GameBoard.hpp>
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
 #include <engine/board/Tile.hpp>
@@ -22,256 +22,258 @@
 #include <engine/player/ai/MoveStrategy.hpp>
 #include <engine/player/ai/MiniMax.hpp>
 
-/* TileBlock */
+/* tile_block */
 
-TileBlock::TileBlock(int tileId)
+tile_block::tile_block(int t_id)
 {
-	this->tileId = tileId;
+	tile_id_ = t_id;
 	// Initial size and positions
-	this->tileRect.setSize(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
-	this->tileRect.setFillColor((tileId / 8 + tileId) % 2 == 0 ? sf::Color(/*White*/ 255, 250, 205) : sf::Color(/*Black*/ 89, 62, 26));
-	this->tileRect.setPosition(162.5f + (tileId % 8) * TILE_WIDTH, 75 + (tileId / 8) * TILE_HEIGHT);
+	tile_rect_.setSize(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
+	tile_rect_.setFillColor((t_id / 8 + t_id) % 2 == 0 ? sf::Color(/*White*/ 255, 250, 205) : sf::Color(/*Black*/ 89, 62, 26));
+	tile_rect_.setPosition(162.5f + (t_id % 8) * TILE_WIDTH, 75 + (t_id / 8) * TILE_HEIGHT);
 }
 
-int TileBlock::getTileId() const
+int tile_block::get_tile_id() const
 {
-	return this->tileId;
+	return tile_id_;
 }
 
-sf::RectangleShape TileBlock::getTileRect() const
+sf::RectangleShape tile_block::get_tile_rect() const
 {
-	return this->tileRect;
+	return tile_rect_;
 }
 
-void TileBlock::setTileRectScale(float x, float y)
+void tile_block::get_tile_rect_scale(float x, float y)
 {
-	this->tileRect.setScale(x, y);
+	tile_rect_.setScale(x, y);
 }
 
-void TileBlock::setTileRectPosition(float x, float y)
+void tile_block::set_tile_rect_position(float x, float y)
 {
-	this->tileRect.setPosition(x, y);
+	tile_rect_.setPosition(x, y);
 }
 
-void TileBlock::setTileRectFillColor(sf::Color color)
+void tile_block::set_tile_rect_fill_color(sf::Color color)
 {
-	this->tileRect.setFillColor(color);
+	tile_rect_.setFillColor(color);
 }
 
-/* MoveLog */
+/* move_log */
 
-MoveLog::~MoveLog()
+std::vector<std::shared_ptr<move>> move_log::get_moves() const
 {
-	for (auto move : this->moves)
-		delete move;
+	return moves;
 }
 
-std::vector<Move *> MoveLog::getMoves() const
+int move_log::get_moves_count() const
 {
-	return this->moves;
+	return moves.size();
 }
 
-int MoveLog::getMovesCount() const
+void move_log::add_move(std::shared_ptr<move> m)
 {
-	return this->moves.size();
+	moves.push_back(m);
 }
 
-void MoveLog::addMove(Move *move)
+std::shared_ptr<move> move_log::remove_move(int index)
 {
-	this->moves.push_back(move);
+	std::shared_ptr<move> m = moves[index];
+	moves.erase(moves.begin() + index);
+	return m;
 }
 
-Move *MoveLog::removeMove(int index)
+void move_log::remove_move(std::shared_ptr<move> m)
 {
-	Move *move = this->moves[index];
-	this->moves.erase(this->moves.begin() + index);
-	return move;
+	moves.erase(std::remove(moves.begin(), moves.end(), m), moves.end());
 }
 
-void MoveLog::removeMove(Move *move)
+void move_log::clear_moves()
 {
-	this->moves.erase(std::remove(this->moves.begin(), this->moves.end(), move), this->moves.end());
+	moves.clear();
 }
 
-void MoveLog::clearMoves()
-{
-	this->moves.clear();
-}
-
-/* GameBoard */
+/* game_board */
 
 #define QUEEN_OFFSET 0
 #define KNIGHT_OFFSET 8
 #define ROOK_OFFSET 16
 #define BISHOP_OFFSET 24
 
-GameBoard::GameBoard()
+game_board::game_board()
 {
 	init();
 }
 
-GameBoard::~GameBoard()
+game_board::~game_board() = default;
+
+void game_board::init()
 {
-	this->tileBlocks.clear();
-	delete this->board;
-	delete this->sourceTile;
-	delete this->destinationTile;
-	delete this->window;
-}
+	board_ = board::create_standard_board();
+	source_tile_ = nullptr;
+	destination_tile_ = nullptr;
+	moved_piece_ = nullptr;
 
-void GameBoard::init()
-{
-	this->board = Board::createStandardBoard();
-	this->sourceTile = nullptr;
-	this->destinationTile = nullptr;
-	this->movedPiece = nullptr;
+	window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Chess");
+	window_->setFramerateLimit(60);
+	current_main_view_ = window_->getDefaultView();
 
-	this->window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Chess");
-	this->window->setFramerateLimit(60);
-	this->currentMainView = this->window->getDefaultView();
+	back_ground_.setSize(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
+	back_ground_.setFillColor(sf::Color::White);
 
-	this->bg.setSize(sf::Vector2f(WINDOW_WIDTH, WINDOW_HEIGHT));
-	this->bg.setFillColor(sf::Color::White);
+	board_rect_.setSize(sf::Vector2f(10 + 8 * TILE_WIDTH, 10 + 8 * TILE_HEIGHT));
+	board_rect_.setFillColor(sf::Color(139, 71, 38));
+	board_rect_.setPosition(157.5f, 70);
 
-	this->boardRect.setSize(sf::Vector2f(10 + 8 * TILE_WIDTH, 10 + 8 * TILE_HEIGHT));
-	this->boardRect.setFillColor(sf::Color(139, 71, 38));
-	this->boardRect.setPosition(157.5f, 70);
+	pawn_promotion_rect_.setSize(sf::Vector2f(1 * TILE_WIDTH, 4 * TILE_HEIGHT));
+	pawn_promotion_rect_.setFillColor(sf::Color(139, 71, 38));
 
-	this->pawnPromotionRect.setSize(sf::Vector2f(1 * TILE_WIDTH, 4 * TILE_HEIGHT));
-	this->pawnPromotionRect.setFillColor(sf::Color(139, 71, 38));
+	callback_functions_t call_backs;
+	/* All the callback fnctions for the menu bar */
+	{
+		call_backs.load_FEN = []() {};
+		call_backs.load_PGN = []() {};
+		call_backs.save_game = []() {};
+		call_backs.exit = [this]()
+		{ window_->close(); };
+		call_backs.new_game = [this]()
+		{ undo_all_moves(); };
+		call_backs.undo_move = [this]()
+		{ undo_last_move(); };
+		call_backs.evaluate_board = []() {};
+		call_backs.escape_analysis_score = []() {};
+		call_backs.current_state = []() {};
+		call_backs.setup_game = [this]()
+		{ is_game_setup_open_ = true; };
+	}
 
-	callback_functions_t callbacks;
-	callbacks.setup_game = [this]() -> void
-	{ this->is_game_setup_open = true; };
+	menu_bar_ = std::make_unique<menu_bar>(*window_, call_backs);
 
-	this->menuBar = std::make_unique<menu_bar>(*this->window, callbacks);
+	taken_pieces_block_ = std::make_unique<taken_pieces_block>();
 
-	this->takenPiecesBlock = std::make_unique<TakenPiecesBlock>();
+	game_history_block_ = std::make_unique<game_history_block>();
 
-	this->gameHistoryBlock = std::make_unique<GameHistoryBlock>();
-
-	gameSetup = std::make_unique<game_setup>([this]() -> void
-											 {
-												this->is_game_setup_open = false;
+	game_setup_ = std::make_unique<game_setup>([this]() -> void
+											   {
+												is_game_setup_open_ = false;
 												observe(); });
 
 	ai = std::make_unique<ai_move_generator>(this);
 
 	for (int i = 0; i < 64; i++)
-		this->tileBlocks.push_back(TileBlock(i));
+		tile_blocks_.push_back(tile_block(i));
 
 	if (
-		!this->blackPawnTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackPawn.png") ||
-		!this->whitePawnTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whitePawn.png") ||
-		!this->blackKingTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackKing.png") ||
-		!this->whiteKingTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteKing.png") ||
-		!this->blackBishopTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackBishop.png") ||
-		!this->whiteBishopTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteBishop.png") ||
-		!this->blackKnightTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackKnight.png") ||
-		!this->whiteKnightTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteKnight.png") ||
-		!this->blackRookTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackRook.png") ||
-		!this->whiteRookTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteRook.png") ||
-		!this->blackQueenTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackQueen.png") ||
-		!this->whiteQueenTexture.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteQueen.png"))
+		!black_pawn_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackPawn.png") ||
+		!white_pawn_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whitePawn.png") ||
+		!black_king_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackKing.png") ||
+		!white_king_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteKing.png") ||
+		!black_bishop_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackBishop.png") ||
+		!white_bishop_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteBishop.png") ||
+		!black_knight_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackKnight.png") ||
+		!white_knight_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteKnight.png") ||
+		!black_rook_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackRook.png") ||
+		!white_rook_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteRook.png") ||
+		!black_queen_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackQueen.png") ||
+		!white_queen_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteQueen.png"))
 	{
 		throw std::runtime_error("Error loading textures");
 	}
 
-	this->blackPawnTexture.setSmooth(true);
-	this->whitePawnTexture.setSmooth(true);
-	this->blackKingTexture.setSmooth(true);
-	this->whiteKingTexture.setSmooth(true);
-	this->blackBishopTexture.setSmooth(true);
-	this->whiteBishopTexture.setSmooth(true);
-	this->blackKnightTexture.setSmooth(true);
-	this->whiteKnightTexture.setSmooth(true);
-	this->blackRookTexture.setSmooth(true);
-	this->whiteRookTexture.setSmooth(true);
-	this->blackQueenTexture.setSmooth(true);
-	this->whiteQueenTexture.setSmooth(true);
+	black_pawn_texture_.setSmooth(true);
+	white_pawn_texture_.setSmooth(true);
+	black_king_texture_.setSmooth(true);
+	white_king_texture_.setSmooth(true);
+	black_bishop_texture_.setSmooth(true);
+	white_bishop_texture_.setSmooth(true);
+	black_knight_texture_.setSmooth(true);
+	white_knight_texture_.setSmooth(true);
+	black_rook_texture_.setSmooth(true);
+	white_rook_texture_.setSmooth(true);
+	black_queen_texture_.setSmooth(true);
+	white_queen_texture_.setSmooth(true);
 
-	this->blackPawnSprite.setTexture(this->blackPawnTexture);
-	this->whitePawnSprite.setTexture(this->whitePawnTexture);
-	this->blackKingSprite.setTexture(this->blackKingTexture);
-	this->whiteKingSprite.setTexture(this->whiteKingTexture);
-	this->blackBishopSprite.setTexture(this->blackBishopTexture);
-	this->whiteBishopSprite.setTexture(this->whiteBishopTexture);
-	this->blackKnightSprite.setTexture(this->blackKnightTexture);
-	this->whiteKnightSprite.setTexture(this->whiteKnightTexture);
-	this->blackRookSprite.setTexture(this->blackRookTexture);
-	this->whiteRookSprite.setTexture(this->whiteRookTexture);
-	this->blackQueenSprite.setTexture(this->blackQueenTexture);
-	this->whiteQueenSprite.setTexture(this->whiteQueenTexture);
+	black_pawn_sprite_.setTexture(black_pawn_texture_);
+	white_pawn_sprite_.setTexture(white_pawn_texture_);
+	black_king_sprite_.setTexture(black_king_texture_);
+	white_king_sprite_.setTexture(white_king_texture_);
+	black_bishop_sprite_.setTexture(black_bishop_texture_);
+	white_bishop_sprite_.setTexture(white_bishop_texture_);
+	black_knight_sprite_.setTexture(black_knight_texture_);
+	white_knight_sprite_.setTexture(white_knight_texture_);
+	black_rook_sprite_.setTexture(black_rook_texture_);
+	white_rook_sprite_.setTexture(white_rook_texture_);
+	black_queen_sprite_.setTexture(black_queen_texture_);
+	white_queen_sprite_.setTexture(white_queen_texture_);
 
 	// Initial scales of the sprites, this will get updated everytime the window is resized
-	this->blackPawnSprite.setScale(TILE_WIDTH / blackPawnSprite.getLocalBounds().width, TILE_HEIGHT / blackPawnSprite.getLocalBounds().height);
-	this->whitePawnSprite.setScale(TILE_WIDTH / whitePawnSprite.getLocalBounds().width, TILE_HEIGHT / whitePawnSprite.getLocalBounds().height);
-	this->blackKingSprite.setScale(TILE_WIDTH / blackKingSprite.getLocalBounds().width, TILE_HEIGHT / blackKingSprite.getLocalBounds().height);
-	this->whiteKingSprite.setScale(TILE_WIDTH / whiteKingSprite.getLocalBounds().width, TILE_HEIGHT / whiteKingSprite.getLocalBounds().height);
-	this->blackBishopSprite.setScale(TILE_WIDTH / blackBishopSprite.getLocalBounds().width, TILE_HEIGHT / blackBishopSprite.getLocalBounds().height);
-	this->whiteBishopSprite.setScale(TILE_WIDTH / whiteBishopSprite.getLocalBounds().width, TILE_HEIGHT / whiteBishopSprite.getLocalBounds().height);
-	this->blackKnightSprite.setScale(TILE_WIDTH / blackKnightSprite.getLocalBounds().width, TILE_HEIGHT / blackKnightSprite.getLocalBounds().height);
-	this->whiteKnightSprite.setScale(TILE_WIDTH / whiteKnightSprite.getLocalBounds().width, TILE_HEIGHT / whiteKnightSprite.getLocalBounds().height);
-	this->blackRookSprite.setScale(TILE_WIDTH / blackRookSprite.getLocalBounds().width, TILE_HEIGHT / blackRookSprite.getLocalBounds().height);
-	this->whiteRookSprite.setScale(TILE_WIDTH / whiteRookSprite.getLocalBounds().width, TILE_HEIGHT / whiteRookSprite.getLocalBounds().height);
-	this->blackQueenSprite.setScale(TILE_WIDTH / blackQueenSprite.getLocalBounds().width, TILE_HEIGHT / blackQueenSprite.getLocalBounds().height);
-	this->whiteQueenSprite.setScale(TILE_WIDTH / whiteQueenSprite.getLocalBounds().width, TILE_HEIGHT / whiteQueenSprite.getLocalBounds().height);
+	black_pawn_sprite_.setScale(TILE_WIDTH / black_pawn_sprite_.getLocalBounds().width, TILE_HEIGHT / black_pawn_sprite_.getLocalBounds().height);
+	white_pawn_sprite_.setScale(TILE_WIDTH / white_pawn_sprite_.getLocalBounds().width, TILE_HEIGHT / white_pawn_sprite_.getLocalBounds().height);
+	black_king_sprite_.setScale(TILE_WIDTH / black_king_sprite_.getLocalBounds().width, TILE_HEIGHT / black_king_sprite_.getLocalBounds().height);
+	white_king_sprite_.setScale(TILE_WIDTH / white_king_sprite_.getLocalBounds().width, TILE_HEIGHT / white_king_sprite_.getLocalBounds().height);
+	black_bishop_sprite_.setScale(TILE_WIDTH / black_bishop_sprite_.getLocalBounds().width, TILE_HEIGHT / black_bishop_sprite_.getLocalBounds().height);
+	white_bishop_sprite_.setScale(TILE_WIDTH / white_bishop_sprite_.getLocalBounds().width, TILE_HEIGHT / white_bishop_sprite_.getLocalBounds().height);
+	black_knight_sprite_.setScale(TILE_WIDTH / black_knight_sprite_.getLocalBounds().width, TILE_HEIGHT / black_knight_sprite_.getLocalBounds().height);
+	white_knight_sprite_.setScale(TILE_WIDTH / white_knight_sprite_.getLocalBounds().width, TILE_HEIGHT / white_knight_sprite_.getLocalBounds().height);
+	black_rook_sprite_.setScale(TILE_WIDTH / black_rook_sprite_.getLocalBounds().width, TILE_HEIGHT / black_rook_sprite_.getLocalBounds().height);
+	white_rook_sprite_.setScale(TILE_WIDTH / white_rook_sprite_.getLocalBounds().width, TILE_HEIGHT / white_rook_sprite_.getLocalBounds().height);
+	black_queen_sprite_.setScale(TILE_WIDTH / black_queen_sprite_.getLocalBounds().width, TILE_HEIGHT / black_queen_sprite_.getLocalBounds().height);
+	white_queen_sprite_.setScale(TILE_WIDTH / white_queen_sprite_.getLocalBounds().width, TILE_HEIGHT / white_queen_sprite_.getLocalBounds().height);
 }
 
-bool GameBoard::isRunning() const
+bool game_board::is_running() const
 {
-	return this->window->isOpen();
+	return window_->isOpen();
 }
 
-void GameBoard::processEvents()
+void game_board::process_events()
 {
-	while (this->window->pollEvent(this->event))
+	while (window_->pollEvent(event_))
 	{
-		switch (this->event.type)
+		switch (event_.type)
 		{
 		case sf::Event::Closed:
-			this->window->close();
+			window_->close();
 			break;
 		case sf::Event::Resized:
 		{
 			// Set the view to the visible area
-			sf::FloatRect visibleArea(0, 0, this->event.size.width, this->event.size.height);
-			this->currentMainView.setSize(visibleArea.width, visibleArea.height);
-			this->currentMainView.setCenter(visibleArea.width / 2, visibleArea.height / 2);
-			this->currentMainView.setViewport(sf::FloatRect(0, 0, 1, 1));
-			this->window->setView(this->currentMainView);
+			sf::FloatRect visible_area(0, 0, event_.size.width, event_.size.height);
+			current_main_view_.setSize(visible_area.width, visible_area.height);
+			current_main_view_.setCenter(visible_area.width / 2, visible_area.height / 2);
+			current_main_view_.setViewport(sf::FloatRect(0, 0, 1, 1));
+			window_->setView(current_main_view_);
 
 			// Update the scale values
-			this->windowScale = sf::Vector2f(static_cast<float>(this->event.size.width) / WINDOW_WIDTH, static_cast<float>(this->event.size.height) / WINDOW_HEIGHT);
+			window_scale_ = sf::Vector2f(static_cast<float>(event_.size.width) / WINDOW_WIDTH, static_cast<float>(event_.size.height) / WINDOW_HEIGHT);
 
 			// Update size of the background
-			this->bg.setSize(sf::Vector2f(this->event.size.width, this->event.size.height));
+			back_ground_.setSize(sf::Vector2f(event_.size.width, event_.size.height));
 
-			this->scaleBoard();
+			scale_board();
 			break;
 		}
 		case sf::Event::MouseButtonPressed:
-			this->menuBar->update_menu_bar(this->event, this->mousePosition);
-			if (is_game_setup_open)
-				gameSetup->update(this->event, this->mousePosition);
+			menu_bar_->update_menu_bar(event_, mouse_position_);
+			if (is_game_setup_open_)
+				game_setup_->update(event_, mouse_position_);
 			else
-				moveHandler(this->mousePosition);
-			gameHistoryBlock->scrollBarScrolled(this->event.mouseButton, true);
+				move_handler();
+			game_history_block_->scroll_bar_scrolled(event_.mouseButton, true);
 			break;
 		case sf::Event::MouseButtonReleased:
-			gameHistoryBlock->scrollBarScrolled(this->event.mouseButton, false);
+			game_history_block_->scroll_bar_scrolled(event_.mouseButton, false);
 			break;
 		case sf::Event::MouseWheelScrolled:
-			this->window->setView(this->gameHistoryBlock->getView());
-			gameHistoryBlock->mouseWheelScrolled(this->event.mouseWheelScroll, sf::Vector2f(this->window->getSize().x, this->window->getSize().y));
-			this->window->setView(this->currentMainView);
+			window_->setView(game_history_block_->get_view());
+			game_history_block_->mouse_wheel_scrolled(event_.mouseWheelScroll, sf::Vector2f(window_->getSize().x, window_->getSize().y));
+			window_->setView(current_main_view_);
 			break;
 		case sf::Event::MouseMoved:
-			gameHistoryBlock->scroll(*this->window);
+			game_history_block_->scroll(*window_);
 			break;
 		case sf::Event::TextEntered:
-			if (is_game_setup_open)
-				gameSetup->update(this->event, this->mousePosition);
+			if (is_game_setup_open_)
+				game_setup_->update(event_, mouse_position_);
 			break;
 		default:
 			break;
@@ -279,79 +281,79 @@ void GameBoard::processEvents()
 	}
 }
 
-void GameBoard::scaleBoard()
+void game_board::scale_board()
 {
-	float min = std::min(this->windowScale.y, (this->window->getSize().x - 195 - 195) / static_cast<float>(570));
+	float min = std::min(window_scale_.y, (window_->getSize().x - 195 - 195) / static_cast<float>(570));
 
 	// Update size and position of the board
-	this->boardRect.setScale(min, min);
-	this->pawnPromotionRect.setScale(min, min);
+	board_rect_.setScale(min, min);
+	pawn_promotion_rect_.setScale(min, min);
 
 	// Update the scale of the sprites
-	this->blackPawnSprite.setScale(TILE_WIDTH / blackPawnSprite.getLocalBounds().width * min, TILE_HEIGHT / blackPawnSprite.getLocalBounds().height * min);
-	this->whitePawnSprite.setScale(TILE_WIDTH / whitePawnSprite.getLocalBounds().width * min, TILE_HEIGHT / whitePawnSprite.getLocalBounds().height * min);
-	this->blackKingSprite.setScale(TILE_WIDTH / blackKingSprite.getLocalBounds().width * min, TILE_HEIGHT / blackKingSprite.getLocalBounds().height * min);
-	this->whiteKingSprite.setScale(TILE_WIDTH / whiteKingSprite.getLocalBounds().width * min, TILE_HEIGHT / whiteKingSprite.getLocalBounds().height * min);
-	this->blackBishopSprite.setScale(TILE_WIDTH / blackBishopSprite.getLocalBounds().width * min, TILE_HEIGHT / blackBishopSprite.getLocalBounds().height * min);
-	this->whiteBishopSprite.setScale(TILE_WIDTH / whiteBishopSprite.getLocalBounds().width * min, TILE_HEIGHT / whiteBishopSprite.getLocalBounds().height * min);
-	this->blackKnightSprite.setScale(TILE_WIDTH / blackKnightSprite.getLocalBounds().width * min, TILE_HEIGHT / blackKnightSprite.getLocalBounds().height * min);
-	this->whiteKnightSprite.setScale(TILE_WIDTH / whiteKnightSprite.getLocalBounds().width * min, TILE_HEIGHT / whiteKnightSprite.getLocalBounds().height * min);
-	this->blackRookSprite.setScale(TILE_WIDTH / blackRookSprite.getLocalBounds().width * min, TILE_HEIGHT / blackRookSprite.getLocalBounds().height * min);
-	this->whiteRookSprite.setScale(TILE_WIDTH / whiteRookSprite.getLocalBounds().width * min, TILE_HEIGHT / whiteRookSprite.getLocalBounds().height * min);
-	this->blackQueenSprite.setScale(TILE_WIDTH / blackQueenSprite.getLocalBounds().width * min, TILE_HEIGHT / blackQueenSprite.getLocalBounds().height * min);
-	this->whiteQueenSprite.setScale(TILE_WIDTH / whiteQueenSprite.getLocalBounds().width * min, TILE_HEIGHT / whiteQueenSprite.getLocalBounds().height * min);
+	black_pawn_sprite_.setScale(TILE_WIDTH / black_pawn_sprite_.getLocalBounds().width * min, TILE_HEIGHT / black_pawn_sprite_.getLocalBounds().height * min);
+	white_pawn_sprite_.setScale(TILE_WIDTH / white_pawn_sprite_.getLocalBounds().width * min, TILE_HEIGHT / white_pawn_sprite_.getLocalBounds().height * min);
+	black_king_sprite_.setScale(TILE_WIDTH / black_king_sprite_.getLocalBounds().width * min, TILE_HEIGHT / black_king_sprite_.getLocalBounds().height * min);
+	white_king_sprite_.setScale(TILE_WIDTH / white_king_sprite_.getLocalBounds().width * min, TILE_HEIGHT / white_king_sprite_.getLocalBounds().height * min);
+	black_bishop_sprite_.setScale(TILE_WIDTH / black_bishop_sprite_.getLocalBounds().width * min, TILE_HEIGHT / black_bishop_sprite_.getLocalBounds().height * min);
+	white_bishop_sprite_.setScale(TILE_WIDTH / white_bishop_sprite_.getLocalBounds().width * min, TILE_HEIGHT / white_bishop_sprite_.getLocalBounds().height * min);
+	black_knight_sprite_.setScale(TILE_WIDTH / black_knight_sprite_.getLocalBounds().width * min, TILE_HEIGHT / black_knight_sprite_.getLocalBounds().height * min);
+	white_knight_sprite_.setScale(TILE_WIDTH / white_knight_sprite_.getLocalBounds().width * min, TILE_HEIGHT / white_knight_sprite_.getLocalBounds().height * min);
+	black_rook_sprite_.setScale(TILE_WIDTH / black_rook_sprite_.getLocalBounds().width * min, TILE_HEIGHT / black_rook_sprite_.getLocalBounds().height * min);
+	white_rook_sprite_.setScale(TILE_WIDTH / white_rook_sprite_.getLocalBounds().width * min, TILE_HEIGHT / white_rook_sprite_.getLocalBounds().height * min);
+	black_queen_sprite_.setScale(TILE_WIDTH / black_queen_sprite_.getLocalBounds().width * min, TILE_HEIGHT / black_queen_sprite_.getLocalBounds().height * min);
+	white_queen_sprite_.setScale(TILE_WIDTH / white_queen_sprite_.getLocalBounds().width * min, TILE_HEIGHT / white_queen_sprite_.getLocalBounds().height * min);
 
-	for (auto &tileBlock : this->tileBlocks)
+	for (auto &tile_block : tile_blocks_)
 	{
-		tileBlock.setTileRectScale(min, min);
-		tileBlock.setTileRectPosition(157.5f + 5 * min + (tileBlock.getTileId() % 8) * TILE_WIDTH * min, 25 + 45 + 5 * min + (tileBlock.getTileId() / 8) * TILE_HEIGHT * min);
+		tile_block.get_tile_rect_scale(min, min);
+		tile_block.set_tile_rect_position(157.5f + 5 * min + (tile_block.get_tile_id() % 8) * TILE_WIDTH * min, 25 + 45 + 5 * min + (tile_block.get_tile_id() / 8) * TILE_HEIGHT * min);
 	}
 }
 
-void GameBoard::moveHandler(sf::Vector2i mousePosition)
+void game_board::move_handler()
 {
-	if (this->event.type == sf::Event::MouseButtonPressed)
+	if (event_.type == sf::Event::MouseButtonPressed)
 	{
-		if (this->event.mouseButton.button == sf::Mouse::Left)
+		if (event_.mouseButton.button == sf::Mouse::Left)
 		{
-			for (auto &tileBlock : this->tileBlocks)
-				if (tileBlock.getTileRect().getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+			for (auto &tile_block : tile_blocks_)
+				if (tile_block.get_tile_rect().getGlobalBounds().contains(mouse_position_.x, mouse_position_.y))
 				{
-					if (this->sourceTile == nullptr)
+					if (source_tile_ == nullptr)
 					{
-						this->sourceTile = this->board->getTile(tileBlock.getTileId());
-						if ((this->movedPiece = this->sourceTile->getPiece()) == nullptr)
-							this->sourceTile = nullptr;
+						source_tile_ = board_->get_tile(tile_block.get_tile_id());
+						if ((moved_piece_ = source_tile_->get_piece()) == nullptr)
+							source_tile_ = nullptr;
 					}
 					else
 					{
-						this->destinationTile = this->board->getTile(tileBlock.getTileId());
-						if (this->sourceTile->getTileCoordinate() == this->destinationTile->getTileCoordinate())
+						destination_tile_ = board_->get_tile(tile_block.get_tile_id());
+						if (source_tile_->get_tile_coordinate() == destination_tile_->get_tile_coordinate())
 						{
-							pawnPromotion = false;
-							this->sourceTile = nullptr;
-							this->destinationTile = nullptr;
-							this->movedPiece = nullptr;
+							pawn_promotion_ = false;
+							source_tile_ = nullptr;
+							destination_tile_ = nullptr;
+							moved_piece_ = nullptr;
 						}
-						else if (pawnPromotion && pawnPromotionRect.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+						else if (pawn_promotion_ && pawn_promotion_rect_.getGlobalBounds().contains(mouse_position_.x, mouse_position_.y))
 						{
-							pawnPromotion = false;
-							Move *move;
-							if (movedPiece->getPieceAlliance() == Alliance::WHITE)
+							pawn_promotion_ = false;
+							std::shared_ptr<move> m;
+							if (moved_piece_->get_piece_alliance() == alliance::white)
 							{
-								switch (tileBlock.getTileId() / 8)
+								switch (tile_block.get_tile_id() / 8)
 								{
 								case 0:
-									move = MoveFactory::createMove(board, sourceTile->getTileCoordinate(), destinationTile->getTileCoordinate() % 8, PieceType::QUEEN);
+									m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::queen);
 									break;
 								case 1:
-									move = MoveFactory::createMove(board, sourceTile->getTileCoordinate(), destinationTile->getTileCoordinate() % 8, PieceType::KNIGHT);
+									m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::knight);
 									break;
 								case 2:
-									move = MoveFactory::createMove(board, sourceTile->getTileCoordinate(), destinationTile->getTileCoordinate() % 8, PieceType::ROOK);
+									m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::rook);
 									break;
 								case 3:
-									move = MoveFactory::createMove(board, sourceTile->getTileCoordinate(), destinationTile->getTileCoordinate() % 8, PieceType::BISHOP);
+									m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::bishop);
 									break;
 								default:
 									throw std::runtime_error("Invalid pawn promotion");
@@ -359,57 +361,60 @@ void GameBoard::moveHandler(sf::Vector2i mousePosition)
 							}
 							else
 							{
-								switch (tileBlock.getTileId() / 8)
+								switch (tile_block.get_tile_id() / 8)
 								{
 								case 4:
-									move = MoveFactory::createMove(board, sourceTile->getTileCoordinate(), destinationTile->getTileCoordinate() % 8 + 56, PieceType::BISHOP);
+									m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::bishop);
 									break;
 								case 5:
-									move = MoveFactory::createMove(board, sourceTile->getTileCoordinate(), destinationTile->getTileCoordinate() % 8 + 56, PieceType::ROOK);
+									m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::rook);
 									break;
 								case 6:
-									move = MoveFactory::createMove(board, sourceTile->getTileCoordinate(), destinationTile->getTileCoordinate() % 8 + 56, PieceType::KNIGHT);
+									m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::knight);
 									break;
 								case 7:
-									move = MoveFactory::createMove(board, sourceTile->getTileCoordinate(), destinationTile->getTileCoordinate() % 8 + 56, PieceType::QUEEN);
+									m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::queen);
 									break;
 								default:
 									throw std::runtime_error("Invalid pawn promotion");
 								}
 							}
-							MoveTransition transition = this->board->getCurrentPlayer()->makeMove(move);
-							if (transition.getMoveStatus() == MoveStatus::DONE)
+							move_transition transition = board_->get_current_player()->make_move(m);
+							if (transition.get_move_status() == move_status::done)
 							{
-								this->board = transition.getTransitionBoard();
-								this->moveLog.addMove(move);
-								is_move_made = true;
-								this->takenPiecesBlock->redo(this->moveLog);
-								this->gameHistoryBlock->redo(this->board, this->moveLog);
+								board_ = transition.get_transition_board();
+								move_log_.add_move(m);
+								is_move_made_ = true;
+								taken_pieces_block_->redo(move_log_);
+								game_history_block_->redo(board_.get(), move_log_);
 							}
-							this->sourceTile = nullptr;
-							this->destinationTile = nullptr;
-							this->movedPiece = nullptr;
+							source_tile_ = nullptr;
+							destination_tile_ = nullptr;
+							moved_piece_ = nullptr;
 						}
-						else if (movedPiece->getPieceType() == PieceType::PAWN && isPawnPromotable(*this))
+						else if (moved_piece_->get_piece_type() == piece_type::pawn && is_pawn_promotable(*this))
 						{
-							pawnPromotion = true;
+							pawn_promotion_ = true;
 						}
 						else
 						{
-							pawnPromotion = false;
-							Move *move = MoveFactory::createMove(this->board, this->sourceTile->getTileCoordinate(), this->destinationTile->getTileCoordinate());
-							MoveTransition transition = this->board->getCurrentPlayer()->makeMove(move);
-							if (transition.getMoveStatus() == MoveStatus::DONE)
+							pawn_promotion_ = false;
+							std::shared_ptr<move> m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate());
+							if (m != nullptr)
 							{
-								this->board = transition.getTransitionBoard();
-								this->moveLog.addMove(move);
-								is_move_made = true;
-								this->takenPiecesBlock->redo(this->moveLog);
-								this->gameHistoryBlock->redo(this->board, this->moveLog);
+								move_transition transition = board_->get_current_player()->make_move(m);
+								if (transition.get_move_status() == move_status::done)
+								{
+									board_ = transition.get_transition_board();
+									move_log_.add_move(m);
+									is_move_made_ = true;
+									taken_pieces_block_->redo(move_log_);
+									game_history_block_->redo(board_.get(), move_log_);
+								}
 							}
-							this->sourceTile = nullptr;
-							this->destinationTile = nullptr;
-							this->movedPiece = nullptr;
+							source_tile_ = nullptr;
+							destination_tile_ = nullptr;
+							moved_piece_ = nullptr;
 						}
 					}
 				}
@@ -417,174 +422,173 @@ void GameBoard::moveHandler(sf::Vector2i mousePosition)
 	}
 }
 
-void GameBoard::observe()
+void game_board::observe()
 {
-	// std::cout << to_string(gameSetup->get_white_player_type()) << " vs " << to_string(gameSetup->get_black_player_type()) << std::endl;
-	is_move_made = false;
-	if (board->getCurrentPlayer()->isInCheckMate())
+	is_move_made_ = false;
+	if (board_->get_current_player()->is_is_checkmate())
 	{
 		std::cout << "Checkmate!" << std::endl;
 	}
-	else if (board->getCurrentPlayer()->isInStaleMate())
+	else if (board_->get_current_player()->is_in_stalemate())
 	{
 		std::cout << "Stalemate!" << std::endl;
 	}
-	else if (gameSetup->is_AI_player(board->getCurrentPlayer()) &&
-			 !board->getCurrentPlayer()->isInCheckMate() &&
-			 !board->getCurrentPlayer()->isInStaleMate())
+	else if (game_setup_->is_AI_player(board_->get_current_player().get()) &&
+			 !board_->get_current_player()->is_is_checkmate() &&
+			 !board_->get_current_player()->is_in_stalemate())
 	{
-		std::cout << board->getCurrentPlayer()->stringify() << " is thinking..." << std::endl;
+		std::cout << board_->get_current_player()->stringify() << " is thinking..." << std::endl;
 		ai->run();
 	}
 }
 
-bool isPawnPromotable(GameBoard &gameBoard)
+bool is_pawn_promotable(game_board &gb)
 {
-	if (gameBoard.movedPiece->getPieceAlliance() == Alliance::WHITE)
-		return BoardUtils::SECOND_ROW[gameBoard.sourceTile->getTileCoordinate()] && BoardUtils::FIRST_ROW[gameBoard.destinationTile->getTileCoordinate()];
+	if (gb.moved_piece_->get_piece_alliance() == alliance::white)
+		return board_utils::second_row[gb.source_tile_->get_tile_coordinate()] && board_utils::first_row[gb.destination_tile_->get_tile_coordinate()];
 	else
-		return BoardUtils::SEVENTH_ROW[gameBoard.sourceTile->getTileCoordinate()] && BoardUtils::EIGHTH_ROW[gameBoard.destinationTile->getTileCoordinate()];
+		return board_utils::seventh_row[gb.source_tile_->get_tile_coordinate()] && board_utils::eighth_row[gb.destination_tile_->get_tile_coordinate()];
 }
 
-void GameBoard::updateMousePosition()
+void game_board::update_mouse_position()
 {
-	this->mousePosition = sf::Mouse::getPosition(*this->window);
+	mouse_position_ = sf::Mouse::getPosition(*window_);
 }
 
-void GameBoard::updateTileBlocks()
+void game_board::update_tile_blocks()
 {
-	for (auto &tileBlock : this->tileBlocks)
+	for (auto &tile_block : tile_blocks_)
 	{
-		std::vector<int> legalMoves = legalMoveDestinations();
+		std::vector<int> legal_moves = legal_move_destinations();
 
-		if (tileBlock.getTileRect().getGlobalBounds().contains(this->mousePosition.x, this->mousePosition.y))
+		if (tile_block.get_tile_rect().getGlobalBounds().contains(mouse_position_.x, mouse_position_.y))
 		{
-			tileBlock.setTileRectFillColor(sf::Color(0, 255, 255, 100));
+			tile_block.set_tile_rect_fill_color(sf::Color(0, 255, 255, 100));
 		}
-		else if (legalMoves.size() > 0 && std::find(legalMoves.begin(), legalMoves.end(), tileBlock.getTileId()) != legalMoves.end())
+		else if (legal_moves.size() > 0 && std::find(legal_moves.begin(), legal_moves.end(), tile_block.get_tile_id()) != legal_moves.end())
 		{
-			tileBlock.setTileRectFillColor(sf::Color(0, 255, 0, 100));
+			tile_block.set_tile_rect_fill_color(sf::Color(0, 255, 0, 100));
 		}
-		else if (this->board->getCurrentPlayer()->isInCheck() && this->board->getCurrentPlayer()->getPlayerKing()->getPiecePosition() == tileBlock.getTileId())
+		else if (board_->get_current_player()->is_in_check() && board_->get_current_player()->get_player_king()->get_piece_position() == tile_block.get_tile_id())
 		{
-			tileBlock.setTileRectFillColor(sf::Color(255, 0, 0, 100));
+			tile_block.set_tile_rect_fill_color(sf::Color(255, 0, 0, 100));
 		}
-		else if (this->sourceTile != nullptr && this->sourceTile->getTileCoordinate() == tileBlock.getTileId())
+		else if (source_tile_ != nullptr && source_tile_->get_tile_coordinate() == tile_block.get_tile_id())
 		{
-			tileBlock.setTileRectFillColor(sf::Color(255, 255, 0, 100));
+			tile_block.set_tile_rect_fill_color(sf::Color(255, 255, 0, 100));
 		}
 		else
 		{
-			tileBlock.setTileRectFillColor((tileBlock.getTileId() / 8 + tileBlock.getTileId()) % 2 == 0 ? sf::Color(/*White*/ 255, 250, 205) : sf::Color(/*Black*/ 89, 62, 26));
+			tile_block.set_tile_rect_fill_color((tile_block.get_tile_id() / 8 + tile_block.get_tile_id()) % 2 == 0 ? sf::Color(/*White*/ 255, 250, 205) : sf::Color(/*Black*/ 89, 62, 26));
 		}
 	}
 }
 
-std::vector<int> GameBoard::legalMoveDestinations()
+std::vector<int> game_board::legal_move_destinations()
 {
-	std::vector<int> moveDestinations;
-	if (movedPiece != nullptr && movedPiece->getPieceAlliance() == this->board->getCurrentPlayer()->getPlayerAlliance())
+	std::vector<int> move_destinations;
+	if (moved_piece_ != nullptr && moved_piece_->get_piece_alliance() == board_->get_current_player()->get_player_alliance())
 	{
-		auto legalMoves = this->board->getCurrentPlayer()->getLegalMoves();
-		legalMoves.erase(std::remove_if(legalMoves.begin(), legalMoves.end(), [this](Move *move)
-										{ return !(*move->getMovedPiece() == *this->movedPiece); }),
-						 legalMoves.end());
-		for (const auto move : legalMoves)
-			moveDestinations.push_back(move->getDestinationCoordinate());
+		auto legal_moves = board_->get_current_player()->get_legal_moves();
+		legal_moves.erase(std::remove_if(legal_moves.begin(), legal_moves.end(), [this](std::shared_ptr<move> move)
+										 { return !(*move->get_moved_piece() == *moved_piece_); }),
+						  legal_moves.end());
+		for (auto m : legal_moves)
+			move_destinations.push_back(m->get_destination_coordinate());
 	}
-	return moveDestinations;
+	return move_destinations;
 }
 
-void GameBoard::update()
+void game_board::update()
 {
-	processEvents();
-	if (is_move_made)
+	process_events();
+	if (is_move_made_)
 		observe();
-	updateMousePosition();
-	updateTileBlocks();
+	update_mouse_position();
+	update_tile_blocks();
 }
 
-void GameBoard::renderTileBlocks()
+void game_board::render_tile_blocks()
 {
-	for (auto &tileBlock : this->tileBlocks)
+	for (auto &tile_block : tile_blocks_)
 	{
-		this->window->draw(tileBlock.getTileRect());
-		if (this->board->getTile(tileBlock.getTileId())->isTileOccupied())
+		window_->draw(tile_block.get_tile_rect());
+		if (board_->get_tile(tile_block.get_tile_id())->is_tile_occupied())
 		{
 			// Draw piece
-			Piece *piece = this->board->getTile(tileBlock.getTileId())->getPiece();
-			switch (piece->getPieceType())
+			auto piece = board_->get_tile(tile_block.get_tile_id())->get_piece();
+			switch (piece->get_piece_type())
 			{
-			case PieceType::PAWN:
-				if (piece->getPieceAlliance() == Alliance::WHITE)
+			case piece_type::pawn:
+				if (piece->get_piece_alliance() == alliance::white)
 				{
-					this->whitePawnSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->whitePawnSprite);
+					white_pawn_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(white_pawn_sprite_);
 				}
 				else
 				{
-					this->blackPawnSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->blackPawnSprite);
+					black_pawn_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(black_pawn_sprite_);
 				}
 				break;
-			case PieceType::KNIGHT:
-				if (piece->getPieceAlliance() == Alliance::WHITE)
+			case piece_type::knight:
+				if (piece->get_piece_alliance() == alliance::white)
 				{
-					this->whiteKnightSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->whiteKnightSprite);
+					white_knight_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(white_knight_sprite_);
 				}
 				else
 				{
-					this->blackKnightSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->blackKnightSprite);
+					black_knight_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(black_knight_sprite_);
 				}
 				break;
-			case PieceType::BISHOP:
-				if (piece->getPieceAlliance() == Alliance::WHITE)
+			case piece_type::bishop:
+				if (piece->get_piece_alliance() == alliance::white)
 				{
-					this->whiteBishopSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->whiteBishopSprite);
+					white_bishop_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(white_bishop_sprite_);
 				}
 				else
 				{
-					this->blackBishopSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->blackBishopSprite);
+					black_bishop_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(black_bishop_sprite_);
 				}
 				break;
-			case PieceType::ROOK:
-				if (piece->getPieceAlliance() == Alliance::WHITE)
+			case piece_type::rook:
+				if (piece->get_piece_alliance() == alliance::white)
 				{
-					this->whiteRookSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->whiteRookSprite);
+					white_rook_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(white_rook_sprite_);
 				}
 				else
 				{
-					this->blackRookSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->blackRookSprite);
+					black_rook_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(black_rook_sprite_);
 				}
 				break;
-			case PieceType::QUEEN:
-				if (piece->getPieceAlliance() == Alliance::WHITE)
+			case piece_type::queen:
+				if (piece->get_piece_alliance() == alliance::white)
 				{
-					this->whiteQueenSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->whiteQueenSprite);
+					white_queen_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(white_queen_sprite_);
 				}
 				else
 				{
-					this->blackQueenSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->blackQueenSprite);
+					black_queen_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(black_queen_sprite_);
 				}
 				break;
-			case PieceType::KING:
-				if (piece->getPieceAlliance() == Alliance::WHITE)
+			case piece_type::king:
+				if (piece->get_piece_alliance() == alliance::white)
 				{
-					this->whiteKingSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->whiteKingSprite);
+					white_king_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(white_king_sprite_);
 				}
 				else
 				{
-					this->blackKingSprite.setPosition(tileBlock.getTileRect().getPosition().x, tileBlock.getTileRect().getPosition().y);
-					this->window->draw(this->blackKingSprite);
+					black_king_sprite_.setPosition(tile_block.get_tile_rect().getPosition().x, tile_block.get_tile_rect().getPosition().y);
+					window_->draw(black_king_sprite_);
 				}
 				break;
 			default:
@@ -594,94 +598,117 @@ void GameBoard::renderTileBlocks()
 	}
 }
 
-void GameBoard::renderPawnPromotionOptionPane()
+void game_board::render_pawn_promotion_option_pane()
 {
-	if (pawnPromotion)
+	if (pawn_promotion_)
 	{
-		if (movedPiece->getPieceAlliance() == Alliance::WHITE)
+		if (moved_piece_->get_piece_alliance() == alliance::white)
 		{
-			pawnPromotionRect.setPosition(tileBlocks[destinationTile->getTileCoordinate()].getTileRect().getPosition());
-			this->window->draw(pawnPromotionRect);
-			whiteQueenSprite.setPosition(tileBlocks[destinationTile->getTileCoordinate() + QUEEN_OFFSET].getTileRect().getPosition());
-			window->draw(whiteQueenSprite);
-			whiteKnightSprite.setPosition(tileBlocks[destinationTile->getTileCoordinate() + KNIGHT_OFFSET].getTileRect().getPosition());
-			window->draw(whiteKnightSprite);
-			whiteRookSprite.setPosition(tileBlocks[destinationTile->getTileCoordinate() + ROOK_OFFSET].getTileRect().getPosition());
-			window->draw(whiteRookSprite);
-			whiteBishopSprite.setPosition(tileBlocks[destinationTile->getTileCoordinate() + BISHOP_OFFSET].getTileRect().getPosition());
-			window->draw(whiteBishopSprite);
+			pawn_promotion_rect_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate()].get_tile_rect().getPosition());
+			window_->draw(pawn_promotion_rect_);
+			white_queen_sprite_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate() + QUEEN_OFFSET].get_tile_rect().getPosition());
+			window_->draw(white_queen_sprite_);
+			white_knight_sprite_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate() + KNIGHT_OFFSET].get_tile_rect().getPosition());
+			window_->draw(white_knight_sprite_);
+			white_rook_sprite_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate() + ROOK_OFFSET].get_tile_rect().getPosition());
+			window_->draw(white_rook_sprite_);
+			white_bishop_sprite_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate() + BISHOP_OFFSET].get_tile_rect().getPosition());
+			window_->draw(white_bishop_sprite_);
 		}
 		else
 		{
-			pawnPromotionRect.setPosition(tileBlocks[destinationTile->getTileCoordinate() - 24].getTileRect().getPosition());
-			this->window->draw(pawnPromotionRect);
-			blackBishopSprite.setPosition(tileBlocks[destinationTile->getTileCoordinate() - BISHOP_OFFSET].getTileRect().getPosition());
-			window->draw(blackBishopSprite);
-			blackRookSprite.setPosition(tileBlocks[destinationTile->getTileCoordinate() - ROOK_OFFSET].getTileRect().getPosition());
-			window->draw(blackRookSprite);
-			blackKnightSprite.setPosition(tileBlocks[destinationTile->getTileCoordinate() - KNIGHT_OFFSET].getTileRect().getPosition());
-			window->draw(blackKnightSprite);
-			blackQueenSprite.setPosition(tileBlocks[destinationTile->getTileCoordinate() - QUEEN_OFFSET].getTileRect().getPosition());
-			window->draw(blackQueenSprite);
+			pawn_promotion_rect_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate() - 24].get_tile_rect().getPosition());
+			window_->draw(pawn_promotion_rect_);
+			black_bishop_sprite_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate() - BISHOP_OFFSET].get_tile_rect().getPosition());
+			window_->draw(black_bishop_sprite_);
+			black_rook_sprite_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate() - ROOK_OFFSET].get_tile_rect().getPosition());
+			window_->draw(black_rook_sprite_);
+			black_knight_sprite_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate() - KNIGHT_OFFSET].get_tile_rect().getPosition());
+			window_->draw(black_knight_sprite_);
+			black_queen_sprite_.setPosition(tile_blocks_[destination_tile_->get_tile_coordinate() - QUEEN_OFFSET].get_tile_rect().getPosition());
+			window_->draw(black_queen_sprite_);
 		}
 	}
 }
 
-void GameBoard::render()
+void game_board::render()
 {
-	this->window->clear();
+	window_->clear();
 
 	// Draw the background
-	this->window->draw(this->bg);
+	window_->draw(back_ground_);
 
 	// Draw the board
-	this->window->draw(this->boardRect);
-	renderTileBlocks();
-	renderPawnPromotionOptionPane();
+	window_->draw(board_rect_);
+	render_tile_blocks();
+	render_pawn_promotion_option_pane();
 
 	// Draw the taken pieces block
-	this->takenPiecesBlock->draw(*this->window);
+	taken_pieces_block_->draw(*window_);
 
 	// Draw the game history block
-	this->gameHistoryBlock->draw(*this->window);
-	this->window->setView(this->currentMainView);
+	game_history_block_->draw(*window_);
+	window_->setView(current_main_view_);
 
 	// Draw the menu bar
-	this->menuBar->draw(*this->window);
+	menu_bar_->draw(*window_);
 
-	if (is_game_setup_open)
-		gameSetup->draw(*this->window);
+	if (is_game_setup_open_)
+		game_setup_->draw(*window_);
 
-	this->window->display();
+	window_->display();
 }
 
-/* GameBoard::ai_move_generator */
+void game_board::undo_last_move()
+{
+	if (move_log_.get_moves_count() > 0)
+	{
+		board_ = board_->get_previous_board();
+		move_log_.remove_move(move_log_.get_moves_count() - 1);
+		game_history_block_->redo(board_.get(), move_log_);
+		taken_pieces_block_->redo(move_log_);
+	}
+}
 
-GameBoard::ai_move_generator::ai_move_generator(GameBoard *parent) : parent(parent) {}
+void game_board::undo_all_moves()
+{
+	while (move_log_.get_moves_count() > 0)
+	{
+		board_ = board_->get_previous_board();
+		move_log_.remove_move(move_log_.get_moves_count() - 1);
+	}
+	game_history_block_->redo(board_.get(), move_log_);
+	taken_pieces_block_->redo(move_log_);
+}
 
-void GameBoard::ai_move_generator::run()
+/* game_board::ai_move_generator */
+
+game_board::ai_move_generator::ai_move_generator(game_board *parent)
+	: parent_(parent) {}
+
+void game_board::ai_move_generator::run()
 {
 	auto future = std::async(std::launch::async, [this]
-							 { return this->get_best_move(); });
+							 { return get_best_move(); });
 	auto best_move = future.get();
 	done(best_move);
 }
 
-Move *GameBoard::ai_move_generator::get_best_move()
+std::shared_ptr<move> game_board::ai_move_generator::get_best_move()
 {
-	std::unique_ptr<MoveStrategy> mini_max = std::make_unique<MiniMax>(parent->gameSetup->get_search_depth());
-	Move *best_move = mini_max->execute(parent->board);
+	mini_max mm(parent_->game_setup_->get_search_depth());
+	std::shared_ptr<move> best_move = mm.execute(parent_->board_);
 	return best_move;
 }
 
-void GameBoard::ai_move_generator::done(Move *best_move)
+void game_board::ai_move_generator::done(std::shared_ptr<move> best_move)
 {
-	parent->board = parent->board->getCurrentPlayer()->makeMove(best_move).getTransitionBoard();
-	parent->moveLog.addMove(best_move);
-	parent->takenPiecesBlock->redo(parent->moveLog);
-	parent->gameHistoryBlock->redo(parent->board, parent->moveLog);
-	parent->render();
-	parent->update();
-	if (parent->isRunning())
-		parent->is_move_made = true;
+	parent_->board_ = parent_->board_->get_current_player()->make_move(best_move).get_transition_board();
+	parent_->move_log_.add_move(best_move);
+	parent_->taken_pieces_block_->redo(parent_->move_log_);
+	parent_->game_history_block_->redo(parent_->board_.get(), parent_->move_log_);
+	parent_->render();
+	parent_->update();
+	if (parent_->is_running())
+		parent_->is_move_made_ = true;
 }

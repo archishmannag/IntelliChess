@@ -3,22 +3,22 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class King : public Piece
+class king : public piece
 {
 private:
-	bool isCastled;
+	bool castled_;
 
-	static const int CANDIDATE_MOVE_COORDINATES[];
+	static const int candidate_move_coordinates[];
 
-	static bool isFirstColumnExclusion(const int currentPosition, const int candidateOffset);
-	static bool isEighthColumnExclusion(const int currentPosition, const int candidateOffset);
+	static bool is_first_column_exclusion(const int cp, const int co);
+	static bool is_eighth_column_exclusion(const int cp, const int co);
 
 public:
-	King(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove = true, const bool isCastled = false);
+	king(const int pp, const alliance pa, const bool fm = true, const bool c = false);
 
-	std::vector<Move *> calculateLegalMoves(Board &board) override;
-	King *movePiece(const Move *move) const override;
-	bool getIsCastled() const;
+	std::vector<std::shared_ptr<move>> calculate_legal_moves(std::shared_ptr<board> b) override;
+	std::shared_ptr<piece> move_piece(const move *const m) const override;
+	bool is_castled() const;
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <memory>
 
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
@@ -11,39 +12,40 @@
 
 TEST(PlayerTest, testSimpleEvaluation)
 {
-	Board *board = Board::createStandardBoard();
-	MoveTransition t1 = board->getCurrentPlayer()->makeMove(MoveFactory::createMove(board, BoardUtils::getCoordinateAtPosition("e2"), BoardUtils::getCoordinateAtPosition("e4"))),
-				   t2 = t1.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(t1.getTransitionBoard(), BoardUtils::getCoordinateAtPosition("e7"), BoardUtils::getCoordinateAtPosition("e5")));
-	ASSERT_EQ(MoveStatus::DONE, t1.getMoveStatus());
-	ASSERT_EQ(MoveStatus::DONE, t2.getMoveStatus());
+	std::shared_ptr<board> b = board::create_standard_board();
+	move_transition t1 = b->get_current_player()->make_move(move_factory::create_move(b, board_utils::get_coordinate_at_position("e2"), board_utils::get_coordinate_at_position("e4"))),
+					t2 = t1.get_transition_board()->get_current_player()->make_move(move_factory::create_move(t1.get_transition_board(), board_utils::get_coordinate_at_position("e7"), board_utils::get_coordinate_at_position("e5")));
+	ASSERT_EQ(move_status::done, t1.get_move_status());
+	ASSERT_EQ(move_status::done, t2.get_move_status());
 }
 
 TEST(PlayerTest, testBug)
 {
-	Board *board = Board::createStandardBoard();
-	MoveTransition t1 = board->getCurrentPlayer()->makeMove(MoveFactory::createMove(board, BoardUtils::getCoordinateAtPosition("c2"), BoardUtils::getCoordinateAtPosition("c3")));
-	ASSERT_EQ(MoveStatus::DONE, t1.getMoveStatus());
+	std::shared_ptr<board> b = board::create_standard_board();
+	move_transition t1 = b->get_current_player()->make_move(move_factory::create_move(b, board_utils::get_coordinate_at_position("c2"), board_utils::get_coordinate_at_position("c3")));
+	ASSERT_EQ(move_status::done, t1.get_move_status());
 
-	MoveTransition t2 = t1.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(t1.getTransitionBoard(), BoardUtils::getCoordinateAtPosition("b8"), BoardUtils::getCoordinateAtPosition("a6")));
-	ASSERT_EQ(MoveStatus::DONE, t2.getMoveStatus());
+	move_transition t2 = t1.get_transition_board()->get_current_player()->make_move(move_factory::create_move(t1.get_transition_board(), board_utils::get_coordinate_at_position("b8"), board_utils::get_coordinate_at_position("a6")));
+	ASSERT_EQ(move_status::done, t2.get_move_status());
 
-	MoveTransition t3 = t2.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(t2.getTransitionBoard(), BoardUtils::getCoordinateAtPosition("d1"), BoardUtils::getCoordinateAtPosition("a4")));
-	ASSERT_EQ(MoveStatus::DONE, t3.getMoveStatus());
+	move_transition t3 = t2.get_transition_board()->get_current_player()->make_move(move_factory::create_move(t2.get_transition_board(), board_utils::get_coordinate_at_position("d1"), board_utils::get_coordinate_at_position("a4")));
+	ASSERT_EQ(move_status::done, t3.get_move_status());
 
-	MoveTransition t4 = t3.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(t3.getTransitionBoard(), BoardUtils::getCoordinateAtPosition("d7"), BoardUtils::getCoordinateAtPosition("d6")));
-	ASSERT_NE(MoveStatus::DONE, t4.getMoveStatus());
+	move_transition t4 = t3.get_transition_board()->get_current_player()->make_move(move_factory::create_move(t3.get_transition_board(), board_utils::get_coordinate_at_position("d7"), board_utils::get_coordinate_at_position("d6")));
+	ASSERT_NE(move_status::done, t4.get_move_status());
 }
 
-TEST(PlayerTest, testDiscoveredCheck){
-	BoardBuilder builder;
+TEST(PlayerTest, testDiscoveredCheck)
+{
+	board_builder builder;
 	// Black Layout
-	builder.setPiece(new King(4, Alliance::BLACK));
-	builder.setPiece(new Rook(24, Alliance::BLACK));
+	builder.set_piece(std::make_shared<king>(4, alliance::black));
+	builder.set_piece(std::make_shared<rook>(24, alliance::black));
 	// White Layout
-	builder.setPiece(new Bishop(44, Alliance::WHITE));
-	builder.setPiece(new Rook(52, Alliance::WHITE));
-	builder.setPiece(new King(58, Alliance::WHITE));
+	builder.set_piece(std::make_shared<bishop>(44, alliance::white));
+	builder.set_piece(std::make_shared<rook>(52, alliance::white));
+	builder.set_piece(std::make_shared<king>(58, alliance::white));
 
-	builder.setMoveMaker(Alliance::WHITE);
-	Board *board = builder.build();
+	builder.set_move_maker(alliance::white);
+	std::shared_ptr<board> b = builder.build();
 }

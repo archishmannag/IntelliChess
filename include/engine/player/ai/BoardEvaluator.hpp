@@ -1,12 +1,12 @@
 #ifndef BOARD_EVALUATOR_HPP
 #define BOARD_EVALUATOR_HPP
 
-class Board;
+class board;
 
-class BoardEvaluator
+class board_evaluator
 {
 public:
-	virtual int evaluate(Board *board, int depth) = 0;
+	virtual int evaluate(board *b, int d) = 0;
 };
 
 #endif

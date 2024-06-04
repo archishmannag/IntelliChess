@@ -3,48 +3,49 @@
 
 #include <map>
 #include <string>
+#include <memory>
 
-class Piece;
-class EmptyTile;
+class piece;
+class empty_tile;
 
-class Tile
+class tile
 {
 private:
-	static std::map<int, EmptyTile *> initializeAllEmptyTiles();
+	static std::map<int, std::shared_ptr<empty_tile>> initialize_all_empty_tiles();
 
-	static std::map<int, EmptyTile *> EMPTY_TILES_CACHE;
+	static std::map<int, std::shared_ptr<empty_tile>> empty_tiles_cache;
 
 protected:
-	const int tileCoordinate;
+	const int tile_coordinate_;
 
-	explicit Tile(int coordinate);
+	tile(int c);
 
 public:
-	static Tile *createTile(int coordinate, Piece *piece);
-	int getTileCoordinate() const;
-	virtual bool isTileOccupied() const;
-	virtual Piece *getPiece() const;
+	static std::shared_ptr<tile> create_tile(int c, std::shared_ptr<piece> p);
+	int get_tile_coordinate() const;
+	virtual bool is_tile_occupied() const;
+	virtual std::shared_ptr<piece> get_piece() const;
 	virtual std::string stringify() const;
 };
 
-class EmptyTile : public Tile
+class empty_tile : public tile
 {
 public:
-	explicit EmptyTile(int coordinate);
-	bool isTileOccupied() const override;
-	Piece *getPiece() const override;
+	empty_tile(int c);
+	bool is_tile_occupied() const override;
+	std::shared_ptr<piece> get_piece() const override;
 	std::string stringify() const override;
 };
 
-class OccupiedTile : public Tile
+class occupied_tile : public tile
 {
 private:
-	Piece *pieceOnTile;
+	std::shared_ptr<piece> piece_on_tile_;
 
 public:
-	OccupiedTile(int coordinate, Piece *piece);
-	bool isTileOccupied() const override;
-	Piece *getPiece() const override;
+	occupied_tile(int c, std::shared_ptr<piece> p);
+	bool is_tile_occupied() const override;
+	std::shared_ptr<piece> get_piece() const override;
 	std::string stringify() const override;
 };
 

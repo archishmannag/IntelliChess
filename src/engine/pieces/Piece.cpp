@@ -2,92 +2,101 @@
 
 #include <engine/pieces/Piece.hpp>
 
-Piece::Piece(const int piecePosition, const Alliance pieceAlliance, const PieceType pieceType, bool isFirstMove) : piecePosition(piecePosition), pieceAlliance(pieceAlliance), isFirstMove(isFirstMove), pieceType(pieceType){};
+piece::piece(const int pp, const alliance pa, const piece_type pt, bool fm)
+	: piece_position_(pp),
+	  piece_alliance_(pa),
+	  first_move_(fm),
+	  piece_type_(pt){};
 
-bool Piece::operator==(const Piece &other)
+bool piece::operator==(const piece &other)
 {
 	if (this == &other)
 		return true;
 	else
-		return this->piecePosition == other.getPiecePosition() &&
-			   this->pieceAlliance == other.getPieceAlliance() &&
-			   this->pieceType == other.getPieceType() &&
-			   this->isFirstMove == other.getIsFirstMove();
+		return piece_position_ == other.get_piece_position() &&
+			   piece_alliance_ == other.get_piece_alliance() &&
+			   piece_type_ == other.get_piece_type() &&
+			   first_move_ == other.is_first_move();
 }
 
-std::vector<Move *> Piece::calculateLegalMoves(Board &board)
+std::vector<std::shared_ptr<move>> piece::calculate_legal_moves(std::shared_ptr<board> b)
 {
 	throw std::logic_error("This method must be overridden by a subclass.");
 }
 
-Piece *Piece::movePiece(const Move *move) const
+std::shared_ptr<piece> piece::move_piece(const move *const m) const
 {
 	throw std::logic_error("This method must be overridden by a subclass.");
 }
 
-int Piece::getPiecePosition() const
+int piece::get_piece_position() const
 {
-	return this->piecePosition;
+	return piece_position_;
 }
 
-Alliance Piece::getPieceAlliance() const
+alliance piece::get_piece_alliance() const
 {
-	return this->pieceAlliance;
+	return piece_alliance_;
 }
 
-bool Piece::getIsFirstMove() const
+bool piece::is_first_move() const
 {
-	return this->isFirstMove;
+	return first_move_;
 }
 
-PieceType Piece::getPieceType() const
+piece_type piece::get_piece_type() const
 {
-	return this->pieceType;
+	return piece_type_;
 }
 
-int Piece::getPieceValue() const
+int piece::get_piece_value() const
 {
-	switch (this->pieceType)
+	switch (piece_type_)
 	{
-	case PieceType::PAWN:
+	case piece_type::pawn:
 		return 100;
-	case PieceType::KNIGHT:
-	case PieceType::BISHOP:
+		break;
+	case piece_type::knight:
+	case piece_type::bishop:
 		return 300;
-	case PieceType::ROOK:
+		break;
+	case piece_type::rook:
 		return 500;
-	case PieceType::QUEEN:
+		break;
+	case piece_type::queen:
 		return 900;
-	case PieceType::KING:
+		break;
+	case piece_type::king:
 		return 10000;
+		break;
 	default:
 		throw std::runtime_error("Invalid piece type");
 	}
 }
 
-std::string Piece::stringify() const
+std::string piece::stringify() const
 {
-	std::string typeString = "";
-	switch (this->pieceType)
+	std::string type_string = "";
+	switch (piece_type_)
 	{
-	case PieceType::PAWN:
-		typeString += "P";
+	case piece_type::pawn:
+		type_string += "P";
 		break;
-	case PieceType::KNIGHT:
-		typeString += "N";
+	case piece_type::knight:
+		type_string += "N";
 		break;
-	case PieceType::BISHOP:
-		typeString += "B";
+	case piece_type::bishop:
+		type_string += "B";
 		break;
-	case PieceType::ROOK:
-		typeString += "R";
+	case piece_type::rook:
+		type_string += "R";
 		break;
-	case PieceType::QUEEN:
-		typeString += "Q";
+	case piece_type::queen:
+		type_string += "Q";
 		break;
-	case PieceType::KING:
-		typeString += "K";
+	case piece_type::king:
+		type_string += "K";
 		break;
 	}
-	return typeString;
+	return type_string;
 }

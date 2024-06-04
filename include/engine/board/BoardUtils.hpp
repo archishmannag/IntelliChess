@@ -5,20 +5,24 @@
 #include <string>
 #include <map>
 
-namespace BoardUtils
+class board;
+
+namespace board_utils
 {
 	extern std::array<bool, 64>
-		FIRST_COLUMN, SECOND_COLUMN, THIRD_COLUMN, FOURTH_COLUMN, FIFTH_COLUMN, SIXTH_COLUMN, SEVENTH_COLUMN, EIGHTH_COLUMN,
-		FIRST_ROW, SECOND_ROW, THIRD_ROW, FOURTH_ROW, FIFTH_ROW, SIXTH_ROW, SEVENTH_ROW, EIGHTH_ROW;
+		first_column, second_column, third_column, fourth_column, fifth_column, sixth_column, seventh_column, eighth_column,
+		first_row, second_row, third_row, fourth_row, fifth_row, sixth_row, seventh_row, eighth_row;
 
-	extern std::array<std::string, 64> ALGEBRAIC_NOTATION;
-	extern std::map<std::string, int> POSITION_TO_COORDINATE;
+	extern std::array<std::string, 64> algebraic_notation;
+	extern std::map<std::string, int> position_to_coordinate;
 
-	bool isValidTileCoordinate(int coordinate);
-	int getCoordinateAtPosition(std::string position);
-	std::string getPositionAtCoordinate(int coordinate);
-	std::array<std::string, 64> initializeAlgebraicNotation();
-	std::map<std::string, int> initializePositionToCoordinateMap();
+	bool is_valid_tile_coordinate(int c);
+	int get_coordinate_at_position(std::string p);
+	std::string get_position_at_coordinate(int c);
+	std::array<std::string, 64> initialize_algebraic_notation();
+	std::map<std::string, int> initialize_position_to_coordinate_map();
+
+	std::string calculate_check_and_checkmate(board *b);
 }
 
 #endif

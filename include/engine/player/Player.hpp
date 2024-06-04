@@ -2,42 +2,43 @@
 #define PLAYER_HPP
 
 #include <vector>
+#include <memory>
 
 #include "../Alliance.hpp"
 
-class Board;
-class Move;
-class King;
-class MoveTransition;
-class Piece;
+class board;
+class move;
+class king;
+class move_transition;
+class piece;
 
-class Player
+class player
 {
 protected:
-	bool inCheck;
-	Board *board;
-	King *playerKing;
-	std::vector<Move *> legalMoves;
+	bool checked_;
+	std::weak_ptr<board> board_;
+	std::shared_ptr<king> player_king_;
+	std::vector<std::shared_ptr<move>> legal_moves_;
 
-	static std::vector<Move *> calculateAttacksOnTile(const int piecePosition, std::vector<Move *> opponentMoves);
-	King *establishKing();
-	bool hasEscapeMoves() const;
+	static std::vector<std::shared_ptr<move>> calculate_attacks_on_tile(const int pp, std::vector<std::shared_ptr<move>> om);
+	std::shared_ptr<king> establish_king();
+	bool has_escape_coves() const;
 
 public:
-	Player(Board *board);
-	bool isMoveLegal(const Move *move) const;
-	King *getPlayerKing() const;
-	std::vector<Move *> getLegalMoves() const;
-	bool isInCheck() const;
-	bool isInCheckMate() const;
-	bool isInStaleMate() const;
-	bool isCastled() const;
-	MoveTransition makeMove(Move *move) const;
+	player(std::shared_ptr<board> b);
+	bool is_move_legal(const move *m) const;
+	std::shared_ptr<king> get_player_king() const;
+	const std::vector<std::shared_ptr<move>> &get_legal_moves() const;
+	bool is_in_check() const;
+	bool is_is_checkmate() const;
+	bool is_in_stalemate() const;
+	bool is_castled() const;
+	move_transition make_move(std::shared_ptr<move> m) const;
 
-	virtual std::vector<Piece *> getActivePieces() const;
-	virtual Alliance getPlayerAlliance() const;
-	virtual const Player *getOpponent() const;
-	virtual std::vector<Move *> calculateKingCastles(const std::vector<Move *> playerLegals, const std::vector<Move *> opponentLegals) const;
+	virtual std::vector<std::shared_ptr<piece>> get_active_pieces() const;
+	virtual alliance get_player_alliance() const;
+	virtual std::weak_ptr<player> get_opponent() const;
+	virtual std::vector<std::shared_ptr<move>> calculate_king_castles(const std::vector<std::shared_ptr<move>> &ol) const;
 	virtual std::string stringify() const;
 };
 

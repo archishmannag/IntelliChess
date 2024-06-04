@@ -2,168 +2,169 @@
 #define MOVE_HPP
 
 #include <string>
+#include <memory>
 
-enum class MoveStatus
+enum class move_status
 {
-	DONE,
-	ILLEGAL_MOVE,
-	LEAVES_PLAYER_IN_CHECK
+	done,
+	illegal_move,
+	leaves_player_in_check
 };
 
-class Board;
-class Piece;
-class Rook;
-class Pawn;
+class board;
+class piece;
+class rook;
+class pawn;
 
-class Move
+class move
 {
 protected:
-	const Board *board;
-	const Piece *movedPiece;
-	const int destinationCoordinate;
-	const bool isFirstMove;
+	std::weak_ptr<board> board_;
+	std::shared_ptr<piece> moved_piece_;
+	const int destination_coordinate_;
+	const bool is_first_move_;
 
-	Move(Board *board, int destinationCoordinate);
-	Move(Board *board, Piece *movedPiece, int destinationCoordinate);
+	move(std::shared_ptr<board> b, int dc);
+	move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
 
 public:
-	virtual bool operator==(const Move &other) const;
+	virtual bool operator==(const move &other) const;
 
-	int getDestinationCoordinate() const;
-	int getCurrentCoordinate() const;
-	Piece *getMovedPiece() const;
-	Board *getBoard() const;
-	virtual bool isAttack() const;
-	virtual bool isCastlingMove() const;
-	virtual Piece *getAttackedPiece() const;
-	virtual Board *execute() const;
+	int get_destination_coordinate() const;
+	int get_current_coordinate() const;
+	std::shared_ptr<piece> get_moved_piece() const;
+	std::shared_ptr<board> get_board() const;
+	virtual bool is_attack() const;
+	virtual bool is_castling_move() const;
+	virtual std::shared_ptr<piece> get_attacked_piece() const;
+	virtual std::shared_ptr<board> execute() const;
 	virtual std::string stringify() const;
 };
 
-class MajorMove : public Move
+class major_move : public move
 {
 public:
-	MajorMove(Board *board, Piece *movedPiece, int destinationCoordinate);
+	major_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
 
-	bool operator==(const Move &other) const override;
+	bool operator==(const move &other) const override;
 	std::string stringify() const override;
 };
 
-class AttackMove : public Move
+class attack_move : public move
 {
 private:
-	const Piece *attackedPiece;
+	std::shared_ptr<piece> attacked_piece_;
 
 public:
-	bool operator==(const Move &other) const override;
+	bool operator==(const move &other) const override;
 
-	AttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate);
-	bool isAttack() const override;
-	Piece *getAttackedPiece() const override;
+	attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc);
+	bool is_attack() const override;
+	std::shared_ptr<piece> get_attacked_piece() const override;
 };
 
-class PawnPromotion : public Move
+class pawn_promotion : public move
 {
 private:
-	Move *inputMove;
-	Pawn *promotedPawn;
-	Piece *promotedPiece;
+	std::shared_ptr<move> input_move_;
+	std::shared_ptr<pawn> promoted_pawn_;
+	std::shared_ptr<piece> promoted_piece_;
 
 public:
-	PawnPromotion(Move *inputMove, Piece *promotedPiece);
-	bool operator==(const Move &other) const override;
-	Board *execute() const override;
-	bool isAttack() const override;
-	Piece *getAttackedPiece() const override;
-	Piece *getPromotedPiece() const;
+	pawn_promotion(std::shared_ptr<move> im, std::shared_ptr<piece> pp);
+	bool operator==(const move &other) const override;
+	std::shared_ptr<board> execute() const override;
+	bool is_attack() const override;
+	std::shared_ptr<piece> get_attacked_piece() const override;
+	std::shared_ptr<piece> get_promoted_piece() const;
 	std::string stringify() const override;
 };
 
-class MajorAttackMove : public AttackMove
+class major_attack_move : public attack_move
 {
 public:
-	MajorAttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate);
-	bool operator==(const Move &other) const override;
+	major_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc);
+	bool operator==(const move &other) const override;
 	std::string stringify() const override;
 };
 
-class PawnMove : public Move
+class pawn_move : public move
 {
 public:
-	PawnMove(Board *board, Piece *movedPiece, int destinationCoordinate);
-	bool operator==(const Move &other) const override;
+	pawn_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
+	bool operator==(const move &other) const override;
 	std::string stringify() const override;
 };
 
-class PawnAttackMove : public AttackMove
+class pawn_attack_move : public attack_move
 {
 public:
-	PawnAttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate);
-	bool operator==(const Move &other) const override;
+	pawn_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc);
+	bool operator==(const move &other) const override;
 	std::string stringify() const override;
 };
 
-class PawnEnPassantAttackMove : public PawnAttackMove
+class pawn_en_passant_attack_move : public pawn_attack_move
 {
 public:
-	PawnEnPassantAttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate);
-	Board *execute() const override;
-	bool operator==(const Move &other) const override;
+	pawn_en_passant_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc);
+	std::shared_ptr<board> execute() const override;
+	bool operator==(const move &other) const override;
 };
 
-class PawnJump : public Move
+class pawn_jump : public move
 {
 public:
-	PawnJump(Board *board, Piece *movedPiece, int destinationCoordinate);
-	Board *execute() const override;
+	pawn_jump(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
+	std::shared_ptr<board> execute() const override;
 	std::string stringify() const override;
 };
 
-class CastleMove : public Move
+class castle_move : public move
 {
 protected:
-	const Rook *castleRook;
-	const int castleRookStart;
-	const int castleRookDestination;
+	std::shared_ptr<rook> castling_rook_;
+	const int castling_rook_start_square_;
+	const int castling_rook_destination_;
 
 public:
-	CastleMove(Board *board, Piece *movedPiece, int destinationCoordinate, Rook *castleRook, int castleRookStart, int castleRookDestination);
-	bool operator==(const Move &other) const override;
-	Rook *getCastleRook() const;
-	bool isCastlingMove() const override;
-	Board *execute() const override;
+	castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd);
+	bool operator==(const move &other) const override;
+	std::shared_ptr<rook> get_castling_rook() const;
+	bool is_castling_move() const override;
+	std::shared_ptr<board> execute() const override;
 };
 
-class KingSideCastleMove : public CastleMove
+class king_side_castle_move : public castle_move
 {
 public:
-	KingSideCastleMove(Board *board, Piece *movedPiece, int destinationCoordinate, Rook *castleRook, int castleRookStart, int castleRookDestination);
-	bool operator==(const Move &other) const override;
+	king_side_castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd);
+	bool operator==(const move &other) const override;
 	std::string stringify() const override;
 };
 
-class QueenSideCastleMove : public CastleMove
+class queen_side_castle_move : public castle_move
 {
 public:
-	QueenSideCastleMove(Board *board, Piece *movedPiece, int destinationCoordinate, Rook *castleRook, int castleRookStart, int castleRookDestination);
-	bool operator==(const Move &other) const override;
+	queen_side_castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd);
+	bool operator==(const move &other) const override;
 	std::string stringify() const override;
 };
 
-class NullMove : public Move
+class null_move : public move
 {
 public:
-	NullMove();
-	Board *execute() const override;
+	null_move();
+	std::shared_ptr<board> execute() const override;
 	std::string stringify() const override;
 };
 
-enum class PieceType;
+enum class piece_type;
 
-namespace MoveFactory
+namespace move_factory
 {
-	Move *createMove(Board *board, int currentCoordinate, int destinationCoordinate);
-	Move *createMove(Board *board, int currentCoordinate, int destinationCoordinate, PieceType promotedPieceType);
+	std::shared_ptr<move> create_move(std::shared_ptr<board> b, int cc, int dc);
+	std::shared_ptr<move> create_move(std::shared_ptr<board> b, int cc, int dc, piece_type ppt);
 } // namespace MoveFactory
 
 #endif

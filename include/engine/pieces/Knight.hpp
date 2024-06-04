@@ -3,21 +3,21 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class Knight : public Piece
+class knight : public piece
 {
 private:
-	static const int CANDIDATE_MOVE_COORDINATES[];
+	static const int candidate_move_coordinates[];
 
-	static bool isFirstColumnExclusion(const int currentPosition, const int candidateOffset);
-	static bool isSecondColumnExclusion(const int currentPosition, const int candidateOffset);
-	static bool isSeventhColumnExclusion(const int currentPosition, const int candidateOffset);
-	static bool isEighthColumnExclusion(const int currentPosition, const int candidateOffset);
+	static bool is_first_column_exclusion(const int cp, const int co);
+	static bool isSecondColumnExclusion(const int cp, const int co);
+	static bool isSeventhColumnExclusion(const int cp, const int co);
+	static bool is_eighth_column_exclusion(const int cp, const int co);
 
 public:
-	Knight(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove = true);
+	knight(const int pp, const alliance pa, const bool fm = true);
 
-	std::vector<Move *> calculateLegalMoves(Board &board) override;
-	Knight *movePiece(const Move *move) const override;
+	std::vector<std::shared_ptr<move>> calculate_legal_moves(std::shared_ptr<board> b) override;
+	std::shared_ptr<piece> move_piece(const move *const m) const override;
 };
 
 #endif

@@ -9,49 +9,49 @@
 #define DEPTH_BONUS 100
 #define CASTLE_BONUS 60
 
-int StandardBoardEvaluator::evaluate(Board *board, int depth)
+int standard_board_evaluator::evaluate(board *b, int d)
 {
-	return scorePlayer(board, board->getWhitePlayer(), depth) - scorePlayer(board, board->getBlackPlayer(), depth);
+	return player_score(b->get_white_player().get(), d) - player_score(b->get_black_player().get(), d);
 }
 
-int StandardBoardEvaluator::scorePlayer(Board *board, const Player *player, int depth)
+int standard_board_evaluator::player_score(const player *p, int d)
 {
-	return pieceValue(player) +
-		   mobilityValue(player) +
-		   checkValue(player) +
-		   checkMateValue(player, depth) +
-		   castled(player);
+	return piece_value(p) +
+		   mobility_value(p) +
+		   check_value(p) +
+		   checkmate_value(p, d) +
+		   has_castled(p);
 }
 
-int StandardBoardEvaluator::pieceValue(const Player *player)
+int standard_board_evaluator::piece_value(const player *p)
 {
-	int pieceValueScore = 0;
-	for (const auto piece : player->getActivePieces())
-		pieceValueScore += piece->getPieceValue();
-	return pieceValueScore;
+	int piece_value_score = 0;
+	for (auto piece : p->get_active_pieces())
+		piece_value_score += piece->get_piece_value();
+	return piece_value_score;
 }
 
-int StandardBoardEvaluator::mobilityValue(const Player *player)
+int standard_board_evaluator::mobility_value(const player *p)
 {
-	return player->getLegalMoves().size();
+	return p->get_legal_moves().size();
 }
 
-int StandardBoardEvaluator::checkValue(const Player *player)
+int standard_board_evaluator::check_value(const player *p)
 {
-	return player->isInCheck() ? CHECK_BONUS : 0;
+	return p->is_in_check() ? CHECK_BONUS : 0;
 }
 
-int StandardBoardEvaluator::checkMateValue(const Player *player, int depth)
+int standard_board_evaluator::checkmate_value(const player *p, int d)
 {
-	return player->isInCheckMate() ? CHECK_MATE_BONUS * depthBonus(depth) : 0;
+	return p->is_is_checkmate() ? CHECK_MATE_BONUS * depth_bonus(d) : 0;
 }
 
-int StandardBoardEvaluator::depthBonus(int depth)
+int standard_board_evaluator::depth_bonus(int d)
 {
-	return depth == 0 ? 1 : DEPTH_BONUS * depth;
+	return d == 0 ? 1 : DEPTH_BONUS * d;
 }
 
-int StandardBoardEvaluator::castled(const Player *player)
+int standard_board_evaluator::has_castled(const player *p)
 {
-	return player->isCastled() ? CASTLE_BONUS : 0;
+	return p->is_castled() ? CASTLE_BONUS : 0;
 }

@@ -3,19 +3,19 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class Bishop : public Piece
+class bishop : public piece
 {
 private:
-	const static int CANDIDATE_MOVE_VECTOR_COORDINATES[];
+	const static int candidate_move_vector_coordinates[];
 
-	static bool isFirstColumnExclusion(const int currentPosition, const int candidateOffset);
-	static bool isEighthColumnExclusion(const int currentPosition, const int candidateOffset);
+	static bool is_first_column_exclusion(const int cp, const int co);
+	static bool is_eighth_column_exclusion(const int cp, const int co);
 
 public:
-	Bishop(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove = true);
+	bishop(const int pp, const alliance pa, const bool fm = true);
 
-	std::vector<Move *> calculateLegalMoves(Board &board) override;
-	Bishop *movePiece(const Move *move) const override;
+	std::vector<std::shared_ptr<move>> calculate_legal_moves(std::shared_ptr<board> b) override;
+	std::shared_ptr<piece> move_piece(const move *const m) const override;
 };
 
 #endif

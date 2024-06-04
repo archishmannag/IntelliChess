@@ -2,26 +2,27 @@
 #define ALLIANCE_HPP
 
 #include <string>
+#include <memory>
 
-class Player;
-class Board;
+class player;
+class board;
 
-enum class Alliance
+enum class alliance
 {
-	WHITE,
-	BLACK
+	white,
+	black
 };
 
-namespace AllianceUtils
+namespace alliance_utils
 {
-	int getDirection(Alliance alliance);
-	int getOppositeDirection(Alliance alliance);
-	bool isWhite(Alliance alliance);
-	bool isBlack(Alliance alliance);
-	bool isPawnPromotionSquare(Alliance alliance, int position);
-	const Player *choosePlayer(Alliance alliance, Board *board);
+	int get_direction(alliance a);
+	int get_opposite_direction(alliance a);
+	bool is_white(alliance a);
+	bool is_black(alliance a);
+	bool is_pawn_promotion_square(alliance a, int p);
+	std::shared_ptr<player> choose_player(alliance a, board *b);
 
-	std::string stringify(Alliance alliance);
+	std::string stringify(alliance a);
 }
 
 #endif

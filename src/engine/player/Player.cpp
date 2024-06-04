@@ -8,111 +8,109 @@
 #include <engine/pieces/King.hpp>
 #include <engine/board/MoveTransition.hpp>
 
-Player::Player(Board *board) : board(board)
+player::player(std::shared_ptr<board> b)
+	: board_(b)
 {
 }
 
-King *Player::establishKing()
+std::shared_ptr<king> player::establish_king()
 {
-	for (auto piece : this->getActivePieces())
-	{
-		if (piece->getPieceType() == PieceType::KING)
-		{
-			return dynamic_cast<King *>(piece);
-		}
-	}
+	for (auto piece : get_active_pieces())
+		if (piece->get_piece_type() == piece_type::king)
+			return std::dynamic_pointer_cast<king>(piece);
 
 	throw std::runtime_error("No king found for player!");
 }
 
-bool Player::hasEscapeMoves() const
+bool player::has_escape_coves() const
 {
-	for (auto move : this->legalMoves)
+	for (auto move : legal_moves_)
 	{
-		MoveTransition transition = makeMove(move);
-		if (transition.getMoveStatus() == MoveStatus::DONE)
+		move_transition transition = make_move(move);
+		if (transition.get_move_status() == move_status::done)
 			return true;
 	}
 	return false;
 }
 
-std::vector<Move *> Player::calculateAttacksOnTile(const int piecePosition, std::vector<Move *> opponentMoves)
+std::vector<std::shared_ptr<move>> player::calculate_attacks_on_tile(const int pp, std::vector<std::shared_ptr<move>> om)
 {
-	std::vector<Move *> attackMoves;
+	std::vector<std::shared_ptr<move>> attack_moves;
 
-	for (const auto move : opponentMoves)
-		if (piecePosition == move->getDestinationCoordinate())
-			attackMoves.push_back(move);
-	return attackMoves;
+	for (auto move : om)
+		if (pp == move->get_destination_coordinate())
+			attack_moves.push_back(move);
+	return attack_moves;
 }
 
-bool Player::isMoveLegal(const Move *move) const
+bool player::is_move_legal(const move *m) const
 {
-	return std::find(this->legalMoves.begin(), this->legalMoves.end(), move) != this->legalMoves.end();
+	return std::find_if(legal_moves_.begin(), legal_moves_.end(), [m](std::shared_ptr<move> legal_move) -> bool
+						{ return *legal_move == *m; }) != legal_moves_.end();
 }
 
-King *Player::getPlayerKing() const
+std::shared_ptr<king> player::get_player_king() const
 {
-	return this->playerKing;
+	return player_king_;
 }
 
-std::vector<Move *> Player::getLegalMoves() const
+const std::vector<std::shared_ptr<move>> &player::get_legal_moves() const
 {
-	return this->legalMoves;
+	return legal_moves_;
 }
 
-bool Player::isInCheck() const
+bool player::is_in_check() const
 {
-	return this->inCheck;
+	return checked_;
 }
 
-bool Player::isInCheckMate() const
+bool player::is_is_checkmate() const
 {
-	return this->inCheck && !hasEscapeMoves();
+	return checked_ && !has_escape_coves();
 }
 
-bool Player::isInStaleMate() const
+bool player::is_in_stalemate() const
 {
-	return !this->inCheck && !hasEscapeMoves();
+	return !checked_ && !has_escape_coves();
 }
 
-bool Player::isCastled() const
+bool player::is_castled() const
 {
-	return playerKing->getIsCastled();
+	return player_king_->is_castled();
 }
 
-MoveTransition Player::makeMove(Move *move) const
+move_transition player::make_move(std::shared_ptr<move> m) const
 {
-	if (!isMoveLegal(move))
-		return MoveTransition(this->board, move, MoveStatus::ILLEGAL_MOVE);
-	const Board *transitionBoard = move->execute();
-	std::vector<Move *> kingAttacks = Player::calculateAttacksOnTile(transitionBoard->getCurrentPlayer()->getOpponent()->getPlayerKing()->getPiecePosition(), transitionBoard->getCurrentPlayer()->getLegalMoves());
-	if (!kingAttacks.empty())
-		return MoveTransition(this->board, move, MoveStatus::LEAVES_PLAYER_IN_CHECK);
-	return MoveTransition(transitionBoard, move, MoveStatus::DONE);
+	if (!is_move_legal(m.get()))
+		return move_transition(board_.lock(), m, move_status::illegal_move);
+	auto transition_board = m->execute();
+	std::vector<std::shared_ptr<move>> king_attacks = player::calculate_attacks_on_tile(transition_board->get_current_player()->get_opponent().lock()->get_player_king()->get_piece_position(), transition_board->get_current_player()->get_legal_moves());
+	if (!king_attacks.empty())
+		return move_transition(board_.lock(), m, move_status::leaves_player_in_check);
+	return move_transition(transition_board, m, move_status::done);
 }
 
-std::vector<Piece *> Player::getActivePieces() const
+std::vector<std::shared_ptr<piece>> player::get_active_pieces() const
 {
-	throw std::logic_error("getActivePieces() must be overridden");
+	throw std::logic_error("This must be overridden");
 }
 
-Alliance Player::getPlayerAlliance() const
-{
-	throw std::logic_error("This function must be overridden!");
-}
-
-const Player *Player::getOpponent() const
+alliance player::get_player_alliance() const
 {
 	throw std::logic_error("This function must be overridden!");
 }
 
-std::vector<Move *> Player::calculateKingCastles(const std::vector<Move *> playerLegals, const std::vector<Move *> opponentLegals) const
+std::weak_ptr<player> player::get_opponent() const
 {
 	throw std::logic_error("This function must be overridden!");
 }
 
-std::string Player::stringify() const
+std::vector<std::shared_ptr<move>> player::calculate_king_castles(const std::vector<std::shared_ptr<move>> &ol) const
+{
+	throw std::logic_error("This function must be overridden!");
+}
+
+std::string player::stringify() const
 {
 	throw std::logic_error("This function must be overridden!");
 }

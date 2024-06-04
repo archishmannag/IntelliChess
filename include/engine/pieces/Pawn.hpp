@@ -3,16 +3,16 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class Pawn : public Piece
+class pawn : public piece
 {
 private:
-	static const int CANDIDATE_MOVE_COORDINATES[];
+	static const int candidate_move_coordinates[];
 
 public:
-	Pawn(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove = true);
+	pawn(const int pp, const alliance pa, const bool fm = true);
 
-	std::vector<Move *> calculateLegalMoves(Board &board) override;
-	Pawn *movePiece(const Move *move) const override;
+	std::vector<std::shared_ptr<move>> calculate_legal_moves(std::shared_ptr<board> b) override;
+	std::shared_ptr<piece> move_piece(const move *const m) const override;
 };
 
 #endif

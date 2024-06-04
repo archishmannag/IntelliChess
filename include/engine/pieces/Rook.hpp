@@ -3,19 +3,19 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class Rook : public Piece
+class rook : public piece
 {
 private:
-	static const int CANDIDATE_MOVE_VECTOR_COORDINATES[];
+	static const int candidate_move_vector_coordinates[];
 
-	static bool isFirstColumnExclusion(const int currentPosition, const int candidateOffset);
-	static bool isEighthColumnExclusion(const int currentPosition, const int candidateOffset);
+	static bool is_first_column_exclusion(const int cp, const int co);
+	static bool is_eighth_column_exclusion(const int cp, const int co);
 
 public:
-	Rook(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove = true);
+	rook(const int pp, const alliance pa, const bool fm = true);
 
-	std::vector<Move *> calculateLegalMoves(Board &board) override;
-	Rook *movePiece(const Move *move) const override;
+	std::vector<std::shared_ptr<move>> calculate_legal_moves(std::shared_ptr<board> b) override;
+	std::shared_ptr<piece> move_piece(const move *const m) const override;
 };
 
 #endif

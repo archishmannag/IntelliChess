@@ -1,13 +1,13 @@
 #ifndef MOVE_STRATEGY_HPP
 #define MOVE_STRATEGY_HPP
 
-class Move;
-class Board;
+class move;
+class board;
 
-class MoveStrategy
+class move_strategy
 {
 public:
-	virtual Move *execute(Board *board) = 0;
+	virtual std::shared_ptr<move> execute(std::shared_ptr<board> b) = 0;
 };
 
 #endif

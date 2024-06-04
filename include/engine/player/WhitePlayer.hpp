@@ -2,17 +2,18 @@
 #define WHITEPLAYER_HPP
 
 #include <vector>
+#include <memory>
 
 #include "Player.hpp"
 
-class WhitePlayer : public Player
+class white_player : public player
 {
 public:
-	WhitePlayer(Board *board, std::vector<Move *> whiteStandardLegalMoves, std::vector<Move *> blackStandardLegalMoves);
-	std::vector<Piece *> getActivePieces() const override;
-	Alliance getPlayerAlliance() const override;
-	const Player *getOpponent() const override;
-	std::vector<Move *> calculateKingCastles(const std::vector<Move *> playerLegals, const std::vector<Move *> opponentLegals) const override;
+	white_player(std::shared_ptr<board> b, std::vector<std::shared_ptr<move>> wslm, std::vector<std::shared_ptr<move>> bslm);
+	std::vector<std::shared_ptr<piece>> get_active_pieces() const override;
+	alliance get_player_alliance() const override;
+	std::weak_ptr<player> get_opponent() const override;
+	std::vector<std::shared_ptr<move>> calculate_king_castles(const std::vector<std::shared_ptr<move>> &ol) const override;
 	std::string stringify() const override;
 };
 

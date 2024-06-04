@@ -11,209 +11,226 @@
 #include <engine/player/WhitePlayer.hpp>
 #include <engine/player/BlackPlayer.hpp>
 
-/* BoardBuilder */
+/* board_builder */
 
-void BoardBuilder::setPiece(Piece *piece)
+void board_builder::set_previous_board(std::shared_ptr<board> pb)
 {
-	this->boardConfig[piece->getPiecePosition()] = piece;
+	previous_board_ = std::move(pb);
+}
+
+void board_builder::set_piece(std::shared_ptr<piece> p)
+{
+	board_config_[p->get_piece_position()] = std::move(p);
 	return;
 }
 
-void BoardBuilder::setEnPassantPawn(Pawn *enPassantPawn)
+void board_builder::set_en_passant_pawn(std::shared_ptr<pawn> ep)
 {
-	this->enPassantPawn = enPassantPawn;
+	en_passant_pawn_ = std::move(ep);
 }
 
-void BoardBuilder::setMoveMaker(const Alliance moveMaker)
+void board_builder::set_move_maker(const alliance mm)
 {
-	this->nextMoveMaker = moveMaker;
-	return;
+	next_move_maker_ = mm;
 }
 
-void BoardBuilder::setTransitionMove(const Move *transitionMove)
+void board_builder::set_transition_move(std::shared_ptr<move> tm)
 {
-	this->transitionMove = transitionMove;
-	return;
+	transition_move_ = std::move(tm);
 }
 
-Alliance BoardBuilder::getNextMoveMaker() const
+std::shared_ptr<board> board_builder::get_previous_board() const
 {
-	return this->nextMoveMaker;
+	return previous_board_;
 }
 
-Pawn *BoardBuilder::getEnPassantPawn() const
+alliance board_builder::get_next_move_maker() const
 {
-	return this->enPassantPawn;
+	return next_move_maker_;
 }
 
-Move *BoardBuilder::getTransitionMove() const
+std::shared_ptr<pawn> board_builder::get_en_passant_pawn() const
 {
-	return const_cast<Move *>(this->transitionMove);
+	return en_passant_pawn_;
 }
 
-Board *BoardBuilder::build()
+std::shared_ptr<move> board_builder::get_transition_move() const
 {
-	return new Board(*this);
+	return transition_move_;
 }
 
-/* Board */
-
-Board::Board(BoardBuilder &builder) : enPassantPawn(builder.getEnPassantPawn()),
-									  transitionMove(builder.getTransitionMove()),
-									  gameBoard(Board::createGameBoard(builder)),
-									  whitePieces(Board::calculateActivePieces(gameBoard, Alliance::WHITE)),
-									  blackPieces(Board::calculateActivePieces(gameBoard, Alliance::BLACK)),
-									  whitePlayer(new WhitePlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))),
-									  blackPlayer(new BlackPlayer(this, this->calculateLegalMoves(this->whitePieces), this->calculateLegalMoves(this->blackPieces))),
-									  currentPlayer(const_cast<Player *>(AllianceUtils::choosePlayer(builder.getNextMoveMaker(), this))) {}
-
-std::vector<Move *> Board::calculateLegalMoves(const std::vector<Piece *> pieces)
+std::shared_ptr<board> board_builder::build()
 {
-	std::vector<Move *> legalMoves;
-	for (const auto &piece : pieces)
+	std::shared_ptr<board> b = std::make_shared<board>();
+	b->initialize_game_board(*this);
+	return b;
+}
+
+/* board */
+
+void board::initialize_game_board(const board_builder &b)
+{
+	previous_board_ = b.get_previous_board();
+	en_passant_pawn_ = b.get_en_passant_pawn();
+	transition_move_ = b.get_transition_move();
+	game_board_ = board::create_game_board(b);
+	white_pieces_ = board::calculate_active_pieces(game_board_, alliance::white);
+	black_pieces_ = board::calculate_active_pieces(game_board_, alliance::black);
+	white_player_ = std::make_shared<white_player>(shared_from_this(), calculate_legal_moves(white_pieces_), calculate_legal_moves(black_pieces_));
+	black_player_ = std::make_shared<black_player>(shared_from_this(), calculate_legal_moves(white_pieces_), calculate_legal_moves(black_pieces_));
+	current_player_ = (alliance_utils::choose_player(b.get_next_move_maker(), this));
+}
+
+std::vector<std::shared_ptr<move>> board::calculate_legal_moves(const std::vector<std::shared_ptr<piece>> &P)
+{
+	std::vector<std::shared_ptr<move>> legal_moves;
+	for (auto &piece : P)
 	{
-		const std::vector<Move *> pieceLegalMoves = piece->calculateLegalMoves(*this);
-		legalMoves.insert(legalMoves.end(), pieceLegalMoves.begin(), pieceLegalMoves.end());
+		std::vector<std::shared_ptr<move>> piece_legal_moves = piece->calculate_legal_moves(shared_from_this());
+		legal_moves.insert(legal_moves.end(), piece_legal_moves.begin(), piece_legal_moves.end());
 	}
-	return legalMoves;
+	return legal_moves;
 }
 
-std::vector<Piece *> Board::calculateActivePieces(std::vector<Tile *> gameBoard, Alliance alliance)
+std::vector<std::shared_ptr<piece>> board::calculate_active_pieces(const std::array<std::shared_ptr<tile>, 64> &gb, alliance a)
 {
-	std::vector<Piece *> activePieces;
-	for (const auto &tile : gameBoard)
+	std::vector<std::shared_ptr<piece>> active_pieces;
+	for (auto &t : gb)
 	{
-		if (tile->isTileOccupied())
+		if (t->is_tile_occupied())
 		{
-			auto piece = tile->getPiece();
-			if (piece->getPieceAlliance() == alliance)
-				activePieces.push_back(piece);
+			auto piece = t->get_piece();
+			if (piece->get_piece_alliance() == a)
+				active_pieces.push_back(piece);
 		}
 	}
-	return activePieces;
+	return active_pieces;
 }
 
-std::vector<Tile *> Board::createGameBoard(const BoardBuilder builder)
+std::array<std::shared_ptr<tile>, 64> board::create_game_board(const board_builder &b)
 {
-	std::vector<Tile *> tiles(64, nullptr);
+	std::array<std::shared_ptr<tile>, 64> game_board;
+	;
 	for (int i = 0; i < 64; i++)
 	{
-		auto iter = builder.boardConfig.find(i);
-		if (iter != builder.boardConfig.end())
-			tiles[i] = Tile::createTile(i, iter->second);
-		else
-			tiles[i] = Tile::createTile(i, nullptr);
+		auto it = b.board_config_.find(i);
+		game_board[i] = it != b.board_config_.end() ? tile::create_tile(i, it->second) : tile::create_tile(i, nullptr);
 	}
-	return tiles;
+	return game_board;
 }
 
-Tile *Board::getTile(const int tileCoordinate) const
+std::shared_ptr<board> board::get_previous_board() const
 {
-	return gameBoard[tileCoordinate];
+	return previous_board_;
 }
 
-std::vector<Piece *> Board::getWhitePieces() const
+std::shared_ptr<tile> board::get_tile(int tc) const
 {
-	return this->whitePieces;
+	return game_board_[tc];
 }
 
-std::vector<Piece *> Board::getBlackPieces() const
+const std::vector<std::shared_ptr<piece>> &board::get_white_pieces() const
 {
-	return this->blackPieces;
+	return white_pieces_;
 }
 
-std::vector<Piece *> Board::getAllPieces() const
+const std::vector<std::shared_ptr<piece>> &board::get_black_pieces() const
 {
-	std::vector<Piece *> allPieces;
-	allPieces.insert(allPieces.end(), this->whitePieces.begin(), this->whitePieces.end());
-	allPieces.insert(allPieces.end(), this->blackPieces.begin(), this->blackPieces.end());
-	return allPieces;
+	return black_pieces_;
 }
 
-const Player *Board::getWhitePlayer() const
+const std::vector<std::shared_ptr<piece>> board::get_all_pieces() const
 {
-	return this->whitePlayer;
+	std::vector<std::shared_ptr<piece>> all_pieces;
+	all_pieces.insert(all_pieces.end(), white_pieces_.begin(), white_pieces_.end());
+	all_pieces.insert(all_pieces.end(), black_pieces_.begin(), black_pieces_.end());
+	return all_pieces;
 }
 
-const Player *Board::getBlackPlayer() const
+std::shared_ptr<player> board::get_white_player() const
 {
-	return this->blackPlayer;
+	return white_player_;
 }
 
-Player *Board::getCurrentPlayer() const
+std::shared_ptr<player> board::get_black_player() const
 {
-	return this->currentPlayer;
+	return black_player_;
 }
 
-std::vector<Move *> Board::getAllLegalMoves() const
+std::shared_ptr<player> board::get_current_player() const
 {
-	std::vector<Move *> allLegalMoves,
-		whiteLegalMoves = this->whitePlayer->getLegalMoves(),
-		blackLegalMoves = this->blackPlayer->getLegalMoves();
-	allLegalMoves.insert(allLegalMoves.end(), whiteLegalMoves.begin(), whiteLegalMoves.end());
-	allLegalMoves.insert(allLegalMoves.end(), blackLegalMoves.begin(), blackLegalMoves.end());
-	return allLegalMoves;
+	return current_player_.lock();
 }
 
-Pawn *Board::getEnPassantPawn() const
+std::vector<std::shared_ptr<move>> board::get_all_legal_moves() const
 {
-	return this->enPassantPawn;
+	std::vector<std::shared_ptr<move>> all_legal_moves,
+		whiteLegalMoves = white_player_->get_legal_moves(),
+		blackLegalMoves = black_player_->get_legal_moves();
+	all_legal_moves.insert(all_legal_moves.end(), whiteLegalMoves.begin(), whiteLegalMoves.end());
+	all_legal_moves.insert(all_legal_moves.end(), blackLegalMoves.begin(), blackLegalMoves.end());
+	return all_legal_moves;
 }
 
-Board *Board::createStandardBoard()
+std::shared_ptr<pawn> board::get_en_passant_pawn() const
 {
-	BoardBuilder builder;
+	return en_passant_pawn_;
+}
+
+std::shared_ptr<board> board::create_standard_board()
+{
+	board_builder builder;
 
 	// Black Pieces
-	builder.setPiece(new Rook(0, Alliance::BLACK));
-	builder.setPiece(new Knight(1, Alliance::BLACK));
-	builder.setPiece(new Bishop(2, Alliance::BLACK));
-	builder.setPiece(new Queen(3, Alliance::BLACK));
-	builder.setPiece(new King(4, Alliance::BLACK));
-	builder.setPiece(new Bishop(5, Alliance::BLACK));
-	builder.setPiece(new Knight(6, Alliance::BLACK));
-	builder.setPiece(new Rook(7, Alliance::BLACK));
-	builder.setPiece(new Pawn(8, Alliance::BLACK));
-	builder.setPiece(new Pawn(9, Alliance::BLACK));
-	builder.setPiece(new Pawn(10, Alliance::BLACK));
-	builder.setPiece(new Pawn(11, Alliance::BLACK));
-	builder.setPiece(new Pawn(12, Alliance::BLACK));
-	builder.setPiece(new Pawn(13, Alliance::BLACK));
-	builder.setPiece(new Pawn(14, Alliance::BLACK));
-	builder.setPiece(new Pawn(15, Alliance::BLACK));
+	builder.set_piece(std::make_shared<rook>(0, alliance::black));
+	builder.set_piece(std::make_shared<knight>(1, alliance::black));
+	builder.set_piece(std::make_shared<bishop>(2, alliance::black));
+	builder.set_piece(std::make_shared<queen>(3, alliance::black));
+	builder.set_piece(std::make_shared<king>(4, alliance::black));
+	builder.set_piece(std::make_shared<bishop>(5, alliance::black));
+	builder.set_piece(std::make_shared<knight>(6, alliance::black));
+	builder.set_piece(std::make_shared<rook>(7, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(8, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(9, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(10, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(11, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(12, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(13, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(14, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(15, alliance::black));
 
 	// White Pieces
-	builder.setPiece(new Pawn(48, Alliance::WHITE));
-	builder.setPiece(new Pawn(49, Alliance::WHITE));
-	builder.setPiece(new Pawn(50, Alliance::WHITE));
-	builder.setPiece(new Pawn(51, Alliance::WHITE));
-	builder.setPiece(new Pawn(52, Alliance::WHITE));
-	builder.setPiece(new Pawn(53, Alliance::WHITE));
-	builder.setPiece(new Pawn(54, Alliance::WHITE));
-	builder.setPiece(new Pawn(55, Alliance::WHITE));
-	builder.setPiece(new Rook(56, Alliance::WHITE));
-	builder.setPiece(new Knight(57, Alliance::WHITE));
-	builder.setPiece(new Bishop(58, Alliance::WHITE));
-	builder.setPiece(new Queen(59, Alliance::WHITE));
-	builder.setPiece(new King(60, Alliance::WHITE));
-	builder.setPiece(new Bishop(61, Alliance::WHITE));
-	builder.setPiece(new Knight(62, Alliance::WHITE));
-	builder.setPiece(new Rook(63, Alliance::WHITE));
+	builder.set_piece(std::make_shared<pawn>(48, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(49, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(50, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(51, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(52, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(53, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(54, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(55, alliance::white));
+	builder.set_piece(std::make_shared<rook>(56, alliance::white));
+	builder.set_piece(std::make_shared<knight>(57, alliance::white));
+	builder.set_piece(std::make_shared<bishop>(58, alliance::white));
+	builder.set_piece(std::make_shared<queen>(59, alliance::white));
+	builder.set_piece(std::make_shared<king>(60, alliance::white));
+	builder.set_piece(std::make_shared<bishop>(61, alliance::white));
+	builder.set_piece(std::make_shared<knight>(62, alliance::white));
+	builder.set_piece(std::make_shared<rook>(63, alliance::white));
 
 	// Starting player is white
-	builder.setMoveMaker(Alliance::WHITE);
+	builder.set_move_maker(alliance::white);
 
 	return builder.build();
 }
 
-std::string Board::stringify() const
+std::string board::stringify() const
 {
-	std::string boardString = "";
+	std::string board_string = "";
 	for (int i = 0; i < 64; i++)
 	{
-		boardString += this->gameBoard[i]->stringify();
+		board_string += game_board_[i]->stringify();
 		if ((i + 1) % 8 == 0)
-			boardString += "\n";
+			board_string += "\n";
 	}
-	return boardString;
+	return board_string;
 }

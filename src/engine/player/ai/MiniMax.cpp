@@ -8,83 +8,83 @@
 #include <engine/board/Move.hpp>
 #include <engine/board/MoveTransition.hpp>
 
-MiniMax::MiniMax(unsigned int searchDepth) : searchDepth(searchDepth)
+mini_max::mini_max(unsigned int sd)
+	: search_depth_(sd)
 {
-	boardEvaluator = std::make_unique<StandardBoardEvaluator>();
+	board_evaluator_ = std::make_unique<standard_board_evaluator>();
 }
 
-Move *MiniMax::execute(Board *board)
+std::shared_ptr<move> mini_max::execute(std::shared_ptr<board> b)
 {
-	const auto startTime = std::chrono::high_resolution_clock::now();
-	Move *bestMove = nullptr;
-	int highestSeenValue = INT32_MIN,
-		lowestSeenValue = INT32_MAX,
-		currentValue;
+	const auto start_time = std::chrono::high_resolution_clock::now();
+	std::shared_ptr<move> best_move = nullptr;
+	int highest_seen_value = INT32_MIN,
+		lowest_seen_value = INT32_MAX,
+		current_value;
 
-	std::cout << board->getCurrentPlayer()->stringify() << " THINKING with depth = " << searchDepth << std::endl;
-	std::vector<Move *> moves = board->getCurrentPlayer()->getLegalMoves();
-	int numMoves = moves.size();
-	for (const auto move : moves)
+	std::cout << b->get_current_player()->stringify() << " THINKING with depth = " << search_depth_ << std::endl;
+	std::vector<std::shared_ptr<move>> moves = b->get_current_player()->get_legal_moves();
+	for (auto move : moves)
 	{
-		MoveTransition transition = board->getCurrentPlayer()->makeMove(move);
-		if (transition.getMoveStatus() == MoveStatus::DONE)
+		move_transition transition = b->get_current_player()->make_move(move);
+		if (transition.get_move_status() == move_status::done)
 		{
-			currentValue = board->getCurrentPlayer()->getPlayerAlliance() == Alliance::WHITE
-							   ? min(transition.getTransitionBoard(), searchDepth - 1)
-							   : max(transition.getTransitionBoard(), searchDepth - 1);
+			current_value = b->get_current_player()->get_player_alliance() == alliance::white
+								? min(transition.get_transition_board(), search_depth_ - 1)
+								: max(transition.get_transition_board(), search_depth_ - 1);
 
-			if (board->getCurrentPlayer()->getPlayerAlliance() == Alliance::WHITE && highestSeenValue <= currentValue)
+			if (b->get_current_player()->get_player_alliance() == alliance::white && highest_seen_value <= current_value)
 			{
-				highestSeenValue = currentValue;
-				bestMove = move;
+				highest_seen_value = current_value;
+				best_move = move;
 			}
-			else if (board->getCurrentPlayer()->getPlayerAlliance() == Alliance::BLACK && currentValue <= lowestSeenValue)
+			else if (b->get_current_player()->get_player_alliance() == alliance::black && current_value <= lowest_seen_value)
 			{
-				lowestSeenValue = currentValue;
-				bestMove = move;
+				lowest_seen_value = current_value;
+				best_move = move;
 			}
 		}
 	}
 
-	const auto executionTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startTime);
+	const auto execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start_time);
 
-	return bestMove;
+	return best_move;
 }
 
-int MiniMax::min(Board *board, unsigned int depth)
+int mini_max::min(std::shared_ptr<board> b, unsigned int d)
 {
-	if (depth == 0)
-		return boardEvaluator->evaluate(board, depth);
+	if (d == 0)
+		return board_evaluator_->evaluate(b.get(), d);
 
-	int lowestSeenValue = INT32_MAX;
-	for (const auto move : board->getCurrentPlayer()->getLegalMoves())
+	int lowest_seen_value = INT32_MAX;
+	for (auto move : b->get_current_player()->get_legal_moves())
 	{
-		MoveTransition transition = board->getCurrentPlayer()->makeMove(move);
-		if (transition.getMoveStatus() == MoveStatus::DONE)
+		move_transition transition = b->get_current_player()->make_move(move);
+		if (transition.get_move_status() == move_status::done)
 		{
-			int currentValue = max(transition.getTransitionBoard(), depth - 1);
-			if (currentValue <= lowestSeenValue)
-				lowestSeenValue = currentValue;
+			int current_value = max(transition.get_transition_board(), d - 1);
+			if (current_value <= lowest_seen_value)
+				lowest_seen_value = current_value;
 		}
 	}
-	return lowestSeenValue;
+	return lowest_seen_value;
 }
 
-int MiniMax::max(Board *board, unsigned int depth)
+int mini_max::max(std::shared_ptr<board> b, unsigned int d)
 {
-	if (depth == 0)
-		return boardEvaluator->evaluate(board, depth);
+	if (d == 0)
+		return board_evaluator_->evaluate(b.get(), d);
 
-	int highestSeenValue = INT32_MIN;
-	for (const auto move : board->getCurrentPlayer()->getLegalMoves())
+	int highest_seen_value = INT32_MIN;
+	for (auto move : b->get_current_player()->get_legal_moves())
 	{
-		MoveTransition transition = board->getCurrentPlayer()->makeMove(move);
-		if (transition.getMoveStatus() == MoveStatus::DONE)
+		move_transition transition = b->get_current_player()->make_move(move);
+		if (transition.get_move_status() == move_status::done)
 		{
-			int currentValue = min(transition.getTransitionBoard(), depth - 1);
-			if (highestSeenValue <= currentValue)
-				highestSeenValue = currentValue;
+			int current_value = min(transition.get_transition_board(), d - 1);
+			if (highest_seen_value <= current_value)
+				highest_seen_value = current_value;
 		}
 	}
-	return highestSeenValue;
+	return highest_seen_value;
 }

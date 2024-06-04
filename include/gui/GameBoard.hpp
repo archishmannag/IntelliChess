@@ -13,126 +13,137 @@
 #define TILE_HEIGHT 70
 #define TILE_WIDTH 70
 
-class Board;
-class Tile;
-class Piece;
+class board;
+class tile;
+class piece;
 class menu_bar;
-class TakenPiecesBlock;
-class GameHistoryBlock;
+class taken_pieces_block;
+class game_history_block;
 class game_setup;
-class Move;
+class move;
 enum class player_type;
 
-class TileBlock
+class tile_block
 {
 private:
-	sf::RectangleShape tileRect;
-	int tileId;
+	sf::RectangleShape tile_rect_;
+	int tile_id_;
 
 public:
-	TileBlock(int tileId);
-	int getTileId() const;
-	sf::RectangleShape getTileRect() const;
-	void setTileRectScale(float x, float y);
-	void setTileRectPosition(float x, float y);
-	void setTileRectFillColor(sf::Color color);
+	tile_block(int t_id);
+	int get_tile_id() const;
+	sf::RectangleShape get_tile_rect() const;
+	void get_tile_rect_scale(float x, float y);
+	void set_tile_rect_position(float x, float y);
+	void set_tile_rect_fill_color(sf::Color color);
 };
 
-class MoveLog
+class move_log
 {
 private:
-	std::vector<Move *> moves;
+	std::vector<std::shared_ptr<move>> moves;
 
 public:
-	~MoveLog();
-	std::vector<Move *> getMoves() const;
-	int getMovesCount() const;
-	void addMove(Move *move);
-	Move *removeMove(int index);
-	void removeMove(Move *move);
-	void clearMoves();
+	std::vector<std::shared_ptr<move>> get_moves() const;
+	int get_moves_count() const;
+	void add_move(std::shared_ptr<move> m);
+	std::shared_ptr<move> remove_move(int index);
+	void remove_move(std::shared_ptr<move> m);
+	void clear_moves();
 };
 
-class GameBoard
+class game_board
 {
 private:
 	// Window and event
-	sf::RenderWindow *window;
-	sf::Event event;
-	sf::RectangleShape bg;
-	sf::View currentMainView;
+	std::shared_ptr<sf::RenderWindow> window_;
+	sf::Event event_;
+	sf::RectangleShape back_ground_;
+	sf::View current_main_view_;
 
 	// Window scale
-	sf::Vector2f windowScale;
+	sf::Vector2f window_scale_;
 
 	// Mouse position and event
-	sf::Vector2i mousePosition;
+	sf::Vector2i mouse_position_;
 
 	// Main board, textures and sprites
-	sf::RectangleShape boardRect;
-	std::vector<TileBlock> tileBlocks;
-	sf::Texture blackPawnTexture, whitePawnTexture, blackKnightTexture, whiteKnightTexture, blackBishopTexture, whiteBishopTexture, blackKingTexture, whiteKingTexture, blackRookTexture, whiteRookTexture, blackQueenTexture, whiteQueenTexture;
-	sf::Sprite blackPawnSprite, whitePawnSprite, blackKnightSprite, whiteKnightSprite, blackBishopSprite, whiteBishopSprite, blackKingSprite, whiteKingSprite, blackRookSprite, whiteRookSprite, blackQueenSprite, whiteQueenSprite;
+	sf::RectangleShape board_rect_;
+	std::vector<tile_block> tile_blocks_;
+	sf::Texture black_pawn_texture_, white_pawn_texture_,
+		black_knight_texture_, white_knight_texture_,
+		black_bishop_texture_, white_bishop_texture_,
+		black_king_texture_, white_king_texture_,
+		black_rook_texture_, white_rook_texture_,
+		black_queen_texture_, white_queen_texture_;
+	sf::Sprite black_pawn_sprite_, white_pawn_sprite_,
+		black_knight_sprite_, white_knight_sprite_,
+		black_bishop_sprite_, white_bishop_sprite_,
+		black_king_sprite_, white_king_sprite_,
+		black_rook_sprite_, white_rook_sprite_,
+		black_queen_sprite_, white_queen_sprite_;
 
 	// Menu bar
-	std::unique_ptr<menu_bar> menuBar;
+	std::unique_ptr<menu_bar> menu_bar_;
 
 	// Taken pieces
-	std::unique_ptr<TakenPiecesBlock> takenPiecesBlock;
+	std::unique_ptr<taken_pieces_block> taken_pieces_block_;
 
 	// Game history
-	std::unique_ptr<GameHistoryBlock> gameHistoryBlock;
+	std::unique_ptr<game_history_block> game_history_block_;
 
 	// Game setup
-	std::unique_ptr<game_setup> gameSetup;
-	bool is_game_setup_open = false;
-	bool is_move_made = false;
+	std::unique_ptr<game_setup> game_setup_;
+	bool is_game_setup_open_ = false;
+	bool is_move_made_ = false;
 
 	// Move log
-	MoveLog moveLog;
-	Board *board;
-	Tile *sourceTile, *destinationTile;
-	Piece *movedPiece;
+	move_log move_log_;
+	std::shared_ptr<board> board_;
+	std::shared_ptr<tile> source_tile_, destination_tile_;
+	std::shared_ptr<piece> moved_piece_;
 
 	// Pawn Promotion
-	sf::RectangleShape pawnPromotionRect;
-	bool pawnPromotion = false;
+	sf::RectangleShape pawn_promotion_rect_;
+	bool pawn_promotion_ = false;
 
-	friend bool isPawnPromotable(GameBoard &gameBoard);
+	friend bool is_pawn_promotable(game_board &gb);
 
 	void init();
-	void processEvents();
-	void updateMousePosition();
-	void scaleBoard();
-	void renderTileBlocks();
-	void renderPawnPromotionOptionPane();
-	void updateTileBlocks();
-	std::vector<int> legalMoveDestinations();
-	void moveHandler(sf::Vector2i mousePosition);
+	void undo_last_move();
+	void undo_all_moves();
+	void process_events();
+	void update_mouse_position();
+	void scale_board();
+	void render_tile_blocks();
+	void render_pawn_promotion_option_pane();
+	void update_tile_blocks();
+	std::vector<int> legal_move_destinations();
+	void move_handler();
 	void observe();
 
 	class ai_move_generator
 	{
 	public:
-		ai_move_generator(GameBoard *parent);
+		ai_move_generator(game_board *parent);
 		void run();
-		void done(Move *best_move);
-		Move *get_best_move();
+		void done(std::shared_ptr<move> best_move);
+		std::shared_ptr<move> get_best_move();
 
 	private:
-		GameBoard *parent;
+		game_board *parent_;
 	};
 
 	std::unique_ptr<ai_move_generator> ai;
 
 public:
-	GameBoard();
-	~GameBoard();
-	bool isRunning() const;
+	game_board();
+	~game_board();
+	bool is_running() const;
 	void update();
 	void render();
 };
 
-bool isPawnPromotable(GameBoard &gameBoard);
+bool is_pawn_promotable(game_board &gameBoard);
 
 #endif

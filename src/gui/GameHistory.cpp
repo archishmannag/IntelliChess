@@ -4,267 +4,252 @@
 #include <gui/GameHistory.hpp>
 #include <gui/GameBoard.hpp>
 #include <engine/board/Board.hpp>
+#include <engine/board/BoardUtils.hpp>
 #include <engine/board/Move.hpp>
 #include <engine/pieces/Piece.hpp>
 #include <engine/player/Player.hpp>
 #include <engine/Alliance.hpp>
 
-/* HistoryRow */
+/* history_row */
 
-HistoryRow::HistoryRow(sf::Font &font)
+history_row::history_row(sf::Font &font)
 {
-	whiteMove.setFont(font);
-	whiteMove.setCharacterSize(18);
-	whiteMove.setFillColor(sf::Color::Black);
+	white_move_.setFont(font);
+	white_move_.setCharacterSize(18);
+	white_move_.setFillColor(sf::Color::Black);
 
-	blackMove.setFont(font);
-	blackMove.setCharacterSize(18);
-	blackMove.setFillColor(sf::Color::Black);
+	black_move_.setFont(font);
+	black_move_.setCharacterSize(18);
+	black_move_.setFillColor(sf::Color::Black);
 
-	bottomDividerRect.setSize(sf::Vector2f(160, 2));
-	bottomDividerRect.setFillColor(sf::Color(0, 0, 0, 100));
+	bottom_divider_rect_.setSize(sf::Vector2f(160, 2));
+	bottom_divider_rect_.setFillColor(sf::Color(0, 0, 0, 100));
 }
 
-void HistoryRow::setPosition(sf::Vector2f position)
+void history_row::set_position(sf::Vector2f position)
 {
-	whiteMove.setPosition(position + sf::Vector2f(7, 0));
-	blackMove.setPosition(position + sf::Vector2f(80, 0) + sf::Vector2f(7, 0));
-	bottomDividerRect.setPosition(position + sf::Vector2f(0, 23));
+	white_move_.setPosition(position + sf::Vector2f(7, 0));
+	black_move_.setPosition(position + sf::Vector2f(80, 0) + sf::Vector2f(7, 0));
+	bottom_divider_rect_.setPosition(position + sf::Vector2f(0, 23));
 }
 
-void HistoryRow::setWhiteMove(std::string move)
+void history_row::set_white_move(std::string move)
 {
-	whiteMove.setString(move);
+	white_move_.setString(move);
 }
 
-void HistoryRow::setBlackMove(std::string move)
+void history_row::set_black_move(std::string move)
 {
-	blackMove.setString(move);
+	black_move_.setString(move);
 }
 
-sf::Vector2f HistoryRow::getPosition() const
+sf::Vector2f history_row::get_position() const
 {
-	return bottomDividerRect.getPosition() + sf::Vector2f(0, 2);
+	return bottom_divider_rect_.getPosition() + sf::Vector2f(0, 2);
 }
 
-std::string HistoryRow::getWhiteMove()
+std::string history_row::get_white_move()
 {
-	return whiteMove.getString();
+	return white_move_.getString();
 }
 
-std::string HistoryRow::getBlackMove()
+std::string history_row::get_black_move()
 {
-	return blackMove.getString();
+	return black_move_.getString();
 }
 
-void HistoryRow::draw(sf::RenderWindow &window)
+void history_row::draw(sf::RenderWindow &window)
 {
-	window.draw(whiteMove);
-	window.draw(blackMove);
-	window.draw(bottomDividerRect);
+	window.draw(white_move_);
+	window.draw(black_move_);
+	window.draw(bottom_divider_rect_);
 }
 
-/* GameHistoryBlock */
+/* game_history_block */
 
-GameHistoryBlock::GameHistoryBlock()
+game_history_block::game_history_block()
 {
 	if (!font.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/fonts/arial.ttf"))
 		throw std::runtime_error("Failed to load font!");
 
-	scrollPercentageTop = 0.f;
-	scrollPercentageBottom = 100.f;
+	scroll_percentage_top_ = 0.f;
+	scroll_percentage_bottom_ = 100.f;
 
-	scrollBarClicked = false;
+	scroll_bar_clicked_ = false;
 
-	gameHistoryAreaRect.setSize(sf::Vector2f(180, 560));
-	gameHistoryAreaRect.setPosition(780, 75);
-	gameHistoryAreaRect.setFillColor(sf::Color(253, 245, 230));
+	game_history_area_rect_.setSize(sf::Vector2f(180, 560));
+	game_history_area_rect_.setPosition(780, 75);
+	game_history_area_rect_.setFillColor(sf::Color(253, 245, 230));
 
-	scrollBarRect.setSize(sf::Vector2f(20, 560));
-	scrollBarRect.setPosition(940, 75);
-	scrollBarRect.setFillColor(sf::Color(200, 200, 200));
+	scroll_bar_rect_.setSize(sf::Vector2f(20, 560));
+	scroll_bar_rect_.setPosition(940, 75);
+	scroll_bar_rect_.setFillColor(sf::Color(200, 200, 200));
 
-	dividerRect.setSize(sf::Vector2f(2, 0));
-	dividerRect.setPosition(860, 75);
-	dividerRect.setFillColor(sf::Color(0, 0, 0, 100));
+	divider_rect_.setSize(sf::Vector2f(2, 0));
+	divider_rect_.setPosition(860, 75);
+	divider_rect_.setFillColor(sf::Color(0, 0, 0, 100));
 
-	scale = sf::Vector2f(1, 1);
-	mouseOffset = sf::Vector2f(0, 0);
+	mouse_offset_ = sf::Vector2f(0, 0);
 
-	playerNames[0].setFont(font);
-	playerNames[0].setCharacterSize(18);
-	playerNames[0].setFillColor(sf::Color::Black);
-	playerNames[0].setString("White");
-	playerNames[0].setPosition(800, 50);
+	player_names_[0].setFont(font);
+	player_names_[0].setCharacterSize(18);
+	player_names_[0].setFillColor(sf::Color::Black);
+	player_names_[0].setString("White");
+	player_names_[0].setPosition(800, 50);
 
-	playerNames[1].setFont(font);
-	playerNames[1].setCharacterSize(18);
-	playerNames[1].setFillColor(sf::Color::Black);
-	playerNames[1].setString("Black");
-	playerNames[1].setPosition(880, 50);
+	player_names_[1].setFont(font);
+	player_names_[1].setCharacterSize(18);
+	player_names_[1].setFillColor(sf::Color::Black);
+	player_names_[1].setString("Black");
+	player_names_[1].setPosition(880, 50);
 
 	view.setSize(160, 560);
 	view.setCenter(860, 355);
 	view.setViewport(sf::FloatRect(0.8125f, 0.107f, 0.1667f, 0.8f));
 }
 
-sf::View GameHistoryBlock::getView() const
+sf::View game_history_block::get_view() const
 {
 	return view;
 }
 
-void GameHistoryBlock::redo(Board *board, MoveLog &moveLog)
+void game_history_block::redo(board *board, move_log &ml)
 {
-	std::list<std::string> pastChecks;
-	for (long unsigned int i = 0; i < historyRows.size(); i++)
+	std::list<std::string> past_checks;
+	for (long unsigned int i = 0; i < history_rows_.size(); i++)
 	{
-		if (historyRows[i].getWhiteMove().find("+") != std::string::npos)
-			pastChecks.push_back(std::to_string(i) + 'W');
-		if (historyRows[i].getBlackMove().find("+") != std::string::npos)
-			pastChecks.push_back(std::to_string(i) + 'B');
+		if (history_rows_[i].get_white_move().find("+") != std::string::npos)
+			past_checks.push_back(std::to_string(i) + 'W');
+		if (history_rows_[i].get_black_move().find("+") != std::string::npos)
+			past_checks.push_back(std::to_string(i) + 'B');
 	}
-	historyRows.clear();
-	int currentRow = 0;
-	if (moveLog.getMoves().size() > 0)
+	history_rows_.clear();
+	int current_row = 0;
+	if (ml.get_moves().size() > 0)
 	{
-		for (long unsigned int i = 0; i < moveLog.getMoves().size(); i += 2)
+		for (long unsigned int i = 0; i < ml.get_moves().size(); i += 2)
 		{
-			HistoryRow historyRow(font);
-			historyRow.setPosition(sf::Vector2f(gameHistoryAreaRect.getPosition().x, 75 + currentRow * 25));
-			historyRow.setWhiteMove(
-				moveLog.getMoves()[i]->stringify() +
-				((pastChecks.front() == std::to_string(currentRow) + 'W') ? pastChecks.pop_front(), "+"
-																		  : ""));
-			if (i + 1 < moveLog.getMoves().size())
-			{
-				historyRow.setBlackMove(
-					moveLog.getMoves()[i + 1]->stringify() +
-					((pastChecks.front() == std::to_string(currentRow) + 'B') ? pastChecks.pop_front(), "+"
-																			  : ""));
-			}
-			historyRows.push_back(historyRow);
-			currentRow++;
+			history_row hr(font);
+			hr.set_position(sf::Vector2f(game_history_area_rect_.getPosition().x, 75 + current_row * 25));
+			hr.set_white_move(
+				ml.get_moves()[i]->stringify() +
+				((past_checks.front() == std::to_string(current_row) + 'W') ? past_checks.pop_front(), "+"
+																			: ""));
+			if (i + 1 < ml.get_moves().size())
+				hr.set_black_move(
+					ml.get_moves()[i + 1]->stringify() +
+					((past_checks.front() == std::to_string(current_row) + 'B') ? past_checks.pop_front(), "+"
+																				: ""));
+			history_rows_.push_back(hr);
+			current_row++;
 		}
-		auto lastMove = moveLog.getMoves().back();
-		const std::string lastMoveString = lastMove->stringify() + calculateCheckAndCheckMate(board);
-		HistoryRow &lastRow = historyRows.back();
-		if (AllianceUtils::isWhite(lastMove->getMovedPiece()->getPieceAlliance()))
-			lastRow.setWhiteMove(lastMoveString);
+		auto last_move = ml.get_moves().back();
+		const std::string last_move_string = last_move->stringify() + board_utils::calculate_check_and_checkmate(board);
+		history_row &last_row = history_rows_.back();
+		if (alliance_utils::is_white(last_move->get_moved_piece()->get_piece_alliance()))
+			last_row.set_white_move(last_move_string);
 		else
-			lastRow.setBlackMove(lastMoveString);
+			last_row.set_black_move(last_move_string);
 	}
-	dividerRect.setSize(sf::Vector2f(2, 25 * currentRow));
-	gameHistoryAreaRect.setSize(sf::Vector2f(180, std::max(25 * currentRow, 560)));
+	divider_rect_.setSize(sf::Vector2f(2, 25 * current_row));
+	game_history_area_rect_.setSize(sf::Vector2f(180, std::max(25 * current_row, 560)));
 }
 
-std::string GameHistoryBlock::calculateCheckAndCheckMate(Board *board)
+void game_history_block::mouse_wheel_scrolled(sf::Event::MouseWheelScrollEvent &event, sf::Vector2f window_size)
 {
-	if (board->getCurrentPlayer()->isInCheckMate())
-	{
-		return "#";
-	}
-	else if (board->getCurrentPlayer()->isInCheck())
-	{
-		return "+";
-	}
-	return "";
-}
-
-void GameHistoryBlock::mouseWheelScrolled(sf::Event::MouseWheelScrollEvent &event, sf::Vector2f windowSize)
-{
-	sf::FloatRect viewPortDim = view.getViewport();
-	sf::FloatRect dim(windowSize.x * viewPortDim.left, windowSize.y * viewPortDim.top, windowSize.x * viewPortDim.width, windowSize.y * viewPortDim.height);
+	sf::FloatRect view_port_dim = view.getViewport();
+	sf::FloatRect dim(window_size.x * view_port_dim.left, window_size.y * view_port_dim.top, window_size.x * view_port_dim.width, window_size.y * view_port_dim.height);
 	if (dim.contains(event.x, event.y))
 	{
 		if (event.delta > 0)
 		{
-			if (scrollPercentageTop > 0)
+			if (scroll_percentage_top_ > 0)
 				view.move(0, -25);
 		}
-		else if (scrollPercentageBottom < 100)
+		else if (scroll_percentage_bottom_ < 100)
 			view.move(0, 25);
 	}
-	updateScrollPercentage(windowSize);
+	update_scroll_percentage(window_size);
 }
-void GameHistoryBlock::scrollBarScrolled(sf::Event::MouseButtonEvent &event, bool buttonClickedOrReleased)
+void game_history_block::scroll_bar_scrolled(sf::Event::MouseButtonEvent &event, bool button_clicked_or_released)
 {
-	if (buttonClickedOrReleased && event.button == sf::Mouse::Button::Left && scrollBarRect.getGlobalBounds().contains(event.x, event.y))
+	if (button_clicked_or_released && event.button == sf::Mouse::Button::Left && scroll_bar_rect_.getGlobalBounds().contains(event.x, event.y))
 	{
-		scrollBarClicked = true;
-		mouseOffset = scrollBarRect.getPosition() - sf::Vector2f(event.x, event.y);
+		scroll_bar_clicked_ = true;
+		mouse_offset_ = scroll_bar_rect_.getPosition() - sf::Vector2f(event.x, event.y);
 	}
 	else
-		scrollBarClicked = false;
+		scroll_bar_clicked_ = false;
 }
 
-void GameHistoryBlock::scroll(sf::RenderWindow &window)
+void game_history_block::scroll(sf::RenderWindow &window)
 {
-	if (scrollBarClicked)
+	if (scroll_bar_clicked_)
 	{
-		sf::Vector2f mousePosition = window.mapPixelToCoords(sf::Mouse::getPosition(window)),
-					 currentRectPosition = scrollBarRect.getPosition(),
-					 newRectPosition = sf::Vector2f(currentRectPosition.x, mousePosition.y + mouseOffset.y),
-					 distance = newRectPosition - currentRectPosition,
-					 windowSize = window.getView().getSize();
-		int numberOfEntriesTraversed = distance.y / 25;
-		if (distance.y > 0 && scrollPercentageBottom < 100.f)
+		sf::Vector2f mouse_position = window.mapPixelToCoords(sf::Mouse::getPosition(window)),
+					 current_rect_position = scroll_bar_rect_.getPosition(),
+					 new_rect_position = sf::Vector2f(current_rect_position.x, mouse_position.y + mouse_offset_.y),
+					 distance = new_rect_position - current_rect_position,
+					 window_size = window.getView().getSize();
+		int number_of_entries_traversed = distance.y / 25;
+		if (distance.y > 0 && scroll_percentage_bottom_ < 100.f)
 		{
-			view.move(0, 25 * numberOfEntriesTraversed);
+			view.move(0, 25 * number_of_entries_traversed);
 		}
-		else if (distance.y < 0 && scrollPercentageTop > 0.f)
+		else if (distance.y < 0 && scroll_percentage_top_ > 0.f)
 		{
-			view.move(0, 25 * numberOfEntriesTraversed);
+			view.move(0, 25 * number_of_entries_traversed);
 		}
-		updateScrollPercentage(windowSize);
+		update_scroll_percentage(window_size);
 	}
 }
 
-void GameHistoryBlock::update(sf::RenderWindow &window)
+void game_history_block::update(sf::RenderWindow &window)
 {
-	sf::Vector2u windowSize = window.getSize();
-	playerNames[0].setPosition(windowSize.x - 160, 50);
-	playerNames[1].setPosition(windowSize.x - 80, 50);
-	gameHistoryAreaRect.setPosition(windowSize.x - 180, 75);
-	scrollBarRect.setPosition(windowSize.x - 20, scrollBarRect.getPosition().y);
-	dividerRect.setPosition(windowSize.x - 100, 75);
+	sf::Vector2u window_size = window.getSize();
+	player_names_[0].setPosition(window_size.x - 160, 50);
+	player_names_[1].setPosition(window_size.x - 80, 50);
+	game_history_area_rect_.setPosition(window_size.x - 180, 75);
+	scroll_bar_rect_.setPosition(window_size.x - 20, scroll_bar_rect_.getPosition().y);
+	divider_rect_.setPosition(window_size.x - 100, 75);
 	float y = view.getSize().y;
-	view.setSize(160, std::min(560u, windowSize.y - 75));
+	view.setSize(160, std::min(560u, window_size.y - 75));
 	y -= view.getSize().y;
-	view.setCenter(windowSize.x - 100, view.getCenter().y - y / 2);
-	view.setViewport(sf::FloatRect((windowSize.x - 180) / static_cast<float>(windowSize.x), 75 / static_cast<float>(windowSize.y), 160 / static_cast<float>(windowSize.x), (std::min(560u, windowSize.y - 75)) / static_cast<float>(windowSize.y)));
-	updateScrollPercentage(sf::Vector2f(windowSize.x, windowSize.y));
-	for (auto &historyRow : historyRows)
-		historyRow.setPosition(sf::Vector2f(gameHistoryAreaRect.getPosition().x, historyRow.getPosition().y - 25));
+	view.setCenter(window_size.x - 100, view.getCenter().y - y / 2);
+	view.setViewport(sf::FloatRect((window_size.x - 180) / static_cast<float>(window_size.x), 75 / static_cast<float>(window_size.y), 160 / static_cast<float>(window_size.x), (std::min(560u, window_size.y - 75)) / static_cast<float>(window_size.y)));
+	update_scroll_percentage(sf::Vector2f(window_size.x, window_size.y));
+	for (auto &historyRow : history_rows_)
+		historyRow.set_position(sf::Vector2f(game_history_area_rect_.getPosition().x, historyRow.get_position().y - 25));
 }
 
-void GameHistoryBlock::updateScrollPercentage(sf::Vector2f windowSize)
+void game_history_block::update_scroll_percentage(sf::Vector2f window_size)
 {
-	if (historyRows.size() == 0 || (historyRows.front().getPosition().y > view.getCenter().y - view.getSize().y / 2 &&
-									historyRows.back().getPosition().y < view.getCenter().y + view.getSize().y / 2))
+	if (history_rows_.size() == 0 || (history_rows_.front().get_position().y > view.getCenter().y - view.getSize().y / 2 &&
+									  history_rows_.back().get_position().y < view.getCenter().y + view.getSize().y / 2))
 	{
-		scrollPercentageTop = 0.f;
-		scrollPercentageBottom = 100.f;
-		scrollBarRect.setSize(sf::Vector2f(20, view.getSize().y));
-		scrollBarRect.setPosition(windowSize.x - 20, 75);
+		scroll_percentage_top_ = 0.f;
+		scroll_percentage_bottom_ = 100.f;
+		scroll_bar_rect_.setSize(sf::Vector2f(20, view.getSize().y));
+		scroll_bar_rect_.setPosition(window_size.x - 20, 75);
 	}
 	else
 	{
-		scrollPercentageBottom = (view.getCenter().y - 75 + view.getSize().y / 2) / (historyRows.back().getPosition().y - 75) * 100.f;
-		scrollPercentageTop = std::max(0.f, scrollPercentageBottom - 100.f * view.getSize().y / (historyRows.back().getPosition().y - 75));
-		scrollBarRect.setSize(sf::Vector2f(20, std::min(560.f, windowSize.y - 75.f) * view.getSize().y / (historyRows.back().getPosition().y - 75)));
-		scrollBarRect.setPosition(windowSize.x - 20, 75 + view.getSize().y * scrollPercentageTop / 100.f);
+		scroll_percentage_bottom_ = (view.getCenter().y - 75 + view.getSize().y / 2) / (history_rows_.back().get_position().y - 75) * 100.f;
+		scroll_percentage_top_ = std::max(0.f, scroll_percentage_bottom_ - 100.f * view.getSize().y / (history_rows_.back().get_position().y - 75));
+		scroll_bar_rect_.setSize(sf::Vector2f(20, std::min(560.f, window_size.y - 75.f) * view.getSize().y / (history_rows_.back().get_position().y - 75)));
+		scroll_bar_rect_.setPosition(window_size.x - 20, 75 + view.getSize().y * scroll_percentage_top_ / 100.f);
 	}
 }
 
-void GameHistoryBlock::draw(sf::RenderWindow &window)
+void game_history_block::draw(sf::RenderWindow &window)
 {
 	update(window);
-	window.draw(playerNames[0]);
-	window.draw(playerNames[1]);
-	window.draw(scrollBarRect);
+	window.draw(player_names_[0]);
+	window.draw(player_names_[1]);
+	window.draw(scroll_bar_rect_);
 	window.setView(view);
-	window.draw(gameHistoryAreaRect);
-	window.draw(dividerRect);
-	for (auto &historyRow : historyRows)
-		historyRow.draw(window);
+	window.draw(game_history_area_rect_);
+	window.draw(divider_rect_);
+	for (auto &history_row : history_rows_)
+		history_row.draw(window);
 }

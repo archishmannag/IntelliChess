@@ -1,16 +1,18 @@
 #include <engine/board/BoardUtils.hpp>
+#include <engine/board/Board.hpp>
+#include <engine/player/Player.hpp>
 
 namespace
 {
-	std::array<bool, 64> initColumn(int columnNumber)
+	std::array<bool, 64> init_column(int c)
 	{
 		std::array<bool, 64> column;
 		for (int i = 0; i < 64; i++)
 		{
-			if (i == columnNumber)
+			if (i == c)
 			{
 				column[i] = true;
-				columnNumber += 8;
+				c += 8;
 			}
 			else
 				column[i] = false;
@@ -18,10 +20,10 @@ namespace
 		return column;
 	}
 
-	std::array<bool, 64> initRow(int rowNumber)
+	std::array<bool, 64> init_row(int r)
 	{
 		std::array<bool, 64> row;
-		int rowStart = rowNumber * 8;
+		int rowStart = r * 8;
 		for (int i = 0; i < 64; i++)
 		{
 			if (i >= rowStart && i < rowStart + 8)
@@ -33,58 +35,71 @@ namespace
 	}
 }
 
-std::array<bool, 64> BoardUtils::FIRST_COLUMN = initColumn(0);
-std::array<bool, 64> BoardUtils::SECOND_COLUMN = initColumn(1);
-std::array<bool, 64> BoardUtils::THIRD_COLUMN = initColumn(2);
-std::array<bool, 64> BoardUtils::FOURTH_COLUMN = initColumn(3);
-std::array<bool, 64> BoardUtils::FIFTH_COLUMN = initColumn(4);
-std::array<bool, 64> BoardUtils::SIXTH_COLUMN = initColumn(5);
-std::array<bool, 64> BoardUtils::SEVENTH_COLUMN = initColumn(6);
-std::array<bool, 64> BoardUtils::EIGHTH_COLUMN = initColumn(7);
+std::array<bool, 64> board_utils::first_column = init_column(0);
+std::array<bool, 64> board_utils::second_column = init_column(1);
+std::array<bool, 64> board_utils::third_column = init_column(2);
+std::array<bool, 64> board_utils::fourth_column = init_column(3);
+std::array<bool, 64> board_utils::fifth_column = init_column(4);
+std::array<bool, 64> board_utils::sixth_column = init_column(5);
+std::array<bool, 64> board_utils::seventh_column = init_column(6);
+std::array<bool, 64> board_utils::eighth_column = init_column(7);
 
-std::array<bool, 64> BoardUtils::FIRST_ROW = initRow(0);
-std::array<bool, 64> BoardUtils::SECOND_ROW = initRow(1);
-std::array<bool, 64> BoardUtils::THIRD_ROW = initRow(2);
-std::array<bool, 64> BoardUtils::FOURTH_ROW = initRow(3);
-std::array<bool, 64> BoardUtils::FIFTH_ROW = initRow(4);
-std::array<bool, 64> BoardUtils::SIXTH_ROW = initRow(5);
-std::array<bool, 64> BoardUtils::SEVENTH_ROW = initRow(6);
-std::array<bool, 64> BoardUtils::EIGHTH_ROW = initRow(7);
+std::array<bool, 64> board_utils::first_row = init_row(0);
+std::array<bool, 64> board_utils::second_row = init_row(1);
+std::array<bool, 64> board_utils::third_row = init_row(2);
+std::array<bool, 64> board_utils::fourth_row = init_row(3);
+std::array<bool, 64> board_utils::fifth_row = init_row(4);
+std::array<bool, 64> board_utils::sixth_row = init_row(5);
+std::array<bool, 64> board_utils::seventh_row = init_row(6);
+std::array<bool, 64> board_utils::eighth_row = init_row(7);
 
-std::array<std::string, 64> BoardUtils::ALGEBRAIC_NOTATION = BoardUtils::initializeAlgebraicNotation();
-std::map<std::string, int> BoardUtils::POSITION_TO_COORDINATE = BoardUtils::initializePositionToCoordinateMap();
+std::array<std::string, 64> board_utils::algebraic_notation = board_utils::initialize_algebraic_notation();
+std::map<std::string, int> board_utils::position_to_coordinate = board_utils::initialize_position_to_coordinate_map();
 
-bool BoardUtils::isValidTileCoordinate(int coordinate)
+bool board_utils::is_valid_tile_coordinate(int c)
 {
-	return coordinate >= 0 && coordinate < 64;
+	return c >= 0 && c < 64;
 };
 
-int BoardUtils::getCoordinateAtPosition(std::string position)
+int board_utils::get_coordinate_at_position(std::string p)
 {
-	return POSITION_TO_COORDINATE.find(position)->second;
+	return position_to_coordinate.find(p)->second;
 }
 
-std::string BoardUtils::getPositionAtCoordinate(int coordinate)
+std::string board_utils::get_position_at_coordinate(int c)
 {
-	return ALGEBRAIC_NOTATION[coordinate];
+	return algebraic_notation[c];
 }
 
-std::array<std::string, 64> BoardUtils::initializeAlgebraicNotation()
+std::array<std::string, 64> board_utils::initialize_algebraic_notation()
 {
-	std::array<std::string, 64> algebraicNotation;
+	std::array<std::string, 64> algebraic_notation;
 	int position = 0;
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
 		{
-			algebraicNotation[position++] = std::string(1, 'a' + j) + std::to_string(8 - i);
+			algebraic_notation[position++] = std::string(1, 'a' + j) + std::to_string(8 - i);
 		}
-	return algebraicNotation;
+	return algebraic_notation;
 }
 
-std::map<std::string, int> BoardUtils::initializePositionToCoordinateMap()
+std::map<std::string, int> board_utils::initialize_position_to_coordinate_map()
 {
-	std::map<std::string, int> positionToCoordinate;
+	std::map<std::string, int> position_to_coordinate;
 	for (int i = 0; i < 64; i++)
-		positionToCoordinate[ALGEBRAIC_NOTATION[i]] = i;
-	return positionToCoordinate;
+		position_to_coordinate[algebraic_notation[i]] = i;
+	return position_to_coordinate;
+}
+
+std::string board_utils::calculate_check_and_checkmate(board *b)
+{
+	if (b->get_current_player()->is_is_checkmate())
+	{
+		return "#";
+	}
+	else if (b->get_current_player()->is_in_check())
+	{
+		return "+";
+	}
+	return "";
 }

@@ -7,18 +7,18 @@
 #include <engine/player/ai/MoveStrategy.hpp>
 #include <engine/player/ai/BoardEvaluator.hpp>
 
-class MiniMax : public MoveStrategy
+class mini_max : public move_strategy
 {
 private:
-	std::unique_ptr<BoardEvaluator> boardEvaluator;
-	unsigned const searchDepth;
+	std::unique_ptr<board_evaluator> board_evaluator_;
+	unsigned const search_depth_;
 
-	int min(Board *board, unsigned int depth);
-	int max(Board *board, unsigned int depth);
+	int min(std::shared_ptr<board> b, unsigned int d);
+	int max(std::shared_ptr<board> b, unsigned int d);
 
 public:
-	MiniMax(unsigned int searchDepth);
-	Move *execute(Board *board) override;
+	mini_max(unsigned int sd);
+	std::shared_ptr<move> execute(std::shared_ptr<board> b) override;
 };
 
 #endif

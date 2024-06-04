@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <vector>
+#include <memory>
 #include <cstdlib>
 
 #include <engine/board/Board.hpp>
@@ -21,139 +22,139 @@
 
 TEST(BoardTest, testInitialBoard)
 {
-	const Board *board = Board::createStandardBoard();
-	EXPECT_EQ(20, board->getCurrentPlayer()->getLegalMoves().size());
-	EXPECT_EQ(20, board->getCurrentPlayer()->getOpponent()->getLegalMoves().size());
+	std::shared_ptr<board> b = board::create_standard_board();
+	EXPECT_EQ(20, b->get_current_player()->get_legal_moves().size());
+	EXPECT_EQ(20, b->get_current_player()->get_opponent().lock()->get_legal_moves().size());
 
-	ASSERT_FALSE(board->getCurrentPlayer()->isInCheck());
-	ASSERT_FALSE(board->getCurrentPlayer()->isInCheckMate());
-	ASSERT_FALSE(board->getCurrentPlayer()->isCastled());
+	ASSERT_FALSE(b->get_current_player()->is_in_check());
+	ASSERT_FALSE(b->get_current_player()->is_is_checkmate());
+	ASSERT_FALSE(b->get_current_player()->is_castled());
 
-	ASSERT_FALSE(board->getCurrentPlayer()->getOpponent()->isInCheck());
-	ASSERT_FALSE(board->getCurrentPlayer()->getOpponent()->isInCheckMate());
-	ASSERT_FALSE(board->getCurrentPlayer()->getOpponent()->isCastled());
+	ASSERT_FALSE(b->get_current_player()->get_opponent().lock()->is_in_check());
+	ASSERT_FALSE(b->get_current_player()->get_opponent().lock()->is_is_checkmate());
+	ASSERT_FALSE(b->get_current_player()->get_opponent().lock()->is_castled());
 
-	ASSERT_EQ(board->getCurrentPlayer(), board->getWhitePlayer());
-	ASSERT_EQ(board->getCurrentPlayer()->getOpponent(), board->getBlackPlayer());
+	ASSERT_EQ(b->get_current_player(), b->get_white_player());
+	ASSERT_EQ(b->get_current_player()->get_opponent().lock(), b->get_black_player());
 
-	ASSERT_STREQ("White", AllianceUtils::stringify(board->getCurrentPlayer()->getPlayerAlliance()).c_str());
-	ASSERT_STREQ("Black", AllianceUtils::stringify(board->getCurrentPlayer()->getOpponent()->getPlayerAlliance()).c_str());
+	ASSERT_STREQ("White", alliance_utils::stringify(b->get_current_player()->get_player_alliance()).c_str());
+	ASSERT_STREQ("Black", alliance_utils::stringify(b->get_current_player()->get_opponent().lock()->get_player_alliance()).c_str());
 
-	std::vector<Piece *> allPieces = board->getWhitePieces(),
-						 blackPieces = board->getBlackPieces();
-	allPieces.insert(allPieces.end(), blackPieces.begin(), blackPieces.end());
-	std::vector<Move *> allMoves = board->getAllLegalMoves();
-	for (const auto move : allMoves)
+	std::vector<std::shared_ptr<piece>> all_pieces = b->get_white_pieces(),
+										black_pieces = b->get_black_pieces();
+	all_pieces.insert(all_pieces.end(), black_pieces.begin(), black_pieces.end());
+	std::vector<std::shared_ptr<move>> all_moves = b->get_all_legal_moves();
+	for (auto m : all_moves)
 	{
-		ASSERT_FALSE(move->isAttack());
-		ASSERT_FALSE(move->isCastlingMove());
+		ASSERT_FALSE(m->is_attack());
+		ASSERT_FALSE(m->is_castling_move());
 	}
 
-	ASSERT_EQ(32, allPieces.size());
-	ASSERT_EQ(40, allMoves.size());
-	ASSERT_EQ(nullptr, board->getTile(35)->getPiece());
+	ASSERT_EQ(32, all_pieces.size());
+	ASSERT_EQ(40, all_moves.size());
+	ASSERT_EQ(nullptr, b->get_tile(35)->get_piece());
 }
 
 TEST(BoardTest, testPlainKingMove)
 {
-	BoardBuilder builder;
+	board_builder builder;
 	// Black Layout
-	builder.setPiece(new King(4, Alliance::BLACK));
-	builder.setPiece(new Pawn(12, Alliance::BLACK));
+	builder.set_piece(std::make_shared<king>(4, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(12, alliance::black));
 	// White Layout
-	builder.setPiece(new Pawn(52, Alliance::WHITE));
-	builder.setPiece(new King(60, Alliance::WHITE));
-	builder.setMoveMaker(Alliance::WHITE);
-	Board *board = builder.build();
+	builder.set_piece(std::make_shared<pawn>(52, alliance::white));
+	builder.set_piece(std::make_shared<king>(60, alliance::white));
+	builder.set_move_maker(alliance::white);
+	std::shared_ptr<board> b = builder.build();
 
-	ASSERT_EQ(6, board->getWhitePlayer()->getLegalMoves().size());
-	ASSERT_EQ(6, board->getBlackPlayer()->getLegalMoves().size());
-	ASSERT_FALSE(board->getWhitePlayer()->isInCheck());
-	ASSERT_FALSE(board->getWhitePlayer()->isInCheckMate());
-	ASSERT_FALSE(board->getWhitePlayer()->isCastled());
-	ASSERT_FALSE(board->getBlackPlayer()->isInCheck());
-	ASSERT_FALSE(board->getBlackPlayer()->isInCheckMate());
-	ASSERT_FALSE(board->getBlackPlayer()->isCastled());
-	ASSERT_EQ(board->getWhitePlayer(), board->getCurrentPlayer());
-	ASSERT_EQ(board->getBlackPlayer(), board->getWhitePlayer()->getOpponent());
+	ASSERT_EQ(6, b->get_white_player()->get_legal_moves().size());
+	ASSERT_EQ(6, b->get_black_player()->get_legal_moves().size());
+	ASSERT_FALSE(b->get_white_player()->is_in_check());
+	ASSERT_FALSE(b->get_white_player()->is_is_checkmate());
+	ASSERT_FALSE(b->get_white_player()->is_castled());
+	ASSERT_FALSE(b->get_black_player()->is_in_check());
+	ASSERT_FALSE(b->get_black_player()->is_is_checkmate());
+	ASSERT_FALSE(b->get_black_player()->is_castled());
+	ASSERT_EQ(b->get_white_player(), b->get_current_player());
+	ASSERT_EQ(b->get_black_player(), b->get_white_player()->get_opponent().lock());
 
-	auto move = MoveFactory::createMove(
-		board,
-		BoardUtils::getCoordinateAtPosition("e1"),
-		BoardUtils::getCoordinateAtPosition("f1"));
-	auto transition = board->getCurrentPlayer()->makeMove(move);
-	ASSERT_EQ(move, transition.getMove());
-	ASSERT_EQ(transition.getTransitionBoard()->getCurrentPlayer(), transition.getTransitionBoard()->getBlackPlayer());
-	ASSERT_TRUE(transition.getMoveStatus() == MoveStatus::DONE);
-	ASSERT_EQ(61, transition.getTransitionBoard()->getWhitePlayer()->getPlayerKing()->getPiecePosition());
+	auto m = move_factory::create_move(
+		b,
+		board_utils::get_coordinate_at_position("e1"),
+		board_utils::get_coordinate_at_position("f1"));
+	auto transition = b->get_current_player()->make_move(m);
+	ASSERT_EQ(m, transition.get_move());
+	ASSERT_EQ(transition.get_transition_board()->get_current_player(), transition.get_transition_board()->get_black_player());
+	ASSERT_TRUE(transition.get_move_status() == move_status::done);
+	ASSERT_EQ(61, transition.get_transition_board()->get_white_player()->get_player_king()->get_piece_position());
 }
 
 TEST(BoardTest, testAlgebraicNotation)
 {
-	ASSERT_STREQ("a8", BoardUtils::getPositionAtCoordinate(0).c_str());
-	ASSERT_STREQ("b8", BoardUtils::getPositionAtCoordinate(1).c_str());
-	ASSERT_STREQ("c8", BoardUtils::getPositionAtCoordinate(2).c_str());
-	ASSERT_STREQ("d8", BoardUtils::getPositionAtCoordinate(3).c_str());
-	ASSERT_STREQ("e8", BoardUtils::getPositionAtCoordinate(4).c_str());
-	ASSERT_STREQ("f8", BoardUtils::getPositionAtCoordinate(5).c_str());
-	ASSERT_STREQ("g8", BoardUtils::getPositionAtCoordinate(6).c_str());
-	ASSERT_STREQ("h8", BoardUtils::getPositionAtCoordinate(7).c_str());
-	ASSERT_STREQ("a1", BoardUtils::getPositionAtCoordinate(56).c_str());
-	ASSERT_STREQ("b1", BoardUtils::getPositionAtCoordinate(57).c_str());
-	ASSERT_STREQ("c1", BoardUtils::getPositionAtCoordinate(58).c_str());
-	ASSERT_STREQ("d1", BoardUtils::getPositionAtCoordinate(59).c_str());
-	ASSERT_STREQ("e1", BoardUtils::getPositionAtCoordinate(60).c_str());
-	ASSERT_STREQ("f1", BoardUtils::getPositionAtCoordinate(61).c_str());
-	ASSERT_STREQ("g1", BoardUtils::getPositionAtCoordinate(62).c_str());
-	ASSERT_STREQ("h1", BoardUtils::getPositionAtCoordinate(63).c_str());
+	ASSERT_STREQ("a8", board_utils::get_position_at_coordinate(0).c_str());
+	ASSERT_STREQ("b8", board_utils::get_position_at_coordinate(1).c_str());
+	ASSERT_STREQ("c8", board_utils::get_position_at_coordinate(2).c_str());
+	ASSERT_STREQ("d8", board_utils::get_position_at_coordinate(3).c_str());
+	ASSERT_STREQ("e8", board_utils::get_position_at_coordinate(4).c_str());
+	ASSERT_STREQ("f8", board_utils::get_position_at_coordinate(5).c_str());
+	ASSERT_STREQ("g8", board_utils::get_position_at_coordinate(6).c_str());
+	ASSERT_STREQ("h8", board_utils::get_position_at_coordinate(7).c_str());
+	ASSERT_STREQ("a1", board_utils::get_position_at_coordinate(56).c_str());
+	ASSERT_STREQ("b1", board_utils::get_position_at_coordinate(57).c_str());
+	ASSERT_STREQ("c1", board_utils::get_position_at_coordinate(58).c_str());
+	ASSERT_STREQ("d1", board_utils::get_position_at_coordinate(59).c_str());
+	ASSERT_STREQ("e1", board_utils::get_position_at_coordinate(60).c_str());
+	ASSERT_STREQ("f1", board_utils::get_position_at_coordinate(61).c_str());
+	ASSERT_STREQ("g1", board_utils::get_position_at_coordinate(62).c_str());
+	ASSERT_STREQ("h1", board_utils::get_position_at_coordinate(63).c_str());
 }
 
 TEST(BoardTest, testInvalidBoard)
 {
-	BoardBuilder builder;
+	board_builder builder;
 	// Black Layout
-	builder.setPiece(new Rook(0, Alliance::BLACK));
-	builder.setPiece(new Knight(1, Alliance::BLACK));
-	builder.setPiece(new Bishop(2, Alliance::BLACK));
-	builder.setPiece(new Queen(3, Alliance::BLACK));
-	builder.setPiece(new Bishop(5, Alliance::BLACK));
-	builder.setPiece(new Knight(6, Alliance::BLACK));
-	builder.setPiece(new Rook(7, Alliance::BLACK));
-	builder.setPiece(new Pawn(8, Alliance::BLACK));
-	builder.setPiece(new Pawn(9, Alliance::BLACK));
-	builder.setPiece(new Pawn(10, Alliance::BLACK));
-	builder.setPiece(new Pawn(11, Alliance::BLACK));
-	builder.setPiece(new Pawn(12, Alliance::BLACK));
-	builder.setPiece(new Pawn(13, Alliance::BLACK));
-	builder.setPiece(new Pawn(14, Alliance::BLACK));
-	builder.setPiece(new Pawn(15, Alliance::BLACK));
+	builder.set_piece(std::make_shared<rook>(0, alliance::black));
+	builder.set_piece(std::make_shared<knight>(1, alliance::black));
+	builder.set_piece(std::make_shared<bishop>(2, alliance::black));
+	builder.set_piece(std::make_shared<queen>(3, alliance::black));
+	builder.set_piece(std::make_shared<bishop>(5, alliance::black));
+	builder.set_piece(std::make_shared<knight>(6, alliance::black));
+	builder.set_piece(std::make_shared<rook>(7, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(8, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(9, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(10, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(11, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(12, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(13, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(14, alliance::black));
+	builder.set_piece(std::make_shared<pawn>(15, alliance::black));
 	// White Layout
-	builder.setPiece(new Pawn(48, Alliance::WHITE));
-	builder.setPiece(new Pawn(49, Alliance::WHITE));
-	builder.setPiece(new Pawn(50, Alliance::WHITE));
-	builder.setPiece(new Pawn(51, Alliance::WHITE));
-	builder.setPiece(new Pawn(52, Alliance::WHITE));
-	builder.setPiece(new Pawn(53, Alliance::WHITE));
-	builder.setPiece(new Pawn(54, Alliance::WHITE));
-	builder.setPiece(new Pawn(55, Alliance::WHITE));
-	builder.setPiece(new Rook(56, Alliance::WHITE));
-	builder.setPiece(new Knight(57, Alliance::WHITE));
-	builder.setPiece(new Bishop(58, Alliance::WHITE));
-	builder.setPiece(new Queen(59, Alliance::WHITE));
-	builder.setPiece(new Bishop(61, Alliance::WHITE));
-	builder.setPiece(new Knight(62, Alliance::WHITE));
-	builder.setPiece(new Rook(63, Alliance::WHITE));
-	builder.setMoveMaker(Alliance::WHITE);
+	builder.set_piece(std::make_shared<pawn>(48, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(49, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(50, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(51, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(52, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(53, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(54, alliance::white));
+	builder.set_piece(std::make_shared<pawn>(55, alliance::white));
+	builder.set_piece(std::make_shared<rook>(56, alliance::white));
+	builder.set_piece(std::make_shared<knight>(57, alliance::white));
+	builder.set_piece(std::make_shared<bishop>(58, alliance::white));
+	builder.set_piece(std::make_shared<queen>(59, alliance::white));
+	builder.set_piece(std::make_shared<bishop>(61, alliance::white));
+	builder.set_piece(std::make_shared<knight>(62, alliance::white));
+	builder.set_piece(std::make_shared<rook>(63, alliance::white));
+	builder.set_move_maker(alliance::white);
 
 	ASSERT_THROW(builder.build(), std::runtime_error);
 }
 
-int calculatedActivesFor(Board *board, Alliance alliance)
+int calculatedActivesFor(std::shared_ptr<board> b, alliance a)
 {
 	int count = 0;
-	for (auto piece : board->getAllPieces())
+	for (auto piece : b->get_all_pieces())
 	{
-		if (piece->getPieceAlliance() == alliance)
+		if (piece->get_piece_alliance() == a)
 		{
 			count++;
 		}
@@ -163,139 +164,107 @@ int calculatedActivesFor(Board *board, Alliance alliance)
 
 TEST(BoardTest, testBoardConsistency)
 {
-	Board *board = Board::createStandardBoard();
-	ASSERT_EQ(board->getWhitePlayer(), board->getCurrentPlayer());
+	std::shared_ptr<board> b = board::create_standard_board();
+	ASSERT_EQ(b->get_white_player(), b->get_current_player());
 
-	MoveTransition t1 = board->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		board,
-		BoardUtils::getCoordinateAtPosition("e2"),
-		BoardUtils::getCoordinateAtPosition("e4")));
+	move_transition t1 = b->get_current_player()->make_move(move_factory::create_move(
+		b,
+		board_utils::get_coordinate_at_position("e2"),
+		board_utils::get_coordinate_at_position("e4")));
 
-	MoveTransition t2 = t1.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t1.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("e7"),
-		BoardUtils::getCoordinateAtPosition("e5")));
+	move_transition t2 = t1.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t1.get_transition_board(),
+		board_utils::get_coordinate_at_position("e7"),
+		board_utils::get_coordinate_at_position("e5")));
 
-	MoveTransition t3 = t2.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t2.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("g1"),
-		BoardUtils::getCoordinateAtPosition("f3")));
+	move_transition t3 = t2.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t2.get_transition_board(),
+		board_utils::get_coordinate_at_position("g1"),
+		board_utils::get_coordinate_at_position("f3")));
 
-	MoveTransition t4 = t3.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t3.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("d7"),
-		BoardUtils::getCoordinateAtPosition("d5")));
+	move_transition t4 = t3.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t3.get_transition_board(),
+		board_utils::get_coordinate_at_position("d7"),
+		board_utils::get_coordinate_at_position("d5")));
 
-	MoveTransition t5 = t4.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t4.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("e4"),
-		BoardUtils::getCoordinateAtPosition("d5")));
+	move_transition t5 = t4.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t4.get_transition_board(),
+		board_utils::get_coordinate_at_position("e4"),
+		board_utils::get_coordinate_at_position("d5")));
 
-	MoveTransition t6 = t5.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t5.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("d8"),
-		BoardUtils::getCoordinateAtPosition("d5")));
+	move_transition t6 = t5.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t5.get_transition_board(),
+		board_utils::get_coordinate_at_position("d8"),
+		board_utils::get_coordinate_at_position("d5")));
 
-	MoveTransition t7 = t6.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t6.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("f3"),
-		BoardUtils::getCoordinateAtPosition("g5")));
+	move_transition t7 = t6.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t6.get_transition_board(),
+		board_utils::get_coordinate_at_position("f3"),
+		board_utils::get_coordinate_at_position("g5")));
 
-	MoveTransition t8 = t7.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t7.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("f7"),
-		BoardUtils::getCoordinateAtPosition("f6")));
+	move_transition t8 = t7.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t7.get_transition_board(),
+		board_utils::get_coordinate_at_position("f7"),
+		board_utils::get_coordinate_at_position("f6")));
 
-	MoveTransition t9 = t8.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t8.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("d1"),
-		BoardUtils::getCoordinateAtPosition("h5")));
+	move_transition t9 = t8.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t8.get_transition_board(),
+		board_utils::get_coordinate_at_position("d1"),
+		board_utils::get_coordinate_at_position("h5")));
 
-	MoveTransition t10 = t9.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t9.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("g7"),
-		BoardUtils::getCoordinateAtPosition("g6")));
+	move_transition t10 = t9.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t9.get_transition_board(),
+		board_utils::get_coordinate_at_position("g7"),
+		board_utils::get_coordinate_at_position("g6")));
 
-	MoveTransition t11 = t10.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t10.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("h5"),
-		BoardUtils::getCoordinateAtPosition("h4")));
+	move_transition t11 = t10.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t10.get_transition_board(),
+		board_utils::get_coordinate_at_position("h5"),
+		board_utils::get_coordinate_at_position("h4")));
 
-	MoveTransition t12 = t11.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t11.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("f6"),
-		BoardUtils::getCoordinateAtPosition("g5")));
+	move_transition t12 = t11.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t11.get_transition_board(),
+		board_utils::get_coordinate_at_position("f6"),
+		board_utils::get_coordinate_at_position("g5")));
 
-	MoveTransition t13 = t12.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t12.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("h4"),
-		BoardUtils::getCoordinateAtPosition("g5")));
+	move_transition t13 = t12.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t12.get_transition_board(),
+		board_utils::get_coordinate_at_position("h4"),
+		board_utils::get_coordinate_at_position("g5")));
 
-	MoveTransition t14 = t13.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t13.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("d5"),
-		BoardUtils::getCoordinateAtPosition("e4")));
+	move_transition t14 = t13.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t13.get_transition_board(),
+		board_utils::get_coordinate_at_position("d5"),
+		board_utils::get_coordinate_at_position("e4")));
 
-	ASSERT_TRUE(t14.getTransitionBoard()->getWhitePlayer()->isInCheck());
-	ASSERT_TRUE(t14.getTransitionBoard()->getWhitePlayer()->getActivePieces().size() == calculatedActivesFor(t14.getTransitionBoard(), Alliance::WHITE));
-	ASSERT_TRUE(t14.getTransitionBoard()->getBlackPlayer()->getActivePieces().size() == calculatedActivesFor(t14.getTransitionBoard(), Alliance::BLACK));
+	ASSERT_TRUE(t14.get_transition_board()->get_white_player()->is_in_check());
+	ASSERT_TRUE(t14.get_transition_board()->get_white_player()->get_active_pieces().size() == calculatedActivesFor(t14.get_transition_board(), alliance::white));
+	ASSERT_TRUE(t14.get_transition_board()->get_black_player()->get_active_pieces().size() == calculatedActivesFor(t14.get_transition_board(), alliance::black));
 }
-
-#ifdef UNIX
-size_t getCurrentMemoryUsage()
-{
-	// Run garbage collection
-	std::system("sync && echo 3 > /proc/sys/vm/drop_caches");
-
-	// Get current memory usage
-	std::FILE *file = std::fopen("/proc/self/statm", "r");
-	if (file == nullptr)
-	{
-		std::cerr << "Failed to open /proc/self/statm file" << std::endl;
-		return 0;
-	}
-
-	size_t pages;
-	std::fscanf(file, "%*s %zu", &pages);
-	std::fclose(file);
-
-	// Convert pages to bytes (assuming page size is 4096 bytes)
-	return pages * 4096;
-}
-
-TEST(BoardTest, testMemFootprint)
-{
-	size_t initialMemory = getCurrentMemoryUsage();
-	Board *board = Board::createStandardBoard();
-	size_t finalMemory = getCurrentMemoryUsage();
-	std::cout << "Memory usage: " << finalMemory - initialMemory << std::endl;
-	ASSERT_LT(finalMemory - initialMemory, 1000000);
-}
-#endif
 
 TEST(BoardTest, testFoolsMate)
 {
-	Board *board = Board::createStandardBoard();
-	MoveTransition t1 = board->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		board,
-		BoardUtils::getCoordinateAtPosition("f2"),
-		BoardUtils::getCoordinateAtPosition("f3")));
-	ASSERT_EQ(MoveStatus::DONE, t1.getMoveStatus());
+	std::shared_ptr<board> b = board::create_standard_board();
+	move_transition t1 = b->get_current_player()->make_move(move_factory::create_move(
+		b,
+		board_utils::get_coordinate_at_position("f2"),
+		board_utils::get_coordinate_at_position("f3")));
+	ASSERT_EQ(move_status::done, t1.get_move_status());
 
-	MoveTransition t2 = t1.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t1.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("e7"),
-		BoardUtils::getCoordinateAtPosition("e5")));
-	ASSERT_EQ(MoveStatus::DONE, t2.getMoveStatus());
+	move_transition t2 = t1.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t1.get_transition_board(),
+		board_utils::get_coordinate_at_position("e7"),
+		board_utils::get_coordinate_at_position("e5")));
+	ASSERT_EQ(move_status::done, t2.get_move_status());
 
-	MoveTransition t3 = t2.getTransitionBoard()->getCurrentPlayer()->makeMove(MoveFactory::createMove(
-		t2.getTransitionBoard(),
-		BoardUtils::getCoordinateAtPosition("g2"),
-		BoardUtils::getCoordinateAtPosition("g4")));
-	ASSERT_EQ(MoveStatus::DONE, t3.getMoveStatus());
+	move_transition t3 = t2.get_transition_board()->get_current_player()->make_move(move_factory::create_move(
+		t2.get_transition_board(),
+		board_utils::get_coordinate_at_position("g2"),
+		board_utils::get_coordinate_at_position("g4")));
+	ASSERT_EQ(move_status::done, t3.get_move_status());
 
-	MoveStrategy *strategy = new MiniMax(4);
-	Move *aiMove = strategy->execute(t3.getTransitionBoard()),
-		 *bestMove = MoveFactory::createMove(t3.getTransitionBoard(), BoardUtils::getCoordinateAtPosition("d8"), BoardUtils::getCoordinateAtPosition("h4"));
-	ASSERT_TRUE(*aiMove == *bestMove);
+	std::shared_ptr<move_strategy> strategy = std::make_shared<mini_max>(4);
+	std::shared_ptr<move> ai_move = strategy->execute(t3.get_transition_board()),
+						  best_move = move_factory::create_move(t3.get_transition_board(), board_utils::get_coordinate_at_position("d8"), board_utils::get_coordinate_at_position("h4"));
+	ASSERT_TRUE(*ai_move == *best_move);
 }

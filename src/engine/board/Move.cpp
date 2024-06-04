@@ -8,395 +8,446 @@
 #include <engine/pieces/Rook.hpp>
 #include <engine/player/Player.hpp>
 
-/*Move*/
+/*move*/
 
-Move::Move(Board *board, int destinationCoordinate) : board(board), movedPiece(nullptr), destinationCoordinate(destinationCoordinate), isFirstMove(false){};
+move::move(std::shared_ptr<board> b, int dc)
+	: board_(b),
+	  moved_piece_(nullptr),
+	  destination_coordinate_(dc),
+	  is_first_move_(false){};
 
-Move::Move(Board *board, Piece *movedPiece, int destinationCoordinate) : board(board), movedPiece(movedPiece), destinationCoordinate(destinationCoordinate), isFirstMove(movedPiece->getIsFirstMove()){};
+move::move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc)
+	: board_(b),
+	  moved_piece_(mp),
+	  destination_coordinate_(dc),
+	  is_first_move_(mp->is_first_move()){};
 
-bool Move::operator==(const Move &other) const
+bool move::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (typeid(*this) != typeid(other))
+	if (const move *otherMove = dynamic_cast<const move *>(&other))
 		return false;
-	return getCurrentCoordinate() == other.getCurrentCoordinate() && getDestinationCoordinate() == other.getDestinationCoordinate() && *getMovedPiece() == *other.getMovedPiece();
+	return get_current_coordinate() == other.get_current_coordinate() && get_destination_coordinate() == other.get_destination_coordinate() && *get_moved_piece() == *other.get_moved_piece();
 }
 
-int Move::getDestinationCoordinate() const
+int move::get_destination_coordinate() const
 {
-	return this->destinationCoordinate;
+	return destination_coordinate_;
 }
 
-int Move::getCurrentCoordinate() const
+int move::get_current_coordinate() const
 {
-	return this->movedPiece->getPiecePosition();
+	return moved_piece_->get_piece_position();
 }
 
-Piece *Move::getMovedPiece() const
+std::shared_ptr<piece> move::get_moved_piece() const
 {
-	return const_cast<Piece *>(this->movedPiece);
+	return moved_piece_;
 }
 
-Board *Move::getBoard() const
+std::shared_ptr<board> move::get_board() const
 {
-	return const_cast<Board *>(this->board);
+	return board_.lock();
 }
 
-bool Move::isAttack() const
-{
-	return false;
-}
-
-bool Move::isCastlingMove() const
+bool move::is_attack() const
 {
 	return false;
 }
 
-Piece *Move::getAttackedPiece() const
+bool move::is_castling_move() const
+{
+	return false;
+}
+
+std::shared_ptr<piece> move::get_attacked_piece() const
 {
 	return nullptr;
 }
 
-Board *Move::execute() const
+std::shared_ptr<board> move::execute() const
 {
-	BoardBuilder builder;
-	// Add all the pieces of same alliance to the new board except the moved piece
-	for (const auto piece : this->board->getCurrentPlayer()->getActivePieces())
-		if (!(*getMovedPiece() == *piece))
-			builder.setPiece(piece);
-	// Add all the pieces of opponent alliance to the new board
-	for (const auto piece : this->board->getCurrentPlayer()->getOpponent()->getActivePieces())
-		builder.setPiece(piece);
-	// Move the moved piece to the destination coordinate
-	builder.setPiece(this->movedPiece->movePiece(this));
-	builder.setMoveMaker(this->board->getCurrentPlayer()->getOpponent()->getPlayerAlliance());
-	builder.setTransitionMove(this);
-	return builder.build();
+	if (auto board_ptr = board_.lock())
+	{
+		board_builder builder;
+		// Add all the pieces of same alliance to the new board except the moved piece
+		for (auto piece : board_ptr->get_current_player()->get_active_pieces())
+			if (!(*get_moved_piece() == *piece))
+				builder.set_piece(piece);
+		// Add all the pieces of opponent alliance to the new board
+		for (auto piece : board_ptr->get_current_player()->get_opponent().lock()->get_active_pieces())
+			builder.set_piece(piece);
+		// Move the moved piece to the destination coordinate
+		builder.set_piece(moved_piece_->move_piece(this));
+		builder.set_move_maker(board_ptr->get_current_player()->get_opponent().lock()->get_player_alliance());
+		builder.set_transition_move(std::make_shared<move>(*this));
+		builder.set_previous_board(board_ptr->shared_from_this());
+		return builder.build();
+	}
+	throw std::runtime_error("Board expired!");
 }
 
-std::string Move::stringify() const
+std::string move::stringify() const
 {
 	throw std::logic_error("Use subclass functions!");
 }
 
-/*MajorMove*/
+/*major_move*/
 
-MajorMove::MajorMove(Board *board, Piece *movedPiece, int destinationCoordinate) : Move(board, movedPiece, destinationCoordinate){};
+major_move::major_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc)
+	: move(b, mp, dc){};
 
-bool MajorMove::operator==(const Move &other) const
+bool major_move::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (const MajorMove *otherMajorMove = dynamic_cast<const MajorMove *>(&other))
-		return Move::operator==(other);
+	if (const major_move *otherMajorMove = dynamic_cast<const major_move *>(&other))
+		return move::operator==(other);
 	return false;
 }
 
-std::string MajorMove::stringify() const
+std::string major_move::stringify() const
 {
-	return movedPiece->stringify() + BoardUtils::getPositionAtCoordinate(this->destinationCoordinate);
+	return moved_piece_->stringify() + board_utils::get_position_at_coordinate(destination_coordinate_);
 }
 
-/*AttackMove*/
+/*attack_move*/
 
-AttackMove::AttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate) : Move(board, movedPiece, destinationCoordinate), attackedPiece(attackedPiece){};
+attack_move::attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc)
+	: move(b, mp, dc),
+	  attacked_piece_(std::move(ap)){};
 
-bool AttackMove::operator==(const Move &other) const
+bool attack_move::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (const AttackMove *otherAttackMove = dynamic_cast<const AttackMove *>(&other))
-		return Move::operator==(other) && *getAttackedPiece() == *otherAttackMove->getAttackedPiece();
+	if (const attack_move *otherAttackMove = dynamic_cast<const attack_move *>(&other))
+		return move::operator==(other) && *get_attacked_piece() == *otherAttackMove->get_attacked_piece();
 	return false;
 }
 
-bool AttackMove::isAttack() const
+bool attack_move::is_attack() const
 {
 	return true;
 }
 
-Piece *AttackMove::getAttackedPiece() const
+std::shared_ptr<piece> attack_move::get_attacked_piece() const
 {
-	return const_cast<Piece *>(this->attackedPiece);
+	return attacked_piece_;
 }
 
-/*PawnPromotion*/
+/*pawn_promotion*/
 
-PawnPromotion::PawnPromotion(Move *inputMove, Piece *promotedPiece) : Move(inputMove->getBoard(), inputMove->getMovedPiece(), inputMove->getDestinationCoordinate()), inputMove(inputMove), promotedPawn(dynamic_cast<Pawn *>(inputMove->getMovedPiece())), promotedPiece(promotedPiece) {}
+pawn_promotion::pawn_promotion(std::shared_ptr<move> im, std::shared_ptr<piece> pp)
+	: move(im->get_board(), im->get_moved_piece(), im->get_destination_coordinate()),
+	  input_move_(im),
+	  promoted_pawn_(std::dynamic_pointer_cast<pawn>(im->get_moved_piece())),
+	  promoted_piece_(pp) {}
 
-bool PawnPromotion::operator==(const Move &other) const
-{
-	if (this == &other)
-		return true;
-	if (const PawnPromotion *otherPawnPromotion = dynamic_cast<const PawnPromotion *>(&other))
-		return Move::operator==(other) && *getPromotedPiece() == *otherPawnPromotion->getPromotedPiece();
-	return false;
-}
-
-Board *PawnPromotion::execute() const
-{
-	Board *pawnMovedBoard = this->inputMove->execute();
-	BoardBuilder builder;
-	for (const auto piece : pawnMovedBoard->getCurrentPlayer()->getActivePieces())
-		if (!this->promotedPawn->operator==(*piece))
-			builder.setPiece(piece);
-	for (const auto piece : pawnMovedBoard->getCurrentPlayer()->getOpponent()->getActivePieces())
-		builder.setPiece(piece);
-	builder.setPiece(this->promotedPiece->movePiece(this));
-	builder.setMoveMaker(pawnMovedBoard->getCurrentPlayer()->getPlayerAlliance());
-	builder.setTransitionMove(this);
-	return builder.build();
-}
-
-bool PawnPromotion::isAttack() const
-{
-	return this->inputMove->isAttack();
-}
-
-Piece *PawnPromotion::getAttackedPiece() const
-{
-	return this->inputMove->getAttackedPiece();
-}
-
-Piece *PawnPromotion::getPromotedPiece() const
-{
-	return this->promotedPiece;
-}
-
-std::string PawnPromotion::stringify() const
-{
-	return inputMove->stringify() + '=' + promotedPiece->stringify();
-}
-
-/*MajorAttackMove*/
-
-MajorAttackMove::MajorAttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate) : AttackMove(board, movedPiece, attackedPiece, destinationCoordinate){};
-
-bool MajorAttackMove::operator==(const Move &other) const
+bool pawn_promotion::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (const MajorAttackMove *otherMajorAttackMove = dynamic_cast<const MajorAttackMove *>(&other))
-		return AttackMove::operator==(other);
+	if (const pawn_promotion *otherPawnPromotion = dynamic_cast<const pawn_promotion *>(&other))
+		return move::operator==(other) && *get_promoted_piece() == *otherPawnPromotion->get_promoted_piece();
 	return false;
 }
 
-std::string MajorAttackMove::stringify() const
+std::shared_ptr<board> pawn_promotion::execute() const
 {
-	return movedPiece->stringify() + "x" + BoardUtils::getPositionAtCoordinate(this->destinationCoordinate);
+	std::shared_ptr<board> pawn_moved_board = this->input_move_->execute();
+	if ((bool)pawn_moved_board)
+	{
+		board_builder builder;
+		for (auto piece : pawn_moved_board->get_current_player()->get_opponent().lock()->get_active_pieces())
+			if (!(*piece == *promoted_pawn_))
+				builder.set_piece(piece);
+		for (auto piece : pawn_moved_board->get_current_player()->get_active_pieces())
+			builder.set_piece(piece);
+		builder.set_piece(promoted_piece_->move_piece(this));
+		builder.set_move_maker(pawn_moved_board->get_current_player()->get_player_alliance());
+		builder.set_transition_move(std::make_shared<pawn_promotion>(*this));
+		builder.set_previous_board(board_.lock()->shared_from_this());
+		return builder.build();
+	}
+	throw std::runtime_error("Board expired!");
 }
 
-/*PawnMove*/
+bool pawn_promotion::is_attack() const
+{
+	return input_move_->is_attack();
+}
 
-PawnMove::PawnMove(Board *board, Piece *movedPiece, int destinationCoordinate) : Move(board, movedPiece, destinationCoordinate){};
+std::shared_ptr<piece> pawn_promotion::get_attacked_piece() const
+{
+	return input_move_->get_attacked_piece();
+}
 
-bool PawnMove::operator==(const Move &other) const
+std::shared_ptr<piece> pawn_promotion::get_promoted_piece() const
+{
+	return promoted_piece_;
+}
+
+std::string pawn_promotion::stringify() const
+{
+	return input_move_->stringify() + '=' + promoted_piece_->stringify();
+}
+
+/*major_attack_move*/
+
+major_attack_move::major_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc)
+	: attack_move(b, mp, ap, dc){};
+
+bool major_attack_move::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (const PawnMove *otherPawnMove = dynamic_cast<const PawnMove *>(&other))
-		return Move::operator==(other);
+	if (const major_attack_move *otherMajorAttackMove = dynamic_cast<const major_attack_move *>(&other))
+		return attack_move::operator==(other);
 	return false;
 }
 
-std::string PawnMove::stringify() const
+std::string major_attack_move::stringify() const
 {
-	return BoardUtils::getPositionAtCoordinate(this->destinationCoordinate);
+	return moved_piece_->stringify() + "x" + board_utils::get_position_at_coordinate(destination_coordinate_);
 }
 
-/*PawnAttackMove*/
+/*pawn_move*/
 
-PawnAttackMove::PawnAttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate) : AttackMove(board, movedPiece, attackedPiece, destinationCoordinate){};
+pawn_move::pawn_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc)
+	: move(b, mp, dc){};
 
-bool PawnAttackMove::operator==(const Move &other) const
+bool pawn_move::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (const PawnAttackMove *otherPawnAttackMove = dynamic_cast<const PawnAttackMove *>(&other))
-		return AttackMove::operator==(other);
+	if (const pawn_move *otherPawnMove = dynamic_cast<const pawn_move *>(&other))
+		return move::operator==(other);
 	return false;
 }
 
-std::string PawnAttackMove::stringify() const
+std::string pawn_move::stringify() const
 {
-	return BoardUtils::getPositionAtCoordinate(this->movedPiece->getPiecePosition()).substr(0, 1) + "x" +
-		   BoardUtils::getPositionAtCoordinate(this->destinationCoordinate);
+	return board_utils::get_position_at_coordinate(destination_coordinate_);
 }
 
-/*PawnEnPassantAttackMove*/
+/*pawn_attack_move*/
 
-PawnEnPassantAttackMove::PawnEnPassantAttackMove(Board *board, Piece *movedPiece, Piece *attackedPiece, int destinationCoordinate) : PawnAttackMove(board, movedPiece, attackedPiece, destinationCoordinate){};
+pawn_attack_move::pawn_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc)
+	: attack_move(b, mp, ap, dc){};
 
-Board *PawnEnPassantAttackMove::execute() const
-{
-	BoardBuilder builder;
-	for (const auto piece : this->board->getCurrentPlayer()->getActivePieces())
-		if (!(piece == this->getMovedPiece()))
-			builder.setPiece(piece);
-	for (const auto piece : this->board->getCurrentPlayer()->getOpponent()->getActivePieces())
-		if (!(piece == this->getAttackedPiece()))
-			builder.setPiece(piece);
-	builder.setPiece(this->movedPiece->movePiece(this));
-	builder.setMoveMaker(this->board->getCurrentPlayer()->getOpponent()->getPlayerAlliance());
-	builder.setTransitionMove(this);
-	return builder.build();
-}
-
-bool PawnEnPassantAttackMove::operator==(const Move &other) const
+bool pawn_attack_move::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (const PawnEnPassantAttackMove *otherPawnEnPassantAttackMove = dynamic_cast<const PawnEnPassantAttackMove *>(&other))
-		return PawnAttackMove::operator==(other);
+	if (const pawn_attack_move *otherPawnAttackMove = dynamic_cast<const pawn_attack_move *>(&other))
+		return attack_move::operator==(other);
 	return false;
 }
 
-/*PawnJump*/
-
-PawnJump::PawnJump(Board *board, Piece *movedPiece, int destinationCoordinate) : Move(board, movedPiece, destinationCoordinate){};
-
-Board *PawnJump::execute() const
+std::string pawn_attack_move::stringify() const
 {
-	BoardBuilder builder;
-	// Add all the pieces of same alliance to the new board except the moved piece
-	for (const auto piece : this->board->getCurrentPlayer()->getActivePieces())
-		if (!(*getMovedPiece() == *piece))
-			builder.setPiece(piece);
-	// Add all the pieces of opponent alliance to the new board
-	for (const auto piece : this->board->getCurrentPlayer()->getOpponent()->getActivePieces())
-		builder.setPiece(piece);
-	// Move the moved piece to the destination coordinate
-	Pawn *movedPawn = dynamic_cast<Pawn *>(this->getMovedPiece()->movePiece(this));
-	builder.setPiece(movedPawn);
-	builder.setEnPassantPawn(movedPawn);
-	builder.setMoveMaker(this->board->getCurrentPlayer()->getOpponent()->getPlayerAlliance());
-	builder.setTransitionMove(this);
-	return builder.build();
+	return board_utils::get_position_at_coordinate(moved_piece_->get_piece_position()).substr(0, 1) + "x" +
+		   board_utils::get_position_at_coordinate(destination_coordinate_);
 }
 
-std::string PawnJump::stringify() const
+/*pawn_en_passant_attack_move*/
+
+pawn_en_passant_attack_move::pawn_en_passant_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc)
+	: pawn_attack_move(b, mp, ap, dc){};
+
+std::shared_ptr<board> pawn_en_passant_attack_move::execute() const
 {
-	return BoardUtils::getPositionAtCoordinate(this->destinationCoordinate);
+	if (auto board_ptr = board_.lock())
+	{
+		board_builder builder;
+		for (auto piece : board_ptr->get_current_player()->get_active_pieces())
+			if (!(*piece == *get_moved_piece()))
+				builder.set_piece(piece);
+		for (auto piece : board_ptr->get_current_player()->get_opponent().lock()->get_active_pieces())
+			if (!(*piece == *get_attacked_piece()))
+				builder.set_piece(piece);
+		builder.set_piece(moved_piece_->move_piece(this));
+		builder.set_move_maker(board_ptr->get_current_player()->get_opponent().lock()->get_player_alliance());
+		builder.set_transition_move(std::make_shared<pawn_en_passant_attack_move>(*this));
+		builder.set_previous_board(board_ptr->shared_from_this());
+		return builder.build();
+	}
+	throw std::runtime_error("Board expired!");
 }
 
-/*CastleMove*/
-
-CastleMove::CastleMove(Board *board, Piece *movedPiece, int destinationCoordinate, Rook *castleRook, int castleRookStart, int castleRookDestination) : Move(board, movedPiece, destinationCoordinate), castleRook(castleRook), castleRookStart(castleRookStart), castleRookDestination(castleRookDestination){};
-
-bool CastleMove::operator==(const Move &other) const
+bool pawn_en_passant_attack_move::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (const CastleMove *otherCastleMove = dynamic_cast<const CastleMove *>(&other))
-		return Move::operator==(other) && *getCastleRook() == *otherCastleMove->getCastleRook();
+	if (const pawn_en_passant_attack_move *otherPawnEnPassantAttackMove = dynamic_cast<const pawn_en_passant_attack_move *>(&other))
+		return pawn_attack_move::operator==(other);
 	return false;
 }
 
-Rook *CastleMove::getCastleRook() const
+/*pawn_jump*/
+
+pawn_jump::pawn_jump(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc)
+	: move(b, mp, dc){};
+
+std::shared_ptr<board> pawn_jump::execute() const
 {
-	return const_cast<Rook *>(this->castleRook);
+	if (auto board_ptr = board_.lock())
+	{
+		board_builder builder;
+		// Add all the pieces of same alliance to the new board except the moved piece
+		for (auto piece : board_ptr->get_current_player()->get_active_pieces())
+			if (!(*get_moved_piece() == *piece))
+				builder.set_piece(piece);
+		// Add all the pieces of opponent alliance to the new board
+		for (auto piece : board_ptr->get_current_player()->get_opponent().lock()->get_active_pieces())
+			builder.set_piece(piece);
+		// Move the moved piece to the destination coordinate
+		std::shared_ptr<pawn> movedPawn = std::dynamic_pointer_cast<pawn>(this->get_moved_piece()->move_piece(this));
+		builder.set_piece(movedPawn);
+		builder.set_en_passant_pawn(movedPawn);
+		builder.set_move_maker(board_ptr->get_current_player()->get_opponent().lock()->get_player_alliance());
+		builder.set_transition_move(std::make_shared<pawn_jump>(*this));
+		builder.set_previous_board(board_ptr->shared_from_this());
+		return builder.build();
+	}
+	throw std::runtime_error("Board expired!");
 }
 
-bool CastleMove::isCastlingMove() const
+std::string pawn_jump::stringify() const
+{
+	return board_utils::get_position_at_coordinate(this->destination_coordinate_);
+}
+
+/*castle_move*/
+
+castle_move::castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd)
+	: move(b, mp, dc),
+	  castling_rook_(cr),
+	  castling_rook_start_square_(crss),
+	  castling_rook_destination_(crd){};
+
+bool castle_move::operator==(const move &other) const
+{
+	if (this == &other)
+		return true;
+	if (const castle_move *otherCastleMove = dynamic_cast<const castle_move *>(&other))
+		return move::operator==(other) && *get_castling_rook() == *otherCastleMove->get_castling_rook();
+	return false;
+}
+
+std::shared_ptr<rook> castle_move::get_castling_rook() const
+{
+	return castling_rook_;
+}
+
+bool castle_move::is_castling_move() const
 {
 	return true;
 }
 
-Board *CastleMove::execute() const
+std::shared_ptr<board> castle_move::execute() const
 {
-	BoardBuilder builder;
-	// Add all the pieces of same alliance to the new board except the moved piece and the castle rook
-	for (const auto piece : this->board->getCurrentPlayer()->getActivePieces())
-		if (!(*getMovedPiece() == *piece) && !(*getCastleRook() == *piece))
-			builder.setPiece(piece);
-	// Add all the pieces of opponent alliance to the new board
-	for (const auto piece : this->board->getCurrentPlayer()->getOpponent()->getActivePieces())
-		builder.setPiece(piece);
-	// Move the moved piece (King) to the destination coordinate
-	builder.setPiece(this->movedPiece->movePiece(this));
-	// Move the castle rook to the destination coordinate
-	builder.setPiece(new Rook(this->castleRookDestination, this->castleRook->getPieceAlliance(), false));
-	builder.setMoveMaker(this->board->getCurrentPlayer()->getOpponent()->getPlayerAlliance());
-	builder.setTransitionMove(this);
-	return builder.build();
+	if (auto board_ptr = board_.lock())
+	{
+		board_builder builder;
+		// Add all the pieces of same alliance to the new board except the moved piece and the castle rook
+		for (auto piece : board_ptr->get_current_player()->get_active_pieces())
+			if (!(*get_moved_piece() == *piece) && !(*get_castling_rook() == *piece))
+				builder.set_piece(piece);
+		// Add all the pieces of opponent alliance to the new board
+		for (auto piece : board_ptr->get_current_player()->get_opponent().lock()->get_active_pieces())
+			builder.set_piece(piece);
+		// Move the moved piece (King) to the destination coordinate
+		builder.set_piece(moved_piece_->move_piece(this));
+		// Move the castle rook to the destination coordinate
+		builder.set_piece(std::make_shared<rook>(castling_rook_destination_, castling_rook_->get_piece_alliance(), false));
+		builder.set_move_maker(board_ptr->get_current_player()->get_opponent().lock()->get_player_alliance());
+		builder.set_transition_move(std::make_shared<castle_move>(*this));
+		builder.set_previous_board(board_ptr->shared_from_this());
+		return builder.build();
+	}
+	throw std::runtime_error("Board expired!");
 }
 
-/*KingSideCastleMove*/
+/*king_side_castle_move*/
 
-KingSideCastleMove::KingSideCastleMove(Board *board, Piece *movedPiece, int destinationCoordinate, Rook *castleRook, int castleRookStart, int castleRookDestination) : CastleMove(board, movedPiece, destinationCoordinate, castleRook, castleRookStart, castleRookDestination){};
+king_side_castle_move::king_side_castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd)
+	: castle_move(b, mp, dc, cr, crss, crd){};
 
-bool KingSideCastleMove::operator==(const Move &other) const
+bool king_side_castle_move::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (const KingSideCastleMove *otherKingSideCastleMove = dynamic_cast<const KingSideCastleMove *>(&other))
-		return CastleMove::operator==(other);
+	if (const king_side_castle_move *otherKingSideCastleMove = dynamic_cast<const king_side_castle_move *>(&other))
+		return castle_move::operator==(other);
 	return false;
 }
 
-std::string KingSideCastleMove::stringify() const
+std::string king_side_castle_move::stringify() const
 {
 	return std::string("O-O");
 }
 
-/*QueenSideCastleMove*/
+/*queen_side_castle_move*/
 
-QueenSideCastleMove::QueenSideCastleMove(Board *board, Piece *movedPiece, int destinationCoordinate, Rook *castleRook, int castleRookStart, int castleRookDestination) : CastleMove(board, movedPiece, destinationCoordinate, castleRook, castleRookStart, castleRookDestination){};
+queen_side_castle_move::queen_side_castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd)
+	: castle_move(b, mp, dc, cr, crss, crd){};
 
-bool QueenSideCastleMove::operator==(const Move &other) const
+bool queen_side_castle_move::operator==(const move &other) const
 {
 	if (this == &other)
 		return true;
-	if (const QueenSideCastleMove *otherQueenSideCastleMove = dynamic_cast<const QueenSideCastleMove *>(&other))
-		return CastleMove::operator==(other);
+	if (const queen_side_castle_move *otherQueenSideCastleMove = dynamic_cast<const queen_side_castle_move *>(&other))
+		return castle_move::operator==(other);
 	return false;
 }
 
-std::string QueenSideCastleMove::stringify() const
+std::string queen_side_castle_move::stringify() const
 {
 	return std::string("O-O-O");
 }
 
-/*NullMove*/
+/*null_move*/
 
-NullMove::NullMove() : Move(nullptr, -1){};
+null_move::null_move() : move(nullptr, -1){};
 
-Board *NullMove::execute() const
+std::shared_ptr<board> null_move::execute() const
 {
 	throw std::logic_error("Cannot execute the null move!");
 }
 
-std::string NullMove::stringify() const
+std::string null_move::stringify() const
 {
 	return std::string("Null Move");
 }
 
-/*Namespace MoveFactory*/
+/*Namespace move_factory*/
 
-Move *MoveFactory::createMove(Board *board, int currentCoordinate, int destinationCoordinate)
+std::shared_ptr<move> move_factory::create_move(std::shared_ptr<board> b, int cc, int dc)
 {
-	Move *selectedMove = nullptr;
-	for (const auto move : board->getAllLegalMoves())
-		if (move->getCurrentCoordinate() == currentCoordinate && move->getDestinationCoordinate() == destinationCoordinate)
+	std::shared_ptr<move> selected_move = nullptr;
+	for (auto move : b->get_all_legal_moves())
+		if (move->get_current_coordinate() == cc && move->get_destination_coordinate() == dc)
 		{
-			selectedMove = move;
+			selected_move = move;
 			break;
 		}
-	return selectedMove;
+	return selected_move;
 }
 
-Move *MoveFactory::createMove(Board *board, int currentCoordinate, int destinationCoordinate, PieceType promotedPieceType)
+std::shared_ptr<move> move_factory::create_move(std::shared_ptr<board> b, int cc, int dc, piece_type ppt)
 {
-	Move *selectedMove = nullptr;
-	for (const auto move : board->getAllLegalMoves())
-		if (move->getCurrentCoordinate() == currentCoordinate &&
-			move->getDestinationCoordinate() == destinationCoordinate &&
-			typeid(*move) == typeid(PawnPromotion) &&
-			dynamic_cast<PawnPromotion *>(move)->getPromotedPiece()->getPieceType() == promotedPieceType)
+	std::shared_ptr<move> selected_move = nullptr;
+	for (auto move : b->get_all_legal_moves())
+		if (move->get_current_coordinate() == cc &&
+			move->get_destination_coordinate() == dc &&
+			typeid(*move) == typeid(pawn_promotion) &&
+			(std::dynamic_pointer_cast<pawn_promotion>(move))->get_promoted_piece()->get_piece_type() == ppt)
 		{
-			selectedMove = move;
+			selected_move = move;
 			break;
 		}
-	return selectedMove;
+	return selected_move;
 }

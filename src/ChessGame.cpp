@@ -6,8 +6,8 @@ int main(int argc, char *argv[])
 {
 	try
 	{
-		GameBoard gameBoard;
-		while (gameBoard.isRunning())
+		game_board gameBoard;
+		while (gameBoard.is_running())
 		{
 			gameBoard.render();
 			gameBoard.update();

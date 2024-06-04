@@ -4,92 +4,96 @@
 #include <engine/Alliance.hpp>
 #include <engine/pieces/Piece.hpp>
 
-/* Tile */
+/* tile */
 
-Tile::Tile(int coordinate) : tileCoordinate(coordinate){};
+tile::tile(int c)
+	: tile_coordinate_(c){};
 
-std::map<int, EmptyTile *> Tile::initializeAllEmptyTiles()
+std::map<int, std::shared_ptr<empty_tile>> tile::initialize_all_empty_tiles()
 {
-	std::map<int, EmptyTile *> emptyTileMap;
+	std::map<int, std::shared_ptr<empty_tile>> empty_tile_map;
 
 	for (int i = 0; i < 64; i++)
-		emptyTileMap.insert(std::pair<int, EmptyTile *>(i, new EmptyTile(i)));
+		empty_tile_map.insert(std::pair<int, std::shared_ptr<empty_tile>>(i, std::make_shared<empty_tile>(i)));
 
-	return emptyTileMap;
+	return empty_tile_map;
 }
 
-std::map<int, EmptyTile *> Tile::EMPTY_TILES_CACHE = Tile::initializeAllEmptyTiles();
+std::map<int, std::shared_ptr<empty_tile>> tile::empty_tiles_cache = tile::initialize_all_empty_tiles();
 
-Tile *Tile::createTile(const int coordinate, Piece *piece)
+std::shared_ptr<tile> tile::create_tile(int c, std::shared_ptr<piece> p)
 {
-	if (piece == nullptr)
-		return (Tile::EMPTY_TILES_CACHE.at(coordinate));
+	if (p == nullptr)
+		return (tile::empty_tiles_cache.at(c));
 	else
-		return new OccupiedTile(coordinate, piece);
+		return std::make_shared<occupied_tile>(c, p);
 }
 
-int Tile::getTileCoordinate() const
+int tile::get_tile_coordinate() const
 {
-	return this->tileCoordinate;
+	return tile_coordinate_;
 }
 
-bool Tile::isTileOccupied() const
+bool tile::is_tile_occupied() const
 {
-	throw std::logic_error("Not implemented. Use derived class functions.");
+	throw std::logic_error("Use derived class functions.");
 };
 
-Piece *Tile::getPiece() const
+std::shared_ptr<piece> tile::get_piece() const
 {
-	throw std::logic_error("Not implemented. Use derived class functions.");
+	throw std::logic_error("Use derived class functions.");
 };
 
-std::string Tile::stringify() const
+std::string tile::stringify() const
 {
-	throw std::logic_error("Not implemented. Use derived class functions.");
+	throw std::logic_error("Use derived class functions.");
 };
 
-/* EmptyTile */
+/* empty_tile */
 
-EmptyTile::EmptyTile(const int coordinate) : Tile(coordinate){};
+empty_tile::empty_tile(const int c)
+	: tile(c){};
 
-bool EmptyTile::isTileOccupied() const
+bool empty_tile::is_tile_occupied() const
 {
 	return false;
 }
 
-Piece *EmptyTile::getPiece() const
+std::shared_ptr<piece> empty_tile::get_piece() const
 {
 	return nullptr;
 }
 
-std::string EmptyTile::stringify() const
+std::string empty_tile::stringify() const
 {
 	return "-";
 }
 
-/* OccupiedTile */
+/* occupied_tile */
 
-OccupiedTile::OccupiedTile(const int coordinate, Piece *piece) : Tile(coordinate), pieceOnTile(piece){};
+occupied_tile::occupied_tile(int c, std::shared_ptr<piece> p)
+	: tile(c),
+	  piece_on_tile_(p){};
 
-bool OccupiedTile::isTileOccupied() const
+bool occupied_tile::is_tile_occupied() const
 {
 	return true;
 }
 
-Piece *OccupiedTile::getPiece() const
+std::shared_ptr<piece> occupied_tile::get_piece() const
 {
-	return this->pieceOnTile;
+	return piece_on_tile_;
 }
 
-std::string OccupiedTile::stringify() const
+std::string occupied_tile::stringify() const
 {
-	if (AllianceUtils::isBlack(this->getPiece()->getPieceAlliance()))
+	if (alliance_utils::is_black(get_piece()->get_piece_alliance()))
 	{
-		std::string str = this->getPiece()->stringify();
+		std::string str = get_piece()->stringify();
 		for (auto &c : str)
 			c = std::tolower(c);
 		return str;
 	}
 	else
-		return this->getPiece()->stringify();
+		return get_piece()->stringify();
 }

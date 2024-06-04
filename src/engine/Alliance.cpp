@@ -2,37 +2,37 @@
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
 
-int AllianceUtils::getDirection(const Alliance alliance)
+int alliance_utils::get_direction(const alliance a)
 {
-	return alliance == Alliance::WHITE ? -1 : 1;
+	return a == alliance::white ? -1 : 1;
 }
 
-int AllianceUtils::getOppositeDirection(const Alliance alliance)
+int alliance_utils::get_opposite_direction(const alliance a)
 {
-	return alliance == Alliance::WHITE ? 1 : -1;
+	return a == alliance::white ? 1 : -1;
 }
 
-bool AllianceUtils::isWhite(const Alliance alliance)
+bool alliance_utils::is_white(const alliance a)
 {
-	return alliance == Alliance::WHITE;
+	return a == alliance::white;
 }
 
-bool AllianceUtils::isBlack(const Alliance alliance)
+bool alliance_utils::is_black(const alliance a)
 {
-	return alliance == Alliance::BLACK;
+	return a == alliance::black;
 }
 
-bool AllianceUtils::isPawnPromotionSquare(const Alliance alliance, const int position)
+bool alliance_utils::is_pawn_promotion_square(const alliance a, const int p)
 {
-	return (isBlack(alliance) && BoardUtils::EIGHTH_ROW[position]) || (isWhite(alliance) && BoardUtils::FIRST_ROW[position]);
+	return (is_black(a) && board_utils::eighth_row[p]) || (is_white(a) && board_utils::first_row[p]);
 }
 
-const Player *AllianceUtils::choosePlayer(const Alliance alliance, Board *board)
+std::shared_ptr<player> alliance_utils::choose_player(alliance a, board *b)
 {
-	return alliance == Alliance::WHITE ? board->getWhitePlayer() : board->getBlackPlayer();
+	return a == alliance::white ? b->get_white_player() : b->get_black_player();
 }
 
-std::string AllianceUtils::stringify(const Alliance alliance)
+std::string alliance_utils::stringify(const alliance a)
 {
-	return alliance == Alliance::WHITE ? "White" : "Black";
+	return a == alliance::white ? "White" : "Black";
 }

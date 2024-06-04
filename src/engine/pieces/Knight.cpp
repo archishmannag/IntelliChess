@@ -4,63 +4,62 @@
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
 
-Knight::Knight(const int piecePosition, const Alliance pieceAlliance, const bool isFirstMove) : Piece(piecePosition, pieceAlliance, PieceType::KNIGHT, isFirstMove)
+knight::knight(const int pp, const alliance pa, const bool isFirstMove)
+	: piece(pp, pa, piece_type::knight, isFirstMove)
 {
 }
 
-const int Knight::CANDIDATE_MOVE_COORDINATES[] = {-17, -15, -10, -6, 6, 10, 15, 17};
+const int knight::candidate_move_coordinates[] = {-17, -15, -10, -6, 6, 10, 15, 17};
 
-std::vector<Move *> Knight::calculateLegalMoves(Board &board)
+std::vector<std::shared_ptr<move>> knight::calculate_legal_moves(std::shared_ptr<board> b)
 {
-	int candidateDestinationCoordinate;
-	std::vector<Move *> legalMoves;
+	int candidate_destination_coordinate;
+	std::vector<std::shared_ptr<move>> legal_moves;
 
-	for (const int currentCandidateOffset : CANDIDATE_MOVE_COORDINATES)
+	for (const int current_candidate_offset : candidate_move_coordinates)
 	{
-		candidateDestinationCoordinate = this->piecePosition + currentCandidateOffset;
-		if (BoardUtils::isValidTileCoordinate(candidateDestinationCoordinate))
+		candidate_destination_coordinate = piece_position_ + current_candidate_offset;
+		if (board_utils::is_valid_tile_coordinate(candidate_destination_coordinate))
 		{
-			if (isFirstColumnExclusion(this->piecePosition, currentCandidateOffset) || isSecondColumnExclusion(this->piecePosition, currentCandidateOffset) || isSeventhColumnExclusion(this->piecePosition, currentCandidateOffset) || isEighthColumnExclusion(this->piecePosition, currentCandidateOffset))
+			if (is_first_column_exclusion(piece_position_, current_candidate_offset) || isSecondColumnExclusion(piece_position_, current_candidate_offset) || isSeventhColumnExclusion(piece_position_, current_candidate_offset) || is_eighth_column_exclusion(piece_position_, current_candidate_offset))
 				continue;
 
-			const Tile *candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
+			auto candidate_destination_tile = b->get_tile(candidate_destination_coordinate);
 
-			if (!candidateDestinationTile->isTileOccupied())
-				legalMoves.push_back(new MajorMove(&board, this, candidateDestinationCoordinate));
+			if (!candidate_destination_tile->is_tile_occupied())
+				legal_moves.push_back(std::make_shared<major_move>(b, shared_from_this(), candidate_destination_coordinate));
 			else
 			{
-				Piece *pieceAtDestination = candidateDestinationTile->getPiece();
-				Alliance pieceAlliance = pieceAtDestination->getPieceAlliance();
-
-				if (this->pieceAlliance != pieceAlliance)
-					legalMoves.push_back(new MajorAttackMove(&board, this, pieceAtDestination, candidateDestinationCoordinate));
+				auto piece_at_destination = candidate_destination_tile->get_piece();
+				if (piece_alliance_ != piece_at_destination->get_piece_alliance())
+					legal_moves.push_back(std::make_shared<major_attack_move>(b, shared_from_this(), piece_at_destination, candidate_destination_coordinate));
 			}
 		}
 	}
-	return legalMoves;
+	return legal_moves;
 }
 
-Knight *Knight::movePiece(const Move *move) const
+std::shared_ptr<piece> knight::move_piece(const move *const m) const
 {
-	return new Knight(move->getDestinationCoordinate(), move->getMovedPiece()->getPieceAlliance(), false);
+	return std::make_shared<knight>(m->get_destination_coordinate(), m->get_moved_piece()->get_piece_alliance(), false);
 }
 
-bool Knight::isFirstColumnExclusion(const int currentPosition, const int candidateOffset)
+bool knight::is_first_column_exclusion(const int cp, const int co)
 {
-	return BoardUtils::FIRST_COLUMN[currentPosition] && (candidateOffset == -17 || candidateOffset == -10 || candidateOffset == 6 || candidateOffset == 15);
+	return board_utils::first_column[cp] && (co == -17 || co == -10 || co == 6 || co == 15);
 }
 
-bool Knight::isSecondColumnExclusion(const int currentPosition, const int candidateOffset)
+bool knight::isSecondColumnExclusion(const int cp, const int co)
 {
-	return BoardUtils::SECOND_COLUMN[currentPosition] && (candidateOffset == -10 || candidateOffset == 6);
+	return board_utils::second_column[cp] && (co == -10 || co == 6);
 }
 
-bool Knight::isSeventhColumnExclusion(const int currentPosition, const int candidateOffset)
+bool knight::isSeventhColumnExclusion(const int cp, const int co)
 {
-	return BoardUtils::SEVENTH_COLUMN[currentPosition] && (candidateOffset == 10 || candidateOffset == -6);
+	return board_utils::seventh_column[cp] && (co == 10 || co == -6);
 }
 
-bool Knight::isEighthColumnExclusion(const int currentPosition, const int candidateOffset)
+bool knight::is_eighth_column_exclusion(const int cp, const int co)
 {
-	return BoardUtils::EIGHTH_COLUMN[currentPosition] && (candidateOffset == 17 || candidateOffset == 10 || candidateOffset == -6 || candidateOffset == -15);
+	return board_utils::eighth_column[cp] && (co == 17 || co == 10 || co == -6 || co == -15);
 }

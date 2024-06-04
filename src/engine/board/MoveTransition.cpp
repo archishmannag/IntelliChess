@@ -2,19 +2,22 @@
 #include <engine/board/Move.hpp>
 #include <engine/board/MoveTransition.hpp>
 
-MoveTransition::MoveTransition(const Board *transitionBoard, const Move *move, const MoveStatus moveStatus) : transitionBoard(transitionBoard), move(move), moveStatus(moveStatus) {}
+move_transition::move_transition(std::shared_ptr<board> tb, std::shared_ptr<move> m, move_status ms)
+	: transition_board_(tb),
+	  move_(m),
+	  move_status_(ms) {}
 
-MoveStatus MoveTransition::getMoveStatus() const
+move_status move_transition::get_move_status() const
 {
-	return this->moveStatus;
+	return this->move_status_;
 }
 
-Move *MoveTransition::getMove() const
+std::shared_ptr<move> move_transition::get_move() const
 {
-	return const_cast<Move *>(this->move);
+	return this->move_;
 }
 
-Board *MoveTransition::getTransitionBoard() const
+std::shared_ptr<board> move_transition::get_transition_board() const
 {
-	return const_cast<Board *>(this->transitionBoard);
+	return this->transition_board_;
 }
