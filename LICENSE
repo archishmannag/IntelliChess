@@ -1,4 +1,4 @@
-# NChess
+MIT License
 
 Copyright (c) 2024 Archishman Nag -- nag.archishman@gmail.com
 
@@ -22,7 +22,7 @@ SOFTWARE.
 
 <br>
 
-## Libraries used by NChess
+### Libraries used by NChess
 
 1. SFML -- https://github.com/SFML/SFML</br>
    Source code is in `./lib`</br>
