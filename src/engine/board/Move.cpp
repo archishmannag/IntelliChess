@@ -427,27 +427,19 @@ std::string null_move::stringify() const
 
 std::shared_ptr<move> move_factory::create_move(std::shared_ptr<board> b, int cc, int dc)
 {
-	std::shared_ptr<move> selected_move = nullptr;
 	for (auto move : b->get_all_legal_moves())
 		if (move->get_current_coordinate() == cc && move->get_destination_coordinate() == dc)
-		{
-			selected_move = move;
-			break;
-		}
-	return selected_move;
+			return move;
+	return std::make_shared<null_move>();
 }
 
 std::shared_ptr<move> move_factory::create_move(std::shared_ptr<board> b, int cc, int dc, piece_type ppt)
 {
-	std::shared_ptr<move> selected_move = nullptr;
-	for (auto move : b->get_all_legal_moves())
-		if (move->get_current_coordinate() == cc &&
-			move->get_destination_coordinate() == dc &&
-			typeid(*move) == typeid(pawn_promotion) &&
-			(std::dynamic_pointer_cast<pawn_promotion>(move))->get_promoted_piece()->get_piece_type() == ppt)
-		{
-			selected_move = move;
-			break;
-		}
-	return selected_move;
+	for (auto m : b->get_all_legal_moves())
+		if (m->get_current_coordinate() == cc &&
+			m->get_destination_coordinate() == dc &&
+			std::dynamic_pointer_cast<pawn_promotion>(m) &&
+			(std::dynamic_pointer_cast<pawn_promotion>(m))->get_promoted_piece()->get_piece_type() == ppt)
+			return m;
+	return std::make_shared<null_move>();
 }

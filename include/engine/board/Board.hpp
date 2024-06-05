@@ -1,7 +1,7 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <array>
 #include <string>
@@ -25,10 +25,9 @@ private:
 	std::shared_ptr<board> previous_board_ = nullptr;
 	std::shared_ptr<pawn> en_passant_pawn_ = nullptr;
 	std::shared_ptr<move> transition_move_ = nullptr;
+	std::unordered_map<int, std::shared_ptr<piece>> board_config_;
 
 public:
-	std::map<int, std::shared_ptr<piece>> board_config_;
-
 	void set_previous_board(std::shared_ptr<board> pb);
 	void set_piece(std::shared_ptr<piece> p);
 	void set_en_passant_pawn(std::shared_ptr<pawn> ep);
@@ -36,6 +35,7 @@ public:
 	void set_transition_move(std::shared_ptr<move> tm);
 	std::shared_ptr<board> get_previous_board() const;
 	alliance get_next_move_maker() const;
+	const std::unordered_map<int, std::shared_ptr<piece>> &get_board_config() const;
 	std::shared_ptr<pawn> get_en_passant_pawn() const;
 	std::shared_ptr<move> get_transition_move() const;
 	std::shared_ptr<board> build();

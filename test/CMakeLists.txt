@@ -7,16 +7,12 @@ set(EXECUTABLE_NAMES
 	"PlayerTest"
 )
 
-set(SFML_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/lib/SFML-Linux/include)
-
-
 foreach(EXECUTABLE_NAME ${EXECUTABLE_NAMES})
 
 	add_executable(${EXECUTABLE_NAME} ${EXECUTABLE_NAME}.cpp)
 
 	target_include_directories(${EXECUTABLE_NAME}
 	PUBLIC "${PROJECT_SOURCE_DIR}/include"
-	# PUBLIC ${SFML_INCLUDE_DIR}
 	)
 
 	target_link_libraries(${EXECUTABLE_NAME} PUBLIC

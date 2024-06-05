@@ -1,7 +1,7 @@
 #ifndef TILE_HPP
 #define TILE_HPP
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <memory>
 
@@ -11,9 +11,9 @@ class empty_tile;
 class tile
 {
 private:
-	static std::map<int, std::shared_ptr<empty_tile>> initialize_all_empty_tiles();
+	static std::unordered_map<int, std::shared_ptr<empty_tile>> initialize_all_empty_tiles();
 
-	static std::map<int, std::shared_ptr<empty_tile>> empty_tiles_cache;
+	static std::unordered_map<int, std::shared_ptr<empty_tile>> empty_tiles_cache;
 
 protected:
 	const int tile_coordinate_;

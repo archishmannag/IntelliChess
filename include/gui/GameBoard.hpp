@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <memory>
-#include <thread>
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -100,8 +99,8 @@ private:
 	// Move log
 	move_log move_log_;
 	std::shared_ptr<board> board_;
-	std::shared_ptr<tile> source_tile_, destination_tile_;
-	std::shared_ptr<piece> moved_piece_;
+	std::shared_ptr<tile> source_tile_ = nullptr, destination_tile_ = nullptr;
+	std::shared_ptr<piece> moved_piece_ = nullptr;
 
 	// Pawn Promotion
 	sf::RectangleShape pawn_promotion_rect_;

@@ -109,9 +109,6 @@ game_board::~game_board() = default;
 void game_board::init()
 {
 	board_ = board::create_standard_board();
-	source_tile_ = nullptr;
-	destination_tile_ = nullptr;
-	moved_piece_ = nullptr;
 
 	window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Chess");
 	window_->setFramerateLimit(60);
@@ -400,17 +397,14 @@ void game_board::move_handler()
 						{
 							pawn_promotion_ = false;
 							std::shared_ptr<move> m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate());
-							if (m != nullptr)
+							move_transition transition = board_->get_current_player()->make_move(m);
+							if (transition.get_move_status() == move_status::done)
 							{
-								move_transition transition = board_->get_current_player()->make_move(m);
-								if (transition.get_move_status() == move_status::done)
-								{
-									board_ = transition.get_transition_board();
-									move_log_.add_move(m);
-									is_move_made_ = true;
-									taken_pieces_block_->redo(move_log_);
-									game_history_block_->redo(board_.get(), move_log_);
-								}
+								board_ = transition.get_transition_board();
+								move_log_.add_move(m);
+								is_move_made_ = true;
+								taken_pieces_block_->redo(move_log_);
+								game_history_block_->redo(board_.get(), move_log_);
 							}
 							source_tile_ = nullptr;
 							destination_tile_ = nullptr;

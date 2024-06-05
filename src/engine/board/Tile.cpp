@@ -9,9 +9,9 @@
 tile::tile(int c)
 	: tile_coordinate_(c){};
 
-std::map<int, std::shared_ptr<empty_tile>> tile::initialize_all_empty_tiles()
+std::unordered_map<int, std::shared_ptr<empty_tile>> tile::initialize_all_empty_tiles()
 {
-	std::map<int, std::shared_ptr<empty_tile>> empty_tile_map;
+	std::unordered_map<int, std::shared_ptr<empty_tile>> empty_tile_map;
 
 	for (int i = 0; i < 64; i++)
 		empty_tile_map.insert(std::pair<int, std::shared_ptr<empty_tile>>(i, std::make_shared<empty_tile>(i)));
@@ -19,7 +19,7 @@ std::map<int, std::shared_ptr<empty_tile>> tile::initialize_all_empty_tiles()
 	return empty_tile_map;
 }
 
-std::map<int, std::shared_ptr<empty_tile>> tile::empty_tiles_cache = tile::initialize_all_empty_tiles();
+std::unordered_map<int, std::shared_ptr<empty_tile>> tile::empty_tiles_cache = tile::initialize_all_empty_tiles();
 
 std::shared_ptr<tile> tile::create_tile(int c, std::shared_ptr<piece> p)
 {

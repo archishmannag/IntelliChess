@@ -49,6 +49,11 @@ alliance board_builder::get_next_move_maker() const
 	return next_move_maker_;
 }
 
+const std::unordered_map<int, std::shared_ptr<piece>> &board_builder::get_board_config() const
+{
+	return board_config_;
+}
+
 std::shared_ptr<pawn> board_builder::get_en_passant_pawn() const
 {
 	return en_passant_pawn_;
@@ -110,11 +115,12 @@ std::vector<std::shared_ptr<piece>> board::calculate_active_pieces(const std::ar
 std::array<std::shared_ptr<tile>, 64> board::create_game_board(const board_builder &b)
 {
 	std::array<std::shared_ptr<tile>, 64> game_board;
-	;
+	auto board_config = b.get_board_config();
+	std::unordered_map<int, std::shared_ptr<piece>>::iterator it;
 	for (int i = 0; i < 64; i++)
 	{
-		auto it = b.board_config_.find(i);
-		game_board[i] = it != b.board_config_.end() ? tile::create_tile(i, it->second) : tile::create_tile(i, nullptr);
+		it = board_config.find(i);
+		game_board[i] = it != board_config.end() ? tile::create_tile(i, it->second) : tile::create_tile(i, nullptr);
 	}
 	return game_board;
 }

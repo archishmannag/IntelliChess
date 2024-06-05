@@ -7,7 +7,7 @@
 #include <engine/player/ai/MoveStrategy.hpp>
 #include <engine/player/ai/BoardEvaluator.hpp>
 
-class mini_max : public move_strategy
+class mini_max final : public move_strategy
 {
 private:
 	std::unique_ptr<board_evaluator> board_evaluator_;

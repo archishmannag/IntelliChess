@@ -33,6 +33,28 @@ namespace
 		}
 		return row;
 	}
+
+	std::array<std::string, 64> initialize_algebraic_notation()
+	{
+		std::array<std::string, 64> algebraic_notation;
+		int position = 0;
+		for (int i = 0; i < 8; i++)
+			for (int j = 0; j < 8; j++)
+			{
+				algebraic_notation[position++] = std::string(1, 'a' + j) + std::to_string(8 - i);
+			}
+		return algebraic_notation;
+	}
+
+	std::array<std::string, 64> algebraic_notation = initialize_algebraic_notation();
+
+	std::unordered_map<std::string, int> initialize_position_to_coordinate_map()
+	{
+		std::unordered_map<std::string, int> position_to_coordinate;
+		for (int i = 0; i < 64; i++)
+			position_to_coordinate[algebraic_notation[i]] = i;
+		return position_to_coordinate;
+	}
 }
 
 std::array<bool, 64> board_utils::first_column = init_column(0);
@@ -53,8 +75,8 @@ std::array<bool, 64> board_utils::sixth_row = init_row(5);
 std::array<bool, 64> board_utils::seventh_row = init_row(6);
 std::array<bool, 64> board_utils::eighth_row = init_row(7);
 
-std::array<std::string, 64> board_utils::algebraic_notation = board_utils::initialize_algebraic_notation();
-std::map<std::string, int> board_utils::position_to_coordinate = board_utils::initialize_position_to_coordinate_map();
+std::array<std::string, 64> board_utils::algebraic_notation = initialize_algebraic_notation();
+std::unordered_map<std::string, int> board_utils::position_to_coordinate = initialize_position_to_coordinate_map();
 
 bool board_utils::is_valid_tile_coordinate(int c)
 {
@@ -69,26 +91,6 @@ int board_utils::get_coordinate_at_position(std::string p)
 std::string board_utils::get_position_at_coordinate(int c)
 {
 	return algebraic_notation[c];
-}
-
-std::array<std::string, 64> board_utils::initialize_algebraic_notation()
-{
-	std::array<std::string, 64> algebraic_notation;
-	int position = 0;
-	for (int i = 0; i < 8; i++)
-		for (int j = 0; j < 8; j++)
-		{
-			algebraic_notation[position++] = std::string(1, 'a' + j) + std::to_string(8 - i);
-		}
-	return algebraic_notation;
-}
-
-std::map<std::string, int> board_utils::initialize_position_to_coordinate_map()
-{
-	std::map<std::string, int> position_to_coordinate;
-	for (int i = 0; i < 64; i++)
-		position_to_coordinate[algebraic_notation[i]] = i;
-	return position_to_coordinate;
 }
 
 std::string board_utils::calculate_check_and_checkmate(board *b)

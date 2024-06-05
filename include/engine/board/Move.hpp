@@ -41,7 +41,7 @@ public:
 	virtual std::string stringify() const;
 };
 
-class major_move : public move
+class major_move final : public move
 {
 public:
 	major_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
@@ -63,7 +63,7 @@ public:
 	std::shared_ptr<piece> get_attacked_piece() const override;
 };
 
-class pawn_promotion : public move
+class pawn_promotion final : public move
 {
 private:
 	std::shared_ptr<move> input_move_;
@@ -80,7 +80,7 @@ public:
 	std::string stringify() const override;
 };
 
-class major_attack_move : public attack_move
+class major_attack_move final : public attack_move
 {
 public:
 	major_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc);
@@ -88,7 +88,7 @@ public:
 	std::string stringify() const override;
 };
 
-class pawn_move : public move
+class pawn_move final : public move
 {
 public:
 	pawn_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
@@ -104,7 +104,7 @@ public:
 	std::string stringify() const override;
 };
 
-class pawn_en_passant_attack_move : public pawn_attack_move
+class pawn_en_passant_attack_move final : public pawn_attack_move
 {
 public:
 	pawn_en_passant_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc);
@@ -112,7 +112,7 @@ public:
 	bool operator==(const move &other) const override;
 };
 
-class pawn_jump : public move
+class pawn_jump final : public move
 {
 public:
 	pawn_jump(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
@@ -135,7 +135,7 @@ public:
 	std::shared_ptr<board> execute() const override;
 };
 
-class king_side_castle_move : public castle_move
+class king_side_castle_move final : public castle_move
 {
 public:
 	king_side_castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd);
@@ -143,7 +143,7 @@ public:
 	std::string stringify() const override;
 };
 
-class queen_side_castle_move : public castle_move
+class queen_side_castle_move final : public castle_move
 {
 public:
 	queen_side_castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd);
@@ -151,7 +151,7 @@ public:
 	std::string stringify() const override;
 };
 
-class null_move : public move
+class null_move final : public move
 {
 public:
 	null_move();
