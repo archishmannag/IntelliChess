@@ -20,10 +20,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-<br>
+Libraries used by NChess
 
-### Libraries used by NChess
-
-1. SFML -- https://github.com/SFML/SFML</br>
-   Source code is in `./lib`</br>
+1. SFML -- https://github.com/SFML/SFML
+   Source code is in '/lib'
    Licensed under the Zlib license.
