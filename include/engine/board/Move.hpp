@@ -15,9 +15,13 @@ class board;
 class piece;
 class rook;
 class pawn;
+class null_move;
 
 class move
 {
+private:
+	static std::shared_ptr<null_move> null_move_;
+
 protected:
 	std::weak_ptr<board> board_;
 	std::shared_ptr<piece> moved_piece_;
@@ -26,6 +30,7 @@ protected:
 
 	move(std::shared_ptr<board> b, int dc);
 	move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
+	std::string disambiguation_file() const;
 
 public:
 	virtual bool operator==(const move &other) const;
@@ -34,11 +39,14 @@ public:
 	int get_current_coordinate() const;
 	std::shared_ptr<piece> get_moved_piece() const;
 	std::shared_ptr<board> get_board() const;
+	std::shared_ptr<board> undo() const;
 	virtual bool is_attack() const;
 	virtual bool is_castling_move() const;
 	virtual std::shared_ptr<piece> get_attacked_piece() const;
 	virtual std::shared_ptr<board> execute() const;
 	virtual std::string stringify() const;
+
+	static std::shared_ptr<move> get_null_move();
 };
 
 class major_move final : public move

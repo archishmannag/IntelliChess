@@ -90,6 +90,11 @@ move_transition player::make_move(std::shared_ptr<move> m) const
 	return move_transition(transition_board, m, move_status::done);
 }
 
+move_transition player::unmake_move(std::shared_ptr<move> m) const
+{
+	return move_transition(m->undo(), m, move_status::done);
+}
+
 std::vector<std::shared_ptr<piece>> player::get_active_pieces() const
 {
 	throw std::logic_error("This must be overridden");

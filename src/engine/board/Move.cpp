@@ -31,6 +31,14 @@ bool move::operator==(const move &other) const
 	return get_current_coordinate() == other.get_current_coordinate() && get_destination_coordinate() == other.get_destination_coordinate() && *get_moved_piece() == *other.get_moved_piece();
 }
 
+std::string move::disambiguation_file() const
+{
+	for (std::shared_ptr<move> m : board_.lock()->get_current_player()->get_legal_moves())
+		if (m->get_destination_coordinate() == destination_coordinate_ && !(*this == *m) && moved_piece_->get_piece_type() == m->get_moved_piece()->get_piece_type())
+			return board_utils::get_position_at_coordinate(moved_piece_->get_piece_position()).substr(0, 1);
+	return "";
+}
+
 int move::get_destination_coordinate() const
 {
 	return destination_coordinate_;
@@ -49,6 +57,11 @@ std::shared_ptr<piece> move::get_moved_piece() const
 std::shared_ptr<board> move::get_board() const
 {
 	return board_.lock();
+}
+
+std::shared_ptr<board> move::undo() const
+{
+	return board_.lock()->get_previous_board();
 }
 
 bool move::is_attack() const
@@ -83,6 +96,14 @@ std::shared_ptr<board> move::execute() const
 		builder.set_move_maker(board_ptr->get_current_player()->get_opponent().lock()->get_player_alliance());
 		builder.set_transition_move(std::make_shared<move>(*this));
 		builder.set_previous_board(board_ptr->shared_from_this());
+		if (is_attack() || moved_piece_->get_piece_type() == piece_type::pawn)
+			builder.set_half_move_clock(0);
+		else
+			builder.set_half_move_clock(board_ptr->get_half_move_clock() + 1);
+		if (board_ptr->get_current_player()->get_player_alliance() == alliance::black)
+			builder.set_full_move_number(board_ptr->get_full_move_number() + 1);
+		else
+			builder.set_full_move_number(board_ptr->get_full_move_number());
 		return builder.build();
 	}
 	throw std::runtime_error("Board expired!");
@@ -91,6 +112,13 @@ std::shared_ptr<board> move::execute() const
 std::string move::stringify() const
 {
 	throw std::logic_error("Use subclass functions!");
+}
+
+std::shared_ptr<null_move> move::null_move_ = std::make_shared<null_move>();
+
+std::shared_ptr<move> move::get_null_move()
+{
+	return null_move_;
 }
 
 /*major_move*/
@@ -109,7 +137,7 @@ bool major_move::operator==(const move &other) const
 
 std::string major_move::stringify() const
 {
-	return moved_piece_->stringify() + board_utils::get_position_at_coordinate(destination_coordinate_);
+	return moved_piece_->stringify() + disambiguation_file() + board_utils::get_position_at_coordinate(destination_coordinate_);
 }
 
 /*attack_move*/
@@ -169,6 +197,11 @@ std::shared_ptr<board> pawn_promotion::execute() const
 		builder.set_move_maker(pawn_moved_board->get_current_player()->get_player_alliance());
 		builder.set_transition_move(std::make_shared<pawn_promotion>(*this));
 		builder.set_previous_board(board_.lock()->shared_from_this());
+		builder.set_half_move_clock(0);
+		if (board_.lock()->get_current_player()->get_player_alliance() == alliance::black)
+			builder.set_full_move_number(board_.lock()->get_full_move_number() + 1);
+		else
+			builder.set_full_move_number(board_.lock()->get_full_move_number());
 		return builder.build();
 	}
 	throw std::runtime_error("Board expired!");
@@ -210,7 +243,7 @@ bool major_attack_move::operator==(const move &other) const
 
 std::string major_attack_move::stringify() const
 {
-	return moved_piece_->stringify() + "x" + board_utils::get_position_at_coordinate(destination_coordinate_);
+	return moved_piece_->stringify() + disambiguation_file() + "x" + board_utils::get_position_at_coordinate(destination_coordinate_);
 }
 
 /*pawn_move*/
@@ -272,6 +305,11 @@ std::shared_ptr<board> pawn_en_passant_attack_move::execute() const
 		builder.set_move_maker(board_ptr->get_current_player()->get_opponent().lock()->get_player_alliance());
 		builder.set_transition_move(std::make_shared<pawn_en_passant_attack_move>(*this));
 		builder.set_previous_board(board_ptr->shared_from_this());
+		builder.set_half_move_clock(0);
+		if (board_ptr->get_current_player()->get_player_alliance() == alliance::black)
+			builder.set_full_move_number(board_ptr->get_full_move_number() + 1);
+		else
+			builder.set_full_move_number(board_ptr->get_full_move_number());
 		return builder.build();
 	}
 	throw std::runtime_error("Board expired!");
@@ -310,6 +348,11 @@ std::shared_ptr<board> pawn_jump::execute() const
 		builder.set_move_maker(board_ptr->get_current_player()->get_opponent().lock()->get_player_alliance());
 		builder.set_transition_move(std::make_shared<pawn_jump>(*this));
 		builder.set_previous_board(board_ptr->shared_from_this());
+		builder.set_half_move_clock(0);
+		if (board_ptr->get_current_player()->get_player_alliance() == alliance::black)
+			builder.set_full_move_number(board_ptr->get_full_move_number() + 1);
+		else
+			builder.set_full_move_number(board_ptr->get_full_move_number());
 		return builder.build();
 	}
 	throw std::runtime_error("Board expired!");
@@ -366,6 +409,11 @@ std::shared_ptr<board> castle_move::execute() const
 		builder.set_move_maker(board_ptr->get_current_player()->get_opponent().lock()->get_player_alliance());
 		builder.set_transition_move(std::make_shared<castle_move>(*this));
 		builder.set_previous_board(board_ptr->shared_from_this());
+		builder.set_half_move_clock(board_ptr->get_half_move_clock() + 1);
+		if (board_ptr->get_current_player()->get_player_alliance() == alliance::black)
+			builder.set_full_move_number(board_ptr->get_full_move_number() + 1);
+		else
+			builder.set_full_move_number(board_ptr->get_full_move_number());
 		return builder.build();
 	}
 	throw std::runtime_error("Board expired!");

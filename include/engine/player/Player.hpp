@@ -34,6 +34,7 @@ public:
 	bool is_in_stalemate() const;
 	bool is_castled() const;
 	move_transition make_move(std::shared_ptr<move> m) const;
+	move_transition unmake_move(std::shared_ptr<move> m) const;
 
 	virtual std::vector<std::shared_ptr<piece>> get_active_pieces() const;
 	virtual alliance get_player_alliance() const;
