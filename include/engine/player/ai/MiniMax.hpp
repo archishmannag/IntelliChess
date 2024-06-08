@@ -5,12 +5,10 @@
 #include <cstdint>
 
 #include <engine/player/ai/MoveStrategy.hpp>
-#include <engine/player/ai/BoardEvaluator.hpp>
 
 class mini_max final : public move_strategy
 {
 private:
-	std::unique_ptr<board_evaluator> board_evaluator_;
 	unsigned const search_depth_;
 
 	int min(std::shared_ptr<board> b, unsigned int d);

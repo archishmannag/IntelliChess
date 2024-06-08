@@ -7,10 +7,13 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-#define WINDOW_WIDTH 960
-#define WINDOW_HEIGHT 700
-#define TILE_HEIGHT 70
-#define TILE_WIDTH 70
+namespace
+{
+	int window_width = 960;
+	int window_height = 700;
+	int tile_width = 70;
+	int tile_height = 70;
+}
 
 class board;
 class tile;

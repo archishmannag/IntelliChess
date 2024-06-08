@@ -1,4 +1,5 @@
 #include <chrono>
+#include <limits>
 #include <iostream>
 
 #include <engine/player/ai/MiniMax.hpp>
@@ -11,15 +12,14 @@
 mini_max::mini_max(unsigned int sd)
 	: search_depth_(sd)
 {
-	board_evaluator_ = std::make_unique<standard_board_evaluator>();
 }
 
 std::shared_ptr<move> mini_max::execute(std::shared_ptr<board> b)
 {
 	const auto start_time = std::chrono::high_resolution_clock::now();
 	std::shared_ptr<move> best_move = nullptr;
-	int highest_seen_value = INT32_MIN,
-		lowest_seen_value = INT32_MAX,
+	int highest_seen_value = std::numeric_limits<int>::min(),
+		lowest_seen_value = std::numeric_limits<int>::max(),
 		current_value;
 
 	std::cout << b->get_current_player()->stringify() << " THINKING with depth = " << search_depth_ << std::endl;
@@ -54,9 +54,9 @@ std::shared_ptr<move> mini_max::execute(std::shared_ptr<board> b)
 int mini_max::min(std::shared_ptr<board> b, unsigned int d)
 {
 	if (d == 0)
-		return board_evaluator_->evaluate(b.get(), d);
+		return standard_board_evaluator::evaluate(*b, d);
 
-	int lowest_seen_value = INT32_MAX;
+	int lowest_seen_value = std::numeric_limits<int>::max();
 	for (auto move : b->get_current_player()->get_legal_moves())
 	{
 		move_transition transition = b->get_current_player()->make_move(move);
@@ -73,9 +73,9 @@ int mini_max::min(std::shared_ptr<board> b, unsigned int d)
 int mini_max::max(std::shared_ptr<board> b, unsigned int d)
 {
 	if (d == 0)
-		return board_evaluator_->evaluate(b.get(), d);
+		return standard_board_evaluator::evaluate(*b, d);
 
-	int highest_seen_value = INT32_MIN;
+	int highest_seen_value = std::numeric_limits<int>::min();
 	for (auto move : b->get_current_player()->get_legal_moves())
 	{
 		move_transition transition = b->get_current_player()->make_move(move);
