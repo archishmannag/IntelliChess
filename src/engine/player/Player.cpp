@@ -59,6 +59,11 @@ const std::vector<std::shared_ptr<move>> &player::get_legal_moves() const
 	return legal_moves_;
 }
 
+bool player::fifty_move_rule() const
+{
+	return board_.lock()->get_half_move_clock() >= 100;
+}
+
 bool player::is_in_check() const
 {
 	return checked_;
@@ -71,7 +76,7 @@ bool player::is_is_checkmate() const
 
 bool player::is_in_stalemate() const
 {
-	return !checked_ && !has_escape_coves();
+	return fifty_move_rule() || (!checked_ && !has_escape_coves());
 }
 
 bool player::is_castled() const

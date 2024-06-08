@@ -39,6 +39,16 @@ void board_builder::set_transition_move(std::shared_ptr<move> tm)
 	transition_move_ = std::move(tm);
 }
 
+void board_builder::set_half_move_clock(int hmc)
+{
+	half_move_clock_ = hmc;
+}
+
+void board_builder::set_full_move_number(int fmn)
+{
+	full_move_number_ = fmn;
+}
+
 std::shared_ptr<board> board_builder::get_previous_board() const
 {
 	return previous_board_;
@@ -64,6 +74,16 @@ std::shared_ptr<move> board_builder::get_transition_move() const
 	return transition_move_;
 }
 
+int board_builder::get_half_move_clock() const
+{
+	return half_move_clock_;
+}
+
+int board_builder::get_full_move_number() const
+{
+	return full_move_number_;
+}
+
 std::shared_ptr<board> board_builder::build()
 {
 	std::shared_ptr<board> b = std::make_shared<board>();
@@ -84,6 +104,8 @@ void board::initialize_game_board(const board_builder &b)
 	white_player_ = std::make_shared<white_player>(shared_from_this(), calculate_legal_moves(white_pieces_), calculate_legal_moves(black_pieces_));
 	black_player_ = std::make_shared<black_player>(shared_from_this(), calculate_legal_moves(white_pieces_), calculate_legal_moves(black_pieces_));
 	current_player_ = (alliance_utils::choose_player(b.get_next_move_maker(), this));
+	half_move_clock_ = b.get_half_move_clock();
+	full_move_number_ = b.get_full_move_number();
 }
 
 std::vector<std::shared_ptr<move>> board::calculate_legal_moves(const std::vector<std::shared_ptr<piece>> &P)
@@ -135,6 +157,16 @@ std::shared_ptr<tile> board::get_tile(int tc) const
 	return game_board_[tc];
 }
 
+int board::get_half_move_clock() const
+{
+	return half_move_clock_;
+}
+
+int board::get_full_move_number() const
+{
+	return full_move_number_;
+}
+
 const std::vector<std::shared_ptr<piece>> &board::get_white_pieces() const
 {
 	return white_pieces_;
@@ -151,6 +183,11 @@ const std::vector<std::shared_ptr<piece>> board::get_all_pieces() const
 	all_pieces.insert(all_pieces.end(), white_pieces_.begin(), white_pieces_.end());
 	all_pieces.insert(all_pieces.end(), black_pieces_.begin(), black_pieces_.end());
 	return all_pieces;
+}
+
+std::shared_ptr<move> board::get_transition_move() const
+{
+	return transition_move_;
 }
 
 std::shared_ptr<player> board::get_white_player() const

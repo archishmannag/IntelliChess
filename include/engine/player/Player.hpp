@@ -23,6 +23,7 @@ protected:
 	static std::vector<std::shared_ptr<move>> calculate_attacks_on_tile(const int pp, std::vector<std::shared_ptr<move>> om);
 	std::shared_ptr<king> establish_king();
 	bool has_escape_coves() const;
+	bool fifty_move_rule() const;
 
 public:
 	player(std::shared_ptr<board> b);
