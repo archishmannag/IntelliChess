@@ -115,6 +115,12 @@ sf::View game_history_block::get_view() const
 
 void game_history_block::redo(board *board, move_log &ml)
 {
+	if (ml.get_moves().size() == 0)
+	{
+		history_rows_.clear();
+		view.setCenter(860, 355);
+		return;
+	}
 	std::list<std::string> past_checks;
 	for (long unsigned int i = 0; i < history_rows_.size(); i++)
 	{

@@ -7,7 +7,7 @@
 typedef struct callback_functions
 {
 	std::function<void()> load_FEN, load_PGN, save_game, exit,
-		new_game, undo_move, evaluate_board, escape_analysis_score, current_state, setup_game;
+		new_game, undo_move, evaluate_board, current_state, setup_game;
 } callback_functions_t;
 
 class menu_bar
@@ -27,7 +27,7 @@ private:
 	// Option menu text and rectangle
 	bool option_menu_open_ = false;
 	sf::RectangleShape option_menu_rect_;
-	sf::Text new_game_text_, undo_move_text_, evaluate_board_text_, escape_analysis_score_text_, current_state_text_, setup_game_text_;
+	sf::Text new_game_text_, undo_move_text_, evaluate_board_text_, current_state_text_, setup_game_text_;
 
 	callback_functions_t callback_functions_;
 

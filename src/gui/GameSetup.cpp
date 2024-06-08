@@ -38,7 +38,7 @@ game_setup::game_setup(std::function<void()> notify_parent) : notify_parent_(not
 	black_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 95));
 
 	depth_text_.setFont(font_);
-	depth_text_.setString("Difficulty");
+	depth_text_.setString("Search Depth");
 	depth_text_.setCharacterSize(18);
 	depth_text_.setFillColor(sf::Color::Black);
 	depth_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 185));

@@ -56,7 +56,7 @@ menu_bar::menu_bar(sf::RenderWindow &window, callback_functions_t callback_funct
 
 	// Option submenu
 	{
-		option_menu_rect_.setSize(sf::Vector2f(190, 151));
+		option_menu_rect_.setSize(sf::Vector2f(190, 126));
 		option_menu_rect_.setFillColor(sf::Color(200, 200, 200));
 		option_menu_rect_.setPosition(70, 25);
 
@@ -78,23 +78,17 @@ menu_bar::menu_bar(sf::RenderWindow &window, callback_functions_t callback_funct
 		evaluate_board_text_.setFillColor(sf::Color::Black);
 		evaluate_board_text_.setPosition(75, 76);
 
-		escape_analysis_score_text_.setFont(font_);
-		escape_analysis_score_text_.setString("Escape Analysis Score");
-		escape_analysis_score_text_.setCharacterSize(18);
-		escape_analysis_score_text_.setFillColor(sf::Color::Black);
-		escape_analysis_score_text_.setPosition(75, 101);
-
 		current_state_text_.setFont(font_);
 		current_state_text_.setString("Current State");
 		current_state_text_.setCharacterSize(18);
 		current_state_text_.setFillColor(sf::Color::Black);
-		current_state_text_.setPosition(75, 126);
+		current_state_text_.setPosition(75, 101);
 
 		setup_game_text_.setFont(font_);
 		setup_game_text_.setString("Setup Game");
 		setup_game_text_.setCharacterSize(18);
 		setup_game_text_.setFillColor(sf::Color::Black);
-		setup_game_text_.setPosition(75, 151);
+		setup_game_text_.setPosition(75, 126);
 	}
 }
 
@@ -123,8 +117,6 @@ void menu_bar::update_menu_bar(sf::Event event, sf::Vector2i mouse_position)
 				callback_functions_.undo_move();
 			else if (evaluate_board_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
 				callback_functions_.evaluate_board();
-			else if (escape_analysis_score_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
-				callback_functions_.escape_analysis_score();
 			else if (current_state_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
 				callback_functions_.current_state();
 			else if (setup_game_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
@@ -173,7 +165,6 @@ void menu_bar::draw(sf::RenderWindow &window)
 		window.draw(new_game_text_);
 		window.draw(undo_move_text_);
 		window.draw(evaluate_board_text_);
-		window.draw(escape_analysis_score_text_);
 		window.draw(current_state_text_);
 		window.draw(setup_game_text_);
 	}

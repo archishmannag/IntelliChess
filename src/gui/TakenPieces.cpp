@@ -36,12 +36,12 @@ taken_pieces_block::taken_pieces_block()
 	black_queen_texture_.setSmooth(true);
 	white_queen_texture_.setSmooth(true);
 
-	taken_piece_area_rect_.setSize(sf::Vector2f(1.5f * TILE_WIDTH, 8 * TILE_HEIGHT));
+	taken_piece_area_rect_.setSize(sf::Vector2f(1.5f * tile_width, 8 * tile_height));
 	taken_piece_area_rect_.setPosition(0, 75);
 	taken_piece_area_rect_.setFillColor(sf::Color(253, 245, 230));
 
 	black_piece_area_position_ = sf::Vector2f(taken_piece_area_rect_.getPosition());
-	white_piece_area_position_ = sf::Vector2f(taken_piece_area_rect_.getPosition() + sf::Vector2f(0, 4 * TILE_HEIGHT));
+	white_piece_area_position_ = sf::Vector2f(taken_piece_area_rect_.getPosition() + sf::Vector2f(0, 4 * tile_height));
 }
 
 void taken_pieces_block::redo(move_log &ml)
@@ -78,7 +78,7 @@ void taken_pieces_block::redo(move_log &ml)
 	std::sort(black_taken_pieces.begin(), black_taken_pieces.end(), [](std::shared_ptr<piece> a, std::shared_ptr<piece> b) -> bool
 			  { return a->get_piece_value() > b->get_piece_value(); });
 
-	sf::Vector2f position = white_piece_area_position_ + sf::Vector2f(0.125f * TILE_WIDTH, 0);
+	sf::Vector2f position = white_piece_area_position_ + sf::Vector2f(0.125f * tile_width, 0);
 	for (auto piece : white_taken_pieces)
 	{
 		sf::Sprite sprite;
@@ -86,44 +86,44 @@ void taken_pieces_block::redo(move_log &ml)
 		{
 		case piece_type::queen:
 			sprite.setTexture(white_queen_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			white_queen_sprites_.push_back(sprite);
 			break;
 		case piece_type::rook:
 			sprite.setTexture(white_rook_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			white_rook_sprites_.push_back(sprite);
 			break;
 		case piece_type::bishop:
 			sprite.setTexture(white_bishop_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			white_bishop_sprites_.push_back(sprite);
 			break;
 		case piece_type::knight:
 			sprite.setTexture(white_knight_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			white_knight_sprites_.push_back(sprite);
 			break;
 		case piece_type::pawn:
 			sprite.setTexture(white_pawn_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			white_pawn_sprites_.push_back(sprite);
 			break;
 		default:
 			throw std::runtime_error("Invalid piece type");
 		}
-		if (position.x > white_piece_area_position_.x + 0.75f * TILE_WIDTH)
-			position.x = white_piece_area_position_.x + 0.125f * TILE_WIDTH, position.y += TILE_HEIGHT / 2;
+		if (position.x > white_piece_area_position_.x + 0.75f * tile_width)
+			position.x = white_piece_area_position_.x + 0.125f * tile_width, position.y += tile_height / 2;
 		else
-			position.x += TILE_WIDTH * 0.75f;
+			position.x += tile_width * 0.75f;
 	}
 
-	position = black_piece_area_position_ + sf::Vector2f(0.125f * TILE_WIDTH, 0);
+	position = black_piece_area_position_ + sf::Vector2f(0.125f * tile_width, 0);
 	for (auto piece : black_taken_pieces)
 	{
 		sf::Sprite sprite;
@@ -131,41 +131,41 @@ void taken_pieces_block::redo(move_log &ml)
 		{
 		case piece_type::queen:
 			sprite.setTexture(black_queen_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			black_queen_sprites_.push_back(sprite);
 			break;
 		case piece_type::rook:
 			sprite.setTexture(black_rook_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			black_rook_sprites_.push_back(sprite);
 			break;
 		case piece_type::bishop:
 			sprite.setTexture(black_bishop_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			black_bishop_sprites_.push_back(sprite);
 			break;
 		case piece_type::knight:
 			sprite.setTexture(black_knight_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			black_knight_sprites_.push_back(sprite);
 			break;
 		case piece_type::pawn:
 			sprite.setTexture(black_pawn_texture_);
-			sprite.setScale(TILE_WIDTH / sprite.getLocalBounds().width * 1 / 2, TILE_HEIGHT / sprite.getLocalBounds().height * 1 / 2);
+			sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
 			sprite.setPosition(position);
 			black_pawn_sprites_.push_back(sprite);
 			break;
 		default:
 			throw std::runtime_error("Invalid piece type");
 		}
-		if (position.x > black_piece_area_position_.x + 0.75f * TILE_WIDTH)
-			position.x = black_piece_area_position_.x + 0.125f * TILE_WIDTH, position.y += TILE_HEIGHT / 2;
+		if (position.x > black_piece_area_position_.x + 0.75f * tile_width)
+			position.x = black_piece_area_position_.x + 0.125f * tile_width, position.y += tile_height / 2;
 		else
-			position.x += TILE_WIDTH * 0.75f;
+			position.x += tile_width * 0.75f;
 	}
 }
 
