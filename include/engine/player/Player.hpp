@@ -33,6 +33,9 @@ public:
 	bool is_is_checkmate() const;
 	bool is_in_stalemate() const;
 	bool is_castled() const;
+	bool is_castle_capable() const;
+	bool is_king_side_castle_capable() const;
+	bool is_queen_side_castle_capable() const;
 	move_transition make_move(std::shared_ptr<move> m) const;
 	move_transition unmake_move(std::shared_ptr<move> m) const;
 

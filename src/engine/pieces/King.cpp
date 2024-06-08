@@ -6,9 +6,11 @@
 
 const int king::candidate_move_coordinates[] = {-9, -8, -7, -1, 1, 7, 8, 9};
 
-king::king(const int pp, const alliance pa, const bool fm, const bool c)
+king::king(const int pp, const alliance pa, const bool fm, const bool c, const bool ksc, const bool qsc)
 	: piece(pp, pa, piece_type::king, fm),
-	  castled_(c)
+	  castled_(c),
+	  king_side_castle_capable_(ksc),
+	  queen_side_castle_capable_(qsc)
 {
 }
 
@@ -40,14 +42,34 @@ std::vector<std::shared_ptr<move>> king::calculate_legal_moves(std::shared_ptr<b
 std::shared_ptr<piece> king::move_piece(const move *const m) const
 {
 	if (!is_castled())
-		return std::make_shared<king>(m->get_destination_coordinate(), m->get_moved_piece()->get_piece_alliance(), false, m->is_castling_move());
+		return std::make_shared<king>(m->get_destination_coordinate(), m->get_moved_piece()->get_piece_alliance(), false, m->is_castling_move(), false, false);
 	else
-		return std::make_shared<king>(m->get_destination_coordinate(), m->get_moved_piece()->get_piece_alliance(), false, true);
+		return std::make_shared<king>(m->get_destination_coordinate(), m->get_moved_piece()->get_piece_alliance(), false, true, false, false);
+}
+
+void king::set_king_side_castle_capable(const bool ksc)
+{
+	king_side_castle_capable_ = ksc;
+}
+
+void king::set_queen_side_castle_capable(const bool qsc)
+{
+	queen_side_castle_capable_ = qsc;
 }
 
 bool king::is_castled() const
 {
 	return castled_;
+}
+
+bool king::is_king_side_castle_capable() const
+{
+	return king_side_castle_capable_;
+}
+
+bool king::is_queen_side_castle_capable() const
+{
+	return queen_side_castle_capable_;
 }
 
 bool king::is_first_column_exclusion(const int cp, const int co)

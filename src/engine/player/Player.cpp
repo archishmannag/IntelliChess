@@ -79,6 +79,21 @@ bool player::is_castled() const
 	return player_king_->is_castled();
 }
 
+bool player::is_castle_capable() const
+{
+	return player_king_->is_king_side_castle_capable() || player_king_->is_queen_side_castle_capable();
+}
+
+bool player::is_king_side_castle_capable() const
+{
+	return player_king_->is_king_side_castle_capable();
+}
+
+bool player::is_queen_side_castle_capable() const
+{
+	return player_king_->is_queen_side_castle_capable();
+}
+
 move_transition player::make_move(std::shared_ptr<move> m) const
 {
 	if (!is_move_legal(m.get()))
