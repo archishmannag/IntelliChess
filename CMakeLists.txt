@@ -6,14 +6,24 @@ project(Chess VERSION 1.0.0 DESCRIPTION "Chess game" LANGUAGES CXX)
 
 add_definitions(-DPROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 
+# Set output directory
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+
 # Add source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 # Set SFML directory
-set(SFML_DIR ${CMAKE_SOURCE_DIR}/lib/SFML-Linux/lib/cmake/SFML)
+if(UNIX)
+	set(SFML_DIR ${CMAKE_SOURCE_DIR}/lib/SFML-Linux/lib/cmake/SFML)
+elseif(WIN32 AND MINGW)
+	set(SFML_DIR ${CMAKE_SOURCE_DIR}/lib/SFML-Windows-MinGW/lib/cmake/SFML)
+elseif(WIN32 AND MSVC)
+	set(SFML_DIR ${CMAKE_SOURCE_DIR}/lib/SFML-Windows-MSVC/lib/cmake/SFML)
+endif(UNIX)
+
 
 # Find SFML
-find_package(SFML 2.5 COMPONENTS graphics window audio REQUIRED)
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 
 # Add executable target
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -30,13 +40,28 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 # Link SFML and pthread
-target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads PRIVATE sfml-graphics sfml-window sfml-audio)
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads PRIVATE sfml-graphics sfml-window sfml-system)
 
 # Add include directories
 target_include_directories(${PROJECT_NAME} PRIVATE include PRIVATE ${SFML_DIR}/../../../include)
 
-# Add compile options
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -std=c++17)
+# Add compile options with Compiler-specific flags
+if (UNIX OR (WIN32 AND MINGW))
+    # Use GCC or Clang specific flags
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -std=c++17)
+elseif (WIN32 AND MSVC)
+    # Use MSVC specific flags
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /EHsc /std:c++17)
+endif(UNIX OR (WIN32 AND MINGW))
+#target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -std=c++17)
+
+if(WIN32)
+	# Find SFML DLLs
+	file(GLOB SFML_DLLS ${SFML_DIR}/../../../bin/*.dll)
+
+	# Copy the DLLs to the output directory
+	file(COPY ${SFML_DLLS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endif(WIN32)
 
 # Add install target
 if(UNIX)
@@ -68,6 +93,6 @@ if(BUILD_TESTING)
 	add_subdirectory(lib/googletest)
 	add_library(${LIB_TEST} STATIC ${SOURCES})
 	target_include_directories(${LIB_TEST} PRIVATE include PRIVATE ${SFML_DIR}/../../../include)
-	target_link_libraries(${LIB_TEST} PRIVATE Threads::Threads PRIVATE sfml-graphics sfml-window sfml-audio)
+	target_link_libraries(${LIB_TEST} PRIVATE Threads::Threads PRIVATE sfml-graphics sfml-window sfml-system)
 	add_subdirectory(test)
 endif(BUILD_TESTING)
