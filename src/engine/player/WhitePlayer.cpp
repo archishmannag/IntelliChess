@@ -47,11 +47,13 @@ std::vector<std::shared_ptr<move>> white_player::calculate_king_castles(const st
 			std::shared_ptr<tile> rook_tile = board_.lock()->get_tile(63);
 			if (rook_tile->is_tile_occupied() &&
 				rook_tile->get_piece()->is_first_move() &&
-				rook_tile->get_piece()->get_piece_type() == piece_type::rook &&
-				calculate_attacks_on_tile(61, ol).empty() &&
-				calculate_attacks_on_tile(62, ol).empty() &&
-				board_utils::is_king_pawn_trap(board_.lock().get(), player_king_.get(), 52))
-				king_castles.push_back(std::make_shared<king_side_castle_move>(board_.lock(), player_king_, 62, std::dynamic_pointer_cast<rook>(rook_tile->get_piece()), rook_tile->get_tile_coordinate(), 61));
+				rook_tile->get_piece()->get_piece_type() == piece_type::rook)
+			{
+				if (calculate_attacks_on_tile(61, ol).empty() &&
+					calculate_attacks_on_tile(62, ol).empty() &&
+					!board_utils::is_king_pawn_trap(board_.lock().get(), player_king_.get(), 52))
+					king_castles.push_back(std::make_shared<king_side_castle_move>(board_.lock(), player_king_, 62, std::dynamic_pointer_cast<rook>(rook_tile->get_piece()), rook_tile->get_tile_coordinate(), 61));
+			}
 			else
 				player_king_->set_king_side_castle_capable(false);
 		}
@@ -63,12 +65,14 @@ std::vector<std::shared_ptr<move>> white_player::calculate_king_castles(const st
 			std::shared_ptr<tile> rook_tile = board_.lock()->get_tile(56);
 			if (rook_tile->is_tile_occupied() &&
 				rook_tile->get_piece()->is_first_move() &&
-				rook_tile->get_piece()->get_piece_type() == piece_type::rook &&
-				calculate_attacks_on_tile(59, ol).empty() &&
-				calculate_attacks_on_tile(58, ol).empty() &&
-				calculate_attacks_on_tile(57, ol).empty() &&
-				board_utils::is_king_pawn_trap(board_.lock().get(), player_king_.get(), 52))
-				king_castles.push_back(std::make_shared<queen_side_castle_move>(board_.lock(), player_king_, 58, std::dynamic_pointer_cast<rook>(rook_tile->get_piece()), rook_tile->get_tile_coordinate(), 59));
+				rook_tile->get_piece()->get_piece_type() == piece_type::rook)
+			{
+				if (calculate_attacks_on_tile(59, ol).empty() &&
+					calculate_attacks_on_tile(58, ol).empty() &&
+					calculate_attacks_on_tile(57, ol).empty() &&
+					!board_utils::is_king_pawn_trap(board_.lock().get(), player_king_.get(), 52))
+					king_castles.push_back(std::make_shared<queen_side_castle_move>(board_.lock(), player_king_, 58, std::dynamic_pointer_cast<rook>(rook_tile->get_piece()), rook_tile->get_tile_coordinate(), 59));
+			}
 			else
 				player_king_->set_queen_side_castle_capable(false);
 		}
