@@ -513,6 +513,10 @@ void game_board::update_tile_blocks()
 		{
 			tile_block.set_tile_rect_fill_color(sf::Color(255, 0, 0, 100));
 		}
+		else if (move_log_.get_moves_count() > 0 && (move_log_.get_moves().back()->get_moved_piece()->get_piece_position() == tile_block.get_tile_id() || move_log_.get_moves().back()->get_destination_coordinate() == tile_block.get_tile_id()))
+		{
+			tile_block.set_tile_rect_fill_color(sf::Color(0, 255, 0, 100));
+		}
 		else if (source_tile_ != nullptr && source_tile_->get_tile_coordinate() == tile_block.get_tile_id())
 		{
 			tile_block.set_tile_rect_fill_color(sf::Color(255, 255, 0, 100));

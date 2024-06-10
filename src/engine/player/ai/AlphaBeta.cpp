@@ -85,7 +85,7 @@ std::shared_ptr<move> alpha_beta::execute(std::shared_ptr<board> b)
 		std::cout << s << std::endl;
 		move_counter++;
 	}
-	std::chrono::_V2::system_clock::rep execution_time = (std::chrono::high_resolution_clock::now() - start_time).count() / 1000000; // Convert nanoseconds to milliseconds
+	auto execution_time = (std::chrono::high_resolution_clock::now() - start_time).count() / 1000000; // Convert nanoseconds to milliseconds
 	std::string result = b->get_current_player()->stringify() + " selects " + best_move->stringify() + ", # boards evaluated = " + std::to_string(boards_evaluated_) + ", time taken = " + std::to_string(execution_time) + "ms, rate = " + std::to_string(1000 * boards_evaluated_ / execution_time) + " boards/s";
 	std::cout << result << std::endl;
 	return best_move;
