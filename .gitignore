@@ -37,6 +37,18 @@
 # CLion
 .idea
 
+# Visual Studio
+*.sdf
+*.opensdf
+*.suo
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.vcproj
+*.vcproj.*
+.vs
+
 # Build directory
 build
 
