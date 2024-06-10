@@ -1,7 +1,6 @@
 #include <gui/GameSetup.hpp>
 #include <engine/player/Player.hpp>
 #include <engine/Alliance.hpp>
-#include <iostream>
 
 std::string to_string(player_type p)
 {

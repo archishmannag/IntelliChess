@@ -1,11 +1,3 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
-#include <memory>
-#include <algorithm>
-#include <stdexcept>
-#include <future>
-#include <functional>
-
 #include <gui/Menu.hpp>
 #include <gui/TakenPieces.hpp>
 #include <gui/GameHistory.hpp>

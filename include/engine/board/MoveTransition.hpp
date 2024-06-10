@@ -1,7 +1,7 @@
 #ifndef MOVETRANSITION_HPP
 #define MOVETRANSITION_HPP
 
-#include <memory>
+#include <PreCompiledHeaders.hpp>
 
 class move;
 class board;

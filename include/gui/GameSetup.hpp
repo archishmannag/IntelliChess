@@ -1,8 +1,9 @@
 #ifndef GAME_SETUP_HPP
 #define GAME_SETUP_HPP
 
+#include <PreCompiledHeaders.hpp>
+
 #include <SFML/Graphics.hpp>
-#include <functional>
 
 enum class player_type
 {

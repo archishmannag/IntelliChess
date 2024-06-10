@@ -1,9 +1,7 @@
 #ifndef TILE_HPP
 #define TILE_HPP
 
-#include <unordered_map>
-#include <string>
-#include <memory>
+#include <PreCompiledHeaders.hpp>
 
 class piece;
 class empty_tile;

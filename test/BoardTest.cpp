@@ -1,7 +1,5 @@
 #include <gtest/gtest.h>
-#include <vector>
-#include <memory>
-#include <cstdlib>
+#include <PreCompiledHeaders.hpp>
 
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>

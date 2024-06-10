@@ -1,9 +1,6 @@
 #ifndef WHITEPLAYER_HPP
 #define WHITEPLAYER_HPP
 
-#include <vector>
-#include <memory>
-
 #include "Player.hpp"
 
 class white_player : public player

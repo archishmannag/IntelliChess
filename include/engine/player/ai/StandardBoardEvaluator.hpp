@@ -1,7 +1,7 @@
 #ifndef STANDARD_BOARD_EVALUATOR_HPP
 #define STANDARD_BOARD_EVALUATOR_HPP
 
-#include <string>
+#include <PreCompiledHeaders.hpp>
 
 class board;
 class player;

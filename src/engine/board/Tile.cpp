@@ -1,5 +1,3 @@
-#include <stdexcept>
-
 #include <engine/board/Tile.hpp>
 #include <engine/Alliance.hpp>
 #include <engine/pieces/Piece.hpp>

@@ -1,4 +1,3 @@
-#include <iostream>
 #include <gui/Menu.hpp>
 
 menu_bar::menu_bar(sf::RenderWindow &window, callback_functions_t callback_functions)

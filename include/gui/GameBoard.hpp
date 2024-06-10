@@ -1,8 +1,8 @@
 #ifndef GAMEBOARD_HPP
 #define GAMEBOARD_HPP
 
-#include <vector>
-#include <memory>
+#include <PreCompiledHeaders.hpp>
+
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>

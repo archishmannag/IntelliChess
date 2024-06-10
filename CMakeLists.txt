@@ -45,6 +45,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads PRIVATE sfml-grap
 # Add include directories
 target_include_directories(${PROJECT_NAME} PRIVATE include PRIVATE ${SFML_DIR}/../../../include)
 
+# Add precompiled header
+target_precompile_headers(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include/PreCompiledHeaders.hpp)
+
 # Add compile options with Compiler-specific flags
 if (UNIX OR (WIN32 AND MINGW))
     # Use GCC or Clang specific flags
@@ -94,5 +97,6 @@ if(BUILD_TESTING)
 	add_library(${LIB_TEST} STATIC ${SOURCES})
 	target_include_directories(${LIB_TEST} PRIVATE include PRIVATE ${SFML_DIR}/../../../include)
 	target_link_libraries(${LIB_TEST} PRIVATE Threads::Threads PRIVATE sfml-graphics sfml-window sfml-system)
+	target_precompile_headers(${LIB_TEST} REUSE_FROM ${PROJECT_NAME})
 	add_subdirectory(test)
 endif(BUILD_TESTING)

@@ -1,8 +1,7 @@
 #ifndef MINIMAX_HPP
 #define MINIMAX_HPP
 
-#include <memory>
-#include <cstdint>
+#include <PreCompiledHeaders.hpp>
 
 #include <engine/player/ai/MoveStrategy.hpp>
 

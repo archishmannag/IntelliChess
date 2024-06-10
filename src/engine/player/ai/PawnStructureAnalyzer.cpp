@@ -1,6 +1,3 @@
-#include <iterator>
-#include <algorithm>
-
 #include <engine/player/ai/PawnStructureAnalyzer.hpp>
 #include <engine/pieces/Piece.hpp>
 #include <engine/player/Player.hpp>

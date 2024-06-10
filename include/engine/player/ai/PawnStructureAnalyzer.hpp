@@ -1,9 +1,7 @@
 #ifndef PAWN_STRUCTURE_ANALYZER_HPP
 #define PAWN_STRUCTURE_ANALYZER_HPP
 
-#include <vector>
-#include <memory>
-#include <array>
+#include <PreCompiledHeaders.hpp>
 
 class piece;
 class player;

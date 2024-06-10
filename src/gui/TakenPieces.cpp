@@ -1,7 +1,3 @@
-#include <iostream>
-#include <algorithm>
-#include <stdexcept>
-
 #include <gui/TakenPieces.hpp>
 #include <gui/GameBoard.hpp>
 #include <engine/board/Move.hpp>

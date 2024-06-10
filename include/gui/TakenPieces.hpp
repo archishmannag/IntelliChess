@@ -1,8 +1,9 @@
 #ifndef TAKEN_PIECES_HPP
 #define TAKEN_PIECES_HPP
 
+#include <PreCompiledHeaders.hpp>
+
 #include <SFML/Graphics.hpp>
-#include <vector>
 
 class move_log;
 

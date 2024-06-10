@@ -1,11 +1,7 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
-#include <unordered_map>
-#include <vector>
-#include <array>
-#include <string>
-#include <memory>
+#include <PreCompiledHeaders.hpp>
 
 #include <engine/Alliance.hpp>
 

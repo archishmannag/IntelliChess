@@ -1,9 +1,7 @@
 #ifndef PIECE_HPP
 #define PIECE_HPP
 
-#include <vector>
-#include <string>
-#include <memory>
+#include <PreCompiledHeaders.hpp>
 
 #include <engine/Alliance.hpp>
 

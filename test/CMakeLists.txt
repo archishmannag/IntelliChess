@@ -20,6 +20,8 @@ foreach(EXECUTABLE_NAME ${EXECUTABLE_NAMES})
 	${PROJECT_NAME}_lib
 	)
 
+	target_precompile_headers(${EXECUTABLE_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/PreCompiledHeaders.hpp)
+
 	if(UNIX AND NOT APPLE)
 	add_compile_definitions(UNIX)
 	endif(UNIX AND NOT APPLE)

@@ -1,7 +1,5 @@
 #include <gtest/gtest.h>
-#include <vector>
-#include <memory>
-#include <algorithm>
+#include <PreCompiledHeaders.hpp>
 
 #include <engine/Alliance.hpp>
 #include <engine/board/Board.hpp>

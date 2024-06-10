@@ -1,11 +1,7 @@
 #ifndef BOARDUTILS_HPP
 #define BOARDUTILS_HPP
 
-#include <array>
-#include <string>
-#include <unordered_map>
-#include <vector>
-#include <memory>
+#include <PreCompiledHeaders.hpp>
 
 class board;
 class king;

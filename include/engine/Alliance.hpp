@@ -1,8 +1,7 @@
 #ifndef ALLIANCE_HPP
 #define ALLIANCE_HPP
 
-#include <string>
-#include <memory>
+#include <PreCompiledHeaders.hpp>
 
 class player;
 class board;

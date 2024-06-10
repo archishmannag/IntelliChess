@@ -1,8 +1,7 @@
 #ifndef MOVE_HPP
 #define MOVE_HPP
 
-#include <string>
-#include <memory>
+#include <PreCompiledHeaders.hpp>
 
 enum class move_status
 {

@@ -1,8 +1,7 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include <vector>
-#include <memory>
+#include <PreCompiledHeaders.hpp>
 
 #include "../Alliance.hpp"
 

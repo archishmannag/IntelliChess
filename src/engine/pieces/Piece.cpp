@@ -1,5 +1,3 @@
-#include <stdexcept>
-
 #include <engine/pieces/Piece.hpp>
 
 piece::piece(const int pp, const alliance pa, const piece_type pt, bool fm)

@@ -1,6 +1,3 @@
-#include <iostream>
-#include <list>
-
 #include <gui/GameHistory.hpp>
 #include <gui/GameBoard.hpp>
 #include <engine/board/Board.hpp>

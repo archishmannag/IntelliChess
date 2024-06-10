@@ -1,7 +1,3 @@
-#include <limits>
-#include <iostream>
-#include <algorithm>
-
 #include <engine/player/ai/AlphaBeta.hpp>
 #include <engine/player/ai/StandardBoardEvaluator.hpp>
 #include <engine/board/Board.hpp>

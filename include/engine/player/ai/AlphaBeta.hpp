@@ -1,9 +1,7 @@
 #ifndef ALPHA_BETA_HPP
 #define ALPHA_BETA_HPP
 
-#include <memory>
-#include <string>
-#include <chrono>
+#include <PreCompiledHeaders.hpp>
 
 #include "MoveStrategy.hpp"
 

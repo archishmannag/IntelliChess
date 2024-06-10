@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <memory>
+#include <PreCompiledHeaders.hpp>
 
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>

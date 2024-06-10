@@ -1,9 +1,6 @@
 #ifndef BLACKPLAYER_HPP
 #define BLACKPLAYER_HPP
 
-#include <vector>
-#include <memory>
-
 #include "Player.hpp"
 
 class black_player : public player

@@ -1,8 +1,9 @@
 #ifndef MENU_HPP
 #define MENU_HPP
 
+#include <PreCompiledHeaders.hpp>
+
 #include <SFML/Graphics.hpp>
-#include <functional>
 
 typedef struct callback_functions
 {

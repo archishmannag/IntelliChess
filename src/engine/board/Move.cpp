@@ -1,5 +1,3 @@
-#include <stdexcept>
-
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
 #include <engine/board/Move.hpp>

@@ -1,6 +1,3 @@
-#include <stdexcept>
-#include <algorithm>
-
 #include <engine/player/Player.hpp>
 #include <engine/board/Move.hpp>
 #include <engine/board/Board.hpp>

@@ -1,10 +1,9 @@
 #ifndef GAME_HISTORY_HPP
 #define GAME_HISTORY_HPP
 
+#include <PreCompiledHeaders.hpp>
+
 #include <SFML/Graphics.hpp>
-#include <string>
-#include <array>
-#include <vector>
 
 class board;
 class move_log;
