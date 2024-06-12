@@ -54,4 +54,5 @@ build
 bin
 
 # Exclude the lib directory from these rules to ship the library files
-!/lib/
+!lib
+!lib/**
