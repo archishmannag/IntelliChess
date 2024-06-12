@@ -74,7 +74,7 @@ endif(UNIX)
 # Enable test and add its subdirectory
 set(LIB_TEST ${PROJECT_NAME}_lib)
 include(CTest)
-set(BUILD_TESTING OFF)
+set(BUILD_TESTING ON)
 if(BUILD_TESTING)
 	enable_testing()
 
