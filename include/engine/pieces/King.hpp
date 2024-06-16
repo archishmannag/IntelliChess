@@ -3,7 +3,7 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class king : public piece
+class king final : public piece
 {
 private:
 	bool castled_,

@@ -3,7 +3,7 @@
 
 #include "Player.hpp"
 
-class white_player : public player
+class white_player final : public player
 {
 public:
 	white_player(std::shared_ptr<board> b, std::vector<std::shared_ptr<move>> wslm, std::vector<std::shared_ptr<move>> bslm);

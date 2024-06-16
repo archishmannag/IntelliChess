@@ -3,7 +3,7 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class knight : public piece
+class knight final : public piece
 {
 private:
 	static const int candidate_move_coordinates[];

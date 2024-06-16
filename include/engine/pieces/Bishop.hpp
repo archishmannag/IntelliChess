@@ -3,7 +3,7 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class bishop : public piece
+class bishop final : public piece
 {
 private:
 	const static int candidate_move_vector_coordinates[];

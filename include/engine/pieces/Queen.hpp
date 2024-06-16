@@ -3,7 +3,7 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class queen : public piece
+class queen final : public piece
 {
 private:
 	static const int candidate_move_vector_coordinates[];

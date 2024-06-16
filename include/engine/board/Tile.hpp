@@ -26,7 +26,7 @@ public:
 	virtual std::string stringify() const;
 };
 
-class empty_tile : public tile
+class empty_tile final : public tile
 {
 public:
 	empty_tile(int c);
@@ -35,7 +35,7 @@ public:
 	std::string stringify() const override;
 };
 
-class occupied_tile : public tile
+class occupied_tile final : public tile
 {
 private:
 	std::shared_ptr<piece> piece_on_tile_;

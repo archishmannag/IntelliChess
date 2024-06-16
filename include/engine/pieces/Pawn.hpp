@@ -3,7 +3,7 @@
 
 #include <engine/pieces/Piece.hpp>
 
-class pawn : public piece
+class pawn final : public piece
 {
 private:
 	static const int candidate_move_coordinates[];
