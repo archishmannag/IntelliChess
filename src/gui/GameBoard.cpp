@@ -1,8 +1,9 @@
+#include <gui/GameBoard.hpp>
 #include <gui/Menu.hpp>
 #include <gui/TakenPieces.hpp>
 #include <gui/GameHistory.hpp>
 #include <gui/GameSetup.hpp>
-#include <gui/GameBoard.hpp>
+#include <gui/Dialogs.hpp>
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
 #include <engine/board/Tile.hpp>
@@ -14,6 +15,8 @@
 #include <engine/player/ai/MoveStrategy.hpp>
 #include <engine/player/ai/AlphaBeta.hpp>
 #include <engine/player/ai/StandardBoardEvaluator.hpp>
+#include <pgn/FenUtils.hpp>
+#include <pgn/PgnUtils.hpp>
 
 /* tile_block */
 
@@ -154,9 +157,65 @@ void game_board::init()
 	callback_functions_t call_backs;
 	/* All the callback fnctions for the menu bar */
 	{
-		call_backs.load_FEN = []() {};
-		call_backs.load_PGN = []() {};
-		call_backs.save_game = []() {};
+		call_backs.load_FEN = [this]()
+		{
+			input_dialog_ = std::make_unique<input_dialog>(
+				"FEN",
+				"Enter FEN:",
+				sf::Vector2f(window_->getSize().x / 2, window_->getSize().y / 2) - sf::Vector2f(200, 75),
+				[this](std::string fen)
+				{
+					std::shared_ptr<board> temp_board = board_;
+					undo_all_moves();
+					try
+					{
+						board_ = fen_utils::fen_to_board(fen);
+					}
+					catch (const std::runtime_error &e)
+					{
+						board_ = temp_board;
+						message_dialog_ = std::make_unique<message_dialog>(
+							"Error",
+							e.what(),
+							sf::Vector2f(window_->getSize().x / 2, window_->getSize().y / 2) - sf::Vector2f(200, 75));
+						message_dialog_->set_active(true);
+					}
+				});
+			input_dialog_->set_active(true);
+		};
+		call_backs.create_FEN = [this]()
+		{
+			std::string fen = fen_utils::board_to_fen(*board_);
+			message_dialog_ = std::make_unique<message_dialog>(
+				"FEN",
+				fen,
+				sf::Vector2f(window_->getSize().x / 2, window_->getSize().y / 2) - sf::Vector2f(200, 75));
+			message_dialog_->set_active(true);
+		};
+		call_backs.save_game = [this]()
+		{
+			input_dialog_ = std::make_unique<input_dialog>(
+				"Save Game",
+				"Enter File to save PGN to:",
+				sf::Vector2f(window_->getSize().x / 2, window_->getSize().y / 2) - sf::Vector2f(200, 75),
+				[this](std::string pgn_file)
+				{
+					try
+					{
+						pgn_utils::save_game_to_pgn(pgn_file, move_log_.get_moves(), *board_);
+					}
+					catch (const std::runtime_error &e)
+					{
+						message_dialog_ = std::make_unique<message_dialog>(
+							"Error",
+							e.what(),
+							sf::Vector2f(window_->getSize().x / 2, window_->getSize().y / 2) - sf::Vector2f(200, 75));
+						message_dialog_->set_active(true);
+					}
+				});
+			input_dialog_->set_input_text(std::filesystem::current_path().string() + "/game.pgn");
+			input_dialog_->set_active(true);
+		};
 		call_backs.exit = [this]()
 		{ window_->close(); };
 		call_backs.new_game = [this]()
@@ -175,7 +234,7 @@ void game_board::init()
 			print_vector_pieces(board_->get_black_pieces());
 		};
 		call_backs.setup_game = [this]()
-		{ is_game_setup_open_ = true; };
+		{ game_setup_->set_active(true); };
 	}
 
 	menu_bar_ = std::make_unique<menu_bar>(*window_, call_backs);
@@ -185,9 +244,7 @@ void game_board::init()
 	game_history_block_ = std::make_unique<game_history_block>();
 
 	game_setup_ = std::make_unique<game_setup>([this]() -> void
-											   {
-												is_game_setup_open_ = false;
-												observe(); });
+											   { observe(); });
 
 	ai = std::make_unique<ai_move_generator>(this);
 
@@ -286,8 +343,15 @@ void game_board::process_events()
 		}
 		case sf::Event::MouseButtonPressed:
 			menu_bar_->update_menu_bar(event_, mouse_position_);
-			if (is_game_setup_open_)
-				game_setup_->update(event_, mouse_position_);
+			if (game_setup_->get_active() || (message_dialog_ && message_dialog_->is_active()) || (input_dialog_ && input_dialog_->is_active()))
+			{
+				if (game_setup_->get_active())
+					game_setup_->update(event_, mouse_position_);
+				if ((message_dialog_ && message_dialog_->is_active()))
+					message_dialog_->event_handler(event_);
+				if ((input_dialog_ && input_dialog_->is_active()))
+					input_dialog_->event_handler(event_);
+			}
 			else
 				move_handler();
 			game_history_block_->scroll_bar_scrolled(event_.mouseButton, true);
@@ -304,8 +368,16 @@ void game_board::process_events()
 			game_history_block_->scroll(*window_);
 			break;
 		case sf::Event::TextEntered:
-			if (is_game_setup_open_)
+			if (game_setup_->get_active())
 				game_setup_->update(event_, mouse_position_);
+			if (input_dialog_ && input_dialog_->is_active())
+				input_dialog_->event_handler(event_);
+			break;
+		case sf::Event::KeyPressed:
+			if (game_setup_->get_active())
+				game_setup_->update(event_, mouse_position_);
+			if (input_dialog_ && input_dialog_->is_active())
+				input_dialog_->event_handler(event_);
 			break;
 		default:
 			break;
@@ -459,11 +531,29 @@ void game_board::observe()
 	is_move_made_ = false;
 	if (board_->get_current_player()->is_is_checkmate())
 	{
-		std::cout << "Checkmate!" << std::endl;
+		message_dialog_ = std::make_unique<message_dialog>(
+			"Checkmate",
+			board_->get_current_player()->get_opponent().lock()->stringify() + " won by checkmate!",
+			sf::Vector2f(window_->getSize().x / 2, window_->getSize().y / 2) - sf::Vector2f(200, 75),
+			[this]() -> void
+			{
+				undo_all_moves();
+				message_dialog_.reset();
+			});
+		message_dialog_->set_active(true);
 	}
 	else if (board_->get_current_player()->is_in_stalemate())
 	{
-		std::cout << "Stalemate!" << std::endl;
+		message_dialog_ = std::make_unique<message_dialog>(
+			"Stalemate",
+			"Stalemate!",
+			sf::Vector2f(window_->getSize().x / 2, window_->getSize().y / 2) - sf::Vector2f(200, 75),
+			[this]() -> void
+			{
+				undo_all_moves();
+				message_dialog_.reset();
+			});
+		message_dialog_->set_active(true);
 	}
 	else if (game_setup_->is_AI_player(board_->get_current_player().get()) &&
 			 !board_->get_current_player()->is_is_checkmate() &&
@@ -641,14 +731,6 @@ void game_board::render_tile_blocks()
 	}
 }
 
-namespace
-{
-	int queen_offset = 0;
-	int knight_offset = 8;
-	int rook_offset = 16;
-	int bishop_offset = 24;
-}
-
 void game_board::render_pawn_promotion_option_pane()
 {
 	if (pawn_promotion_)
@@ -704,7 +786,15 @@ void game_board::render()
 	// Draw the menu bar
 	menu_bar_->draw(*window_);
 
-	if (is_game_setup_open_)
+	// Draw the message dialog
+	if ((message_dialog_ && message_dialog_->is_active()))
+		message_dialog_->draw(*window_);
+
+	// Draw the input dialog
+	if ((input_dialog_ && input_dialog_->is_active()))
+		input_dialog_->draw(*window_);
+
+	if (game_setup_->get_active())
 		game_setup_->draw(*window_);
 
 	window_->display();

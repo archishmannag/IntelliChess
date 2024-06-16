@@ -9,10 +9,14 @@
 
 namespace
 {
-	int window_width = 960;
-	int window_height = 700;
-	int tile_width = 70;
-	int tile_height = 70;
+	int window_width = 960,
+		window_height = 700,
+		tile_width = 70,
+		tile_height = 70,
+		queen_offset = 0,
+		knight_offset = 8,
+		rook_offset = 16,
+		bishop_offset = 24;
 }
 
 class board;
@@ -22,6 +26,8 @@ class menu_bar;
 class taken_pieces_block;
 class game_history_block;
 class game_setup;
+class message_dialog;
+class input_dialog;
 class move;
 enum class player_type;
 
@@ -96,11 +102,15 @@ private:
 
 	// Game setup
 	std::unique_ptr<game_setup> game_setup_;
-	bool is_game_setup_open_ = false;
 	bool is_move_made_ = false;
+
+	// Dialogs
+	std::unique_ptr<message_dialog> message_dialog_;
+	std::unique_ptr<input_dialog> input_dialog_;
 
 	// Move log
 	move_log move_log_;
+
 	std::shared_ptr<board> board_;
 	std::shared_ptr<tile> source_tile_ = nullptr, destination_tile_ = nullptr;
 	std::shared_ptr<piece> moved_piece_ = nullptr;
