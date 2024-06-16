@@ -18,7 +18,10 @@ std::shared_ptr<move> mini_max::execute(std::shared_ptr<board> b)
 		lowest_seen_value = std::numeric_limits<int>::max(),
 		current_value;
 
+#ifdef DEBUG_BUILD
 	std::cout << b->get_current_player()->stringify() << " THINKING with depth = " << search_depth_ << std::endl;
+#endif // DEBUG_BUILD
+
 	std::vector<std::shared_ptr<move>> moves = b->get_current_player()->get_legal_moves();
 	for (auto move : moves)
 	{

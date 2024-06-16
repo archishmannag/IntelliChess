@@ -48,7 +48,9 @@ std::shared_ptr<move> alpha_beta::execute(std::shared_ptr<board> b)
 		current_value;
 	std::string s;
 
+#ifdef DEBUG_BUILD
 	std::cout << current_player->stringify() << " THINKING with depth = " << search_depth_ << std::endl;
+#endif // DEBUG_BUILD
 
 	for (std::shared_ptr<move> m : move_sorter::sort(b->get_current_player()->get_legal_moves()))
 	{
@@ -78,12 +80,16 @@ std::shared_ptr<move> alpha_beta::execute(std::shared_ptr<board> b)
 		}
 		else
 			s = "\tAlphaBeta(d:" + std::to_string(search_depth_) + ") -> m: (" + std::to_string(move_counter) + '/' + std::to_string(number_of_moves) + ") " + m->stringify() + " is illegal! Best: " + best_move->stringify();
+#ifdef DEBUG_BUILD
 		std::cout << s << std::endl;
+#endif // DEBUG_BUILD
 		move_counter++;
 	}
 	auto execution_time = (std::chrono::high_resolution_clock::now() - start_time).count() / 1000000; // Convert nanoseconds to milliseconds
 	std::string result = b->get_current_player()->stringify() + " selects " + best_move->stringify() + ", # boards evaluated = " + std::to_string(boards_evaluated_) + ", time taken = " + std::to_string(execution_time) + "ms, rate = " + std::to_string(1000 * boards_evaluated_ / execution_time) + " boards/s";
+#ifdef DEBUG_BUILD
 	std::cout << result << std::endl;
+#endif // DEBUG_BUILD
 	return best_move;
 }
 

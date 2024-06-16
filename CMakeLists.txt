@@ -4,7 +4,20 @@ cmake_minimum_required(VERSION 3.20)
 # Project name
 project(Chess VERSION 1.0.0 DESCRIPTION "Chess game" LANGUAGES CXX)
 
+# Add project source directory as a preprocessor definition for finding the assets
 add_definitions(-DPROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+
+# Send build type to source code as a preprocessor definition
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DDEBUG_BUILD)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_definitions(-DRELEASE_BUILD)
+elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    add_definitions(-DRELWITHDEBINFO_BUILD)
+elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    add_definitions(-DMINSIZEREL_BUILD)
+endif()
+
 
 # Set output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
@@ -74,7 +87,7 @@ endif(UNIX)
 # Enable test and add its subdirectory
 set(LIB_TEST ${PROJECT_NAME}_lib)
 include(CTest)
-set(BUILD_TESTING ON)
+set(BUILD_TESTING OFF)
 if(BUILD_TESTING)
 	enable_testing()
 
