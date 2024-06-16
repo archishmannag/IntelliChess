@@ -7,7 +7,7 @@
 
 typedef struct callback_functions
 {
-	std::function<void()> load_FEN, load_PGN, save_game, exit,
+	std::function<void()> load_FEN, create_FEN, save_game, exit,
 		new_game, undo_move, evaluate_board, current_state, setup_game;
 } callback_functions_t;
 
@@ -23,7 +23,7 @@ private:
 	// File menu text and rectangle
 	bool file_menu_open_ = false;
 	sf::RectangleShape file_menu_rect_;
-	sf::Text load_FEN_text_, load_PGN_text_, save_game_text_, exit_text_;
+	sf::Text load_FEN_text_, create_FEN_text_, save_game_text_, exit_text_;
 
 	// Option menu text and rectangle
 	bool option_menu_open_ = false;

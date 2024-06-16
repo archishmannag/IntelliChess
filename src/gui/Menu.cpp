@@ -28,11 +28,11 @@ menu_bar::menu_bar(sf::RenderWindow &window, callback_functions_t callback_funct
 		load_FEN_text_.setFillColor(sf::Color::Black);
 		load_FEN_text_.setPosition(5, 26);
 
-		load_PGN_text_.setFont(font_);
-		load_PGN_text_.setString("Load PGN");
-		load_PGN_text_.setCharacterSize(18);
-		load_PGN_text_.setFillColor(sf::Color::Black);
-		load_PGN_text_.setPosition(5, 51);
+		create_FEN_text_.setFont(font_);
+		create_FEN_text_.setString("Create FEN");
+		create_FEN_text_.setCharacterSize(18);
+		create_FEN_text_.setFillColor(sf::Color::Black);
+		create_FEN_text_.setPosition(5, 51);
 
 		save_game_text_.setFont(font_);
 		save_game_text_.setString("Save Game");
@@ -100,8 +100,8 @@ void menu_bar::update_menu_bar(sf::Event event, sf::Vector2i mouse_position)
 			file_menu_open_ = false;
 			if (load_FEN_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
 				callback_functions_.load_FEN();
-			else if (load_PGN_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
-				callback_functions_.load_PGN();
+			else if (create_FEN_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
+				callback_functions_.create_FEN();
 			else if (save_game_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
 				callback_functions_.save_game();
 			else if (exit_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
@@ -154,7 +154,7 @@ void menu_bar::draw(sf::RenderWindow &window)
 	{
 		window.draw(file_menu_rect_);
 		window.draw(load_FEN_text_);
-		window.draw(load_PGN_text_);
+		window.draw(create_FEN_text_);
 		window.draw(save_game_text_);
 		window.draw(exit_text_);
 	}
