@@ -116,6 +116,7 @@ void game_history_block::redo(board *board, move_log &ml)
 	{
 		history_rows_.clear();
 		view.setCenter(860, 355);
+		divider_rect_.setSize(sf::Vector2f(2, 0));
 		return;
 	}
 	std::list<std::string> past_checks;
