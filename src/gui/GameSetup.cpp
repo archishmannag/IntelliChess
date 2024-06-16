@@ -22,7 +22,7 @@ game_setup::game_setup(std::function<void()> notify_parent) : notify_parent_(not
 
 	game_setup_rect_.setSize(sf::Vector2f(180, 300));
 	game_setup_rect_.setFillColor(sf::Color(200, 200, 200));
-	game_setup_rect_.setPosition(740, 120);
+	game_setup_rect_.setPosition(740, 100);
 
 	white_text_.setFont(font_);
 	white_text_.setString("White");
@@ -90,17 +90,17 @@ game_setup::game_setup(std::function<void()> notify_parent) : notify_parent_(not
 	black_computer_text_.setFillColor(sf::Color::Black);
 	black_computer_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(30, 155));
 
-	depth_field_rect_.setSize(sf::Vector2f(150, 20));
+	depth_field_rect_.setSize(sf::Vector2f(150, 25));
 	depth_field_rect_.setFillColor(sf::Color::White);
 	depth_field_rect_.setOutlineColor(sf::Color::Black);
 	depth_field_rect_.setOutlineThickness(1.f);
 	depth_field_rect_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 215));
 
-	depth_entered_text_.setFont(font_);
-	depth_entered_text_.setString("6");
-	depth_entered_text_.setCharacterSize(18);
-	depth_entered_text_.setFillColor(sf::Color::Black);
-	depth_entered_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 215));
+	depth_input_text_.setFont(font_);
+	depth_input_text_.setString("6_");
+	depth_input_text_.setCharacterSize(18);
+	depth_input_text_.setFillColor(sf::Color::Black);
+	depth_input_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(9, 215));
 
 	depth_increment_.setPrimitiveType(sf::Triangles);
 	depth_increment_.append(sf::Vertex(game_setup_rect_.getPosition() + sf::Vector2f(157.5f, 224), sf::Color(255, 255, 255, 255)));
@@ -127,6 +127,13 @@ game_setup::game_setup(std::function<void()> notify_parent) : notify_parent_(not
 
 void game_setup::update(sf::Event event, sf::Vector2i mouse_position)
 {
+	std::string input_string, input_string_left, input_string_right;
+
+	input_string_left = depth_input_text_.getString().substring(0, cursor_position_);
+	if (cursor_position_ < static_cast<int>(depth_input_text_.getString().getSize()) - 1)
+		input_string_right = depth_input_text_.getString().substring(cursor_position_ + 1);
+	input_string = input_string_left + input_string_right;
+
 	if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left)
 	{
 		if (white_human_.getGlobalBounds().contains(mouse_position.x, mouse_position.y) || white_human_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
@@ -155,48 +162,83 @@ void game_setup::update(sf::Event event, sf::Vector2i mouse_position)
 		}
 		else if (depth_increment_.getBounds().contains(mouse_position.x, mouse_position.y))
 		{
-			int val = std::stoi(depth_entered_text_.getString().toAnsiString());
-			depth_entered_text_.setString(std::to_string(val < INT32_MAX ? val + 1 : val));
+			int val = std::stoi(input_string);
+			input_string = std::to_string(val < INT32_MAX ? val + 1 : val);
+			cursor_position_ = static_cast<int>(input_string.size());
+			input_string.insert(cursor_position_, "_");
+			depth_input_text_.setString(input_string);
 		}
 		else if (depth_decrement_.getBounds().contains(mouse_position.x, mouse_position.y))
 		{
-			int val = std::stoi(depth_entered_text_.getString().toAnsiString());
-			depth_entered_text_.setString(std::to_string(val > 0 ? val - 1 : val));
+			int val = std::stoi(input_string);
+			input_string = std::to_string(val > 1 ? val - 1 : val);
+			cursor_position_ = static_cast<int>(input_string.size());
+			input_string.insert(cursor_position_, "_");
+			depth_input_text_.setString(input_string);
 		}
 		else if (setup_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
 		{
 			white_player_ = is_white_player_AI_ ? player_type::computer : player_type::human;
 			black_player_ = is_black_player_AI_ ? player_type::computer : player_type::human;
-			depth_ = std::stoi(depth_entered_text_.getString().toAnsiString());
+			depth_ = std::stoi(depth_input_text_.getString().toAnsiString().erase(cursor_position_, 1));
+			if (!depth_)
+				depth_ = 1;
+			set_active(false);
 			notify_parent_();
 		}
 		else if (cancel_text_.getGlobalBounds().contains(mouse_position.x, mouse_position.y))
 		{
-			white_player_ = player_type::human;
-			black_player_ = player_type::human;
-			depth_ = 6;
-			notify_parent_();
+			set_active(false);
 		}
 	}
 	else if (event.type == sf::Event::TextEntered)
 	{
 		if (event.text.unicode >= '0' && event.text.unicode <= '9')
 		{
-			std::string str = depth_entered_text_.getString().toAnsiString();
-			if (std::stol(str + static_cast<char>(event.text.unicode)) <= INT32_MAX)
-				depth_entered_text_.setString(str + static_cast<char>(event.text.unicode));
+			if (std::stol(input_string + static_cast<char>(event.text.unicode)) <= INT32_MAX)
+			{
+				input_string_left += static_cast<char>(event.text.unicode);
+				cursor_position_++;
+			}
 		}
 		else if (event.text.unicode == '\b')
 		{
-			std::string str = depth_entered_text_.getString().toAnsiString();
-			if (str.size() > 0)
-				depth_entered_text_.setString(str.substr(0, str.size() - 1));
+			if (input_string_left.size() > 0)
+			{
+				input_string_left.erase(input_string_left.size() - 1);
+				cursor_position_--;
+			}
 		}
+		else if (event.text.unicode == '\127' /* DEL */)
+		{
+			if (input_string_right.size() > 0)
+				input_string_right.erase(0, 1);
+		}
+		input_string = input_string_left + input_string_right;
+		input_string.insert(cursor_position_, "_");
+		depth_input_text_.setString(input_string);
+	}
+	else if (event.type == sf::Event::KeyPressed)
+	{
+		if (event.key.code == sf::Keyboard::Left)
+		{
+			if (cursor_position_ > 0)
+				cursor_position_--;
+		}
+		else if (event.key.code == sf::Keyboard::Right)
+		{
+			if (cursor_position_ < static_cast<int>(depth_input_text_.getString().getSize()) - 1)
+				cursor_position_++;
+		}
+		input_string = input_string_left + input_string_right;
+		input_string.insert(cursor_position_, "_");
+		depth_input_text_.setString(input_string);
 	}
 }
 
 void game_setup::draw(sf::RenderWindow &window)
 {
+	update_locations(window.getSize());
 	window.draw(game_setup_rect_);
 	window.draw(white_text_);
 	window.draw(black_text_);
@@ -210,12 +252,50 @@ void game_setup::draw(sf::RenderWindow &window)
 	window.draw(black_human_text_);
 	window.draw(black_computer_text_);
 	window.draw(depth_field_rect_);
-	window.draw(depth_entered_text_);
+	window.draw(depth_input_text_);
 	window.draw(depth_increment_);
 	window.draw(depth_decrement_);
 
 	window.draw(setup_text_);
 	window.draw(cancel_text_);
+}
+
+void game_setup::update_locations(sf::Vector2u window_size)
+{
+	game_setup_rect_.setPosition(window_size.x - 220, 100);
+	white_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 5));
+	black_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 95));
+	depth_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 185));
+	white_human_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 35));
+	white_computer_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 65));
+	black_human_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 125));
+	black_computer_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 155));
+	white_human_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(30, 35));
+	white_computer_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(30, 65));
+	black_human_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(30, 125));
+	black_computer_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(30, 155));
+	depth_field_rect_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(5, 215));
+	depth_input_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(9, 215));
+	setup_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(15, 270));
+	cancel_text_.setPosition(game_setup_rect_.getPosition() + sf::Vector2f(90, 270));
+	depth_decrement_.clear();
+	depth_decrement_.append(sf::Vertex(game_setup_rect_.getPosition() + sf::Vector2f(157.5f, 226), sf::Color(255, 255, 255, 255)));
+	depth_decrement_.append(sf::Vertex(game_setup_rect_.getPosition() + sf::Vector2f(177.5f, 226), sf::Color(255, 255, 255, 255)));
+	depth_decrement_.append(sf::Vertex(game_setup_rect_.getPosition() + sf::Vector2f(167.5f, 235), sf::Color(255, 255, 255, 255)));
+	depth_increment_.clear();
+	depth_increment_.append(sf::Vertex(game_setup_rect_.getPosition() + sf::Vector2f(157.5f, 224), sf::Color(255, 255, 255, 255)));
+	depth_increment_.append(sf::Vertex(game_setup_rect_.getPosition() + sf::Vector2f(177.5f, 224), sf::Color(255, 255, 255, 255)));
+	depth_increment_.append(sf::Vertex(game_setup_rect_.getPosition() + sf::Vector2f(167.5f, 215), sf::Color(255, 255, 255, 255)));
+}
+
+void game_setup::set_active(bool active)
+{
+	is_game_setup_active_ = active;
+}
+
+bool game_setup::get_active() const
+{
+	return is_game_setup_active_;
 }
 
 bool game_setup::is_AI_player(player *p) const
