@@ -1,5 +1,5 @@
 #include <gui/TakenPieces.hpp>
-#include <gui/GameBoard.hpp>
+#include <gui/GuiUtils.hpp>
 #include <engine/board/Move.hpp>
 #include <engine/pieces/Piece.hpp>
 #include <engine/Alliance.hpp>

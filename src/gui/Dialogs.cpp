@@ -1,5 +1,5 @@
 #include <gui/Dialogs.hpp>
-#include <gui/GameBoard.hpp>
+#include <gui/GuiUtils.hpp>
 
 dialog::dialog(std::string heading_text, std::string dialog_text, sf::Vector2f position)
 {

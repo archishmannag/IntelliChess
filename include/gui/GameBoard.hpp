@@ -3,21 +3,11 @@
 
 #include <PreCompiledHeaders.hpp>
 
+#include <gui/GuiUtils.hpp>
+
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
-
-namespace
-{
-	int window_width = 960,
-		window_height = 700,
-		tile_width = 70,
-		tile_height = 70,
-		queen_offset = 0,
-		knight_offset = 8,
-		rook_offset = 16,
-		bishop_offset = 24;
-}
 
 class board;
 class tile;
@@ -44,20 +34,6 @@ public:
 	void get_tile_rect_scale(float x, float y);
 	void set_tile_rect_position(float x, float y);
 	void set_tile_rect_fill_color(sf::Color color);
-};
-
-class move_log
-{
-private:
-	std::vector<std::shared_ptr<move>> moves;
-
-public:
-	std::vector<std::shared_ptr<move>> get_moves() const;
-	int get_moves_count() const;
-	void add_move(std::shared_ptr<move> m);
-	std::shared_ptr<move> remove_move(int index);
-	void remove_move(std::shared_ptr<move> m);
-	void clear_moves();
 };
 
 class game_board

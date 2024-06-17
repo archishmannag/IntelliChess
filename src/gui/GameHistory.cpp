@@ -1,5 +1,5 @@
 #include <gui/GameHistory.hpp>
-#include <gui/GameBoard.hpp>
+#include <gui/GuiUtils.hpp>
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
 #include <engine/board/Move.hpp>
