@@ -38,7 +38,7 @@ void move_log::clear_moves()
 
 hourglass::hourglass()
 {
-	texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/hourglass.png");
+	texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/images/hourglass.png");
 	sprite_.setTexture(texture_);
 	sprite_.setTextureRect(rect_);
 	sprite_.setPosition(window_width - 230, 45);

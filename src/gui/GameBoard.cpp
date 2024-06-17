@@ -108,6 +108,9 @@ void game_board::init()
 
 	window_ = std::make_unique<sf::RenderWindow>(sf::VideoMode(window_width, window_height), "Chess");
 	window_->setFramerateLimit(60);
+	sf::Image icon;
+	icon.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/images/icon.png");
+	window_->setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 	current_main_view_ = window_->getDefaultView();
 
 	back_ground_.setSize(sf::Vector2f(window_width, window_height));
@@ -524,10 +527,7 @@ void game_board::observe()
 	else if (game_setup_->is_AI_player(board_->get_current_player().get()) &&
 			 !board_->get_current_player()->is_is_checkmate() &&
 			 !board_->get_current_player()->is_in_stalemate())
-	{
-		std::cout << board_->get_current_player()->stringify() << " is thinking..." << std::endl;
 		ai->run();
-	}
 }
 
 bool is_pawn_promotable(game_board &gb)
