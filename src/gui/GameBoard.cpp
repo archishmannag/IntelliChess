@@ -603,6 +603,8 @@ void game_board::update()
 	process_events();
 	update_mouse_position();
 	update_tile_blocks();
+	if (hourglass_.is_active())
+		hourglass_.update();
 	if (is_move_made_)
 		observe();
 }
@@ -752,6 +754,10 @@ void game_board::render()
 	// Draw the menu bar
 	menu_bar_->draw(*window_);
 
+	// Draw hourglass
+	if (hourglass_.is_active())
+		hourglass_.draw(*window_);
+
 	// Draw the message dialog
 	if ((message_dialog_ && message_dialog_->is_active()))
 		message_dialog_->draw(*window_);
@@ -795,6 +801,7 @@ void game_board::ai_move_generator::run()
 	std::future<std::shared_ptr<move>> future = std::async(std::launch::async, [this]
 														   { return get_best_move(); });
 	std::future_status move_calculation_status;
+	parent_->hourglass_.set_active(true);
 	do
 	{
 		move_calculation_status = future.wait_for(std::chrono::milliseconds(15));
@@ -815,6 +822,7 @@ void game_board::ai_move_generator::run()
 		future.get();
 		return;
 	}
+	parent_->hourglass_.set_active(false);
 	std::shared_ptr<move> best_move = future.get();
 	done(best_move);
 }

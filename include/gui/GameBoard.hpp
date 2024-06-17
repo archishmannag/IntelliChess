@@ -95,6 +95,9 @@ private:
 	sf::RectangleShape pawn_promotion_rect_;
 	bool pawn_promotion_ = false;
 
+	// Hourglass
+	hourglass hourglass_;
+
 	friend bool is_pawn_promotable(game_board &gb);
 
 	void init();
