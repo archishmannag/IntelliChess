@@ -9,15 +9,14 @@ add_definitions(-DPROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 
 # Send build type to source code as a preprocessor definition
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DDEBUG_BUILD)
+	add_definitions(-DDEBUG_BUILD)
 elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    add_definitions(-DRELEASE_BUILD)
+	add_definitions(-DRELEASE_BUILD)
 elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    add_definitions(-DRELWITHDEBINFO_BUILD)
+	add_definitions(-DRELWITHDEBINFO_BUILD)
 elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-    add_definitions(-DMINSIZEREL_BUILD)
+	add_definitions(-DMINSIZEREL_BUILD)
 endif()
-
 
 # Set output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
@@ -33,7 +32,6 @@ elseif(WIN32 AND MINGW)
 elseif(WIN32 AND MSVC)
 	set(SFML_DIR ${CMAKE_SOURCE_DIR}/lib/SFML-Windows-MSVC/lib/cmake/SFML)
 endif(UNIX)
-
 
 # Find SFML
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
@@ -62,15 +60,15 @@ target_include_directories(${PROJECT_NAME} PRIVATE include PRIVATE ${SFML_DIR}/.
 target_precompile_headers(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include/PreCompiledHeaders.hpp)
 
 # Add compile options with Compiler-specific flags
-if (UNIX OR (WIN32 AND MINGW))
-    # Use GCC or Clang specific flags
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -std=c++17)
-elseif (WIN32 AND MSVC)
-    # Use MSVC specific flags
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /EHsc /std:c++17)
-endif(UNIX OR (WIN32 AND MINGW))
-#target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -std=c++17)
+if(UNIX OR(WIN32 AND MINGW))
+	# Use GCC or Clang specific flags
+	target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -std=c++17)
+elseif(WIN32 AND MSVC)
+	# Use MSVC specific flags
+	target_compile_options(${PROJECT_NAME} PRIVATE /W4 /EHsc /std:c++17)
+endif(UNIX OR(WIN32 AND MINGW))
 
+# target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -std=c++17)
 if(WIN32)
 	# Find SFML DLLs
 	file(GLOB SFML_DLLS ${SFML_DIR}/../../../bin/*.dll)
@@ -87,20 +85,24 @@ endif(UNIX)
 # Enable test and add its subdirectory
 set(LIB_TEST ${PROJECT_NAME}_lib)
 include(CTest)
-set(BUILD_TESTING OFF)
+set(BUILD_TESTING ON)
+
 if(BUILD_TESTING)
 	enable_testing()
 
 	# Update googletest submodule before building tests
 	find_package(Git QUIET)
+
 	if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 		option(GIT_SUBMODULE "Check submodules during build" ON)
-		if (GIT_SUBMODULE)
+
+		if(GIT_SUBMODULE)
 			message(STATUS "Updating git submodules")
 			execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-			WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-			RESULT_VARIABLE GIT_SUBMOD_RESULT)
-			if (NOT GIT_SUBMOD_RESULT EQUAL "0")
+				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+				RESULT_VARIABLE GIT_SUBMOD_RESULT)
+
+			if(NOT GIT_SUBMOD_RESULT EQUAL "0")
 				message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
 			endif(NOT GIT_SUBMOD_RESULT EQUAL "0")
 		endif(GIT_SUBMODULE)
