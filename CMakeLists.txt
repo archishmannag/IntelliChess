@@ -77,6 +77,25 @@ if(WIN32)
 	file(COPY ${SFML_DLLS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif(WIN32)
 
+# Add icon for windows executable using resource file
+if(WIN32)
+	# Icon path
+	set(ICON_PATH ${CMAKE_SOURCE_DIR}/resources/images/icon.ico)
+
+	# Get resource file template and generated resource file
+	set(RESOURCE_TEMPLATE ${CMAKE_SOURCE_DIR}/resources/icon.rc.in)
+	set(GENERATED_RESOURCE ${CMAKE_BINARY_DIR}/icon.rc)
+	configure_file(${RESOURCE_TEMPLATE} ${GENERATED_RESOURCE} @ONLY)
+
+	# Add resource file to the executable
+	target_sources(${PROJECT_NAME} PRIVATE ${GENERATED_RESOURCE})
+
+	# Set resource compiler
+	enable_language(RC)
+	set(CMAKE_RC_COMPILER_INIT windres)
+	set(CMAKE_RC_COMPILER windres)
+endif(WIN32)
+
 # Add install target
 if(UNIX)
 	install(TARGETS ${PROJECT_NAME} DESTINATION bin)
