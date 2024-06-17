@@ -85,7 +85,7 @@ endif(UNIX)
 # Enable test and add its subdirectory
 set(LIB_TEST ${PROJECT_NAME}_lib)
 include(CTest)
-set(BUILD_TESTING ON)
+set(BUILD_TESTING ON) # <--- Set to OFF to disable testing
 
 if(BUILD_TESTING)
 	enable_testing()
@@ -108,10 +108,28 @@ if(BUILD_TESTING)
 		endif(GIT_SUBMODULE)
 	endif(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 
+	# Add googletest library
 	add_subdirectory(lib/googletest)
+
+	# Add test target
 	add_library(${LIB_TEST} STATIC ${SOURCES})
+
+	# Set C++ standard
+	set_target_properties(${LIB_TEST} PROPERTIES
+		CXX_STANDARD 17
+		CXX_STANDARD_REQUIRED YES
+		CXX_EXTENSIONS NO
+	)
+
+	# Add include directories
 	target_include_directories(${LIB_TEST} PRIVATE include PRIVATE ${SFML_DIR}/../../../include)
+
+	# Link SFML and pthread
 	target_link_libraries(${LIB_TEST} PRIVATE Threads::Threads PRIVATE sfml-graphics sfml-window sfml-system)
+
+	# Add precompiled header
 	target_precompile_headers(${LIB_TEST} REUSE_FROM ${PROJECT_NAME})
+
+	# Include the tests from its subdirectory
 	add_subdirectory(test)
 endif(BUILD_TESTING)

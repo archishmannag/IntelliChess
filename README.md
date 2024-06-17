@@ -32,13 +32,25 @@ git clone https://github.com/archishmannag/IntelliChess.git
 cd IntelliChess
 ```
 
-2. Create a directory named `build` and enter it.
-3. Run CMake.
-4. Run make.
+2. Turn off the tests (they are enabled by default).
+
+> Open CMakeLists.txt in project root and set the `BUILD_TESTING` variable to OFF
+
+3. Create a directory named `build` and enter it.
 
 ```
 mkdir build && cd build
+```
+
+4. Run CMake.
+
+```
 cmake -DCMAKE_BUILD_TYPE=Release ..
+```
+
+5. Run make.
+
+```
 make
 ```
 
@@ -54,7 +66,8 @@ Visual Studio can run CMake projects without a solution(sln) file. Clone the rep
 <summary>MinGW</summary>
 For MinGW build to work, first install the required version and add its /bin directory to the PATH variable.
 
-PowerShell:-
+<br>
+PowerShell command:-
 
 ```
 Set-EnvironmentVariable -Name "PATH" -Value "path_to_MinGW_bin_folder;$env:PATH" -Scope Machine
@@ -63,15 +76,31 @@ Set-EnvironmentVariable -Name "PATH" -Value "path_to_MinGW_bin_folder;$env:PATH"
 After the path has been set, the process is straight-forward:-
 
 1. Clone the repository
-2. Create a `build` directory
-3. Run CMake
-4. Run Make
 
 ```
 git clone https://github.com/archishmannag/IntelliChess.git
 cd IntelliChess
+```
+
+2. Turn off the tests (they are enabled by default).
+
+> Open CMakeLists.txt in project root and set the `BUILD_TESTING` variable to OFF
+
+3. Create a `build` directory
+
+```
 md build && cd build
+```
+
+4. Run CMake
+
+```
 cmake -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" ..
+```
+
+5. Run Make
+
+```
 mingw32-make
 ```
 
@@ -83,6 +112,15 @@ The binary will be in the `bin` directory at the project root.
 ## Usage
 
 Currently the application is coupled with the GUI, but I plan to add CLI support soon. So running the executable will automatically launch the GUI.
+
+## Roadmap
+
+-   [ ] Add CLI support
+-   [ ] Add different game modes (blitz, bullet, etc.)
+-   [ ] Add clock
+-   [ ] Enhance the GUI
+-   [ ] Add support for different themes
+-   [ ] Improve the AI and move generation speed
 
 ## Contributing
 
