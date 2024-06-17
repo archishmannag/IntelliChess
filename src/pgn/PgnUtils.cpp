@@ -28,17 +28,20 @@ namespace
 
 	std::string calculate_result_string(const board &b)
 	{
+		std::string result = "[Result \"";
 		if (b.get_current_player()->is_is_checkmate())
 		{
 			if (b.get_current_player()->get_player_alliance() == alliance::white)
-				return "1-0";
+				result += "1-0";
 			else
-				return "0-1";
+				result += "0-1";
 		}
 		else if (b.get_current_player()->is_in_stalemate())
-			return "1/2-1/2";
+			result += "1/2-1/2";
 		else
-			return "*";
+			result += "*";
+		result += "\"]";
+		return result;
 	}
 } // namespace
 
@@ -50,7 +53,7 @@ void pgn_utils::save_game_to_pgn(const std::string &file_path, const std::vector
 		<< calculate_date_string() << '\n'
 		<< calculate_ply_string(moves.size()) << '\n'
 		<< calculate_result_string(b) << '\n'
-		<< "[FEN \"" << fen_utils::board_to_fen(b) << "\"]" << '\n';
+		<< "[FEN \"" << fen_utils::board_to_fen(b) << "\"]" << "\n\n";
 
 	for (std::size_t i = 0; i < moves.size(); i++)
 	{
