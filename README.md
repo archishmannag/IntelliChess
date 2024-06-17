@@ -107,7 +107,8 @@ mingw32-make
 </details>
 </details>
 
-The binary will be in the `bin` directory at the project root.
+The binary will be in the `bin` directory at the project root. <br>
+Windows users ensure to keep the provided DLLs in the same directory as the executable.
 
 ## Usage
 
