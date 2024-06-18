@@ -72,7 +72,7 @@ As MinGW builds require the MinGW 13.1.0 version, this PowerShell command is nec
 PowerShell command (Run in elevated prompt (as administrator)):-
 
 ```
-[System.Environment]::SetEnvironmentVariable("PATH","path_to_MinGW_bin_folder;$env:PATH","Machine")
+[System.Environment]::SetEnvironmentVariable("PATH","path_to_MinGW_bin_folder;;$env:PATH","Machine")
 ```
 <br>
 The following steps are required if you plan to build locally. If you have installed the binaries, you may simply run the executable directly.
