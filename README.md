@@ -64,16 +64,22 @@ Visual Studio can run CMake projects without a solution(sln) file. Clone the rep
 </details>
 <details>
 <summary>MinGW</summary>
-For MinGW build to work, first install the required version and add its /bin directory to the PATH variable.
+MinGW builds are provided in the Releases, so the binaries can be simply downloaded. You may build it yourself though.
+
+As MinGW builds require the MinGW 13.1.0 version, this PowerShell command is necessary whether you build it locally or download the binaries.
 
 <br>
-PowerShell command:-
+PowerShell command (Run in elevated prompt (as administrator)):-
 
 ```
-Set-EnvironmentVariable -Name "PATH" -Value "path_to_MinGW_bin_folder;$env:PATH" -Scope Machine
+[System.Environment]::SetEnvironmentVariable("PATH","path_to_MinGW_bin_folder;$env:PATH","Machine")
 ```
+<br>
+The following steps are required if you plan to build locally. If you have installed the binaries, you may simply run the executable directly.
 
-After the path has been set, the process is straight-forward:-
+<br>
+
+<details><summary>Steps</summary>
 
 1. Clone the repository
 
@@ -104,6 +110,7 @@ cmake -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles" ..
 mingw32-make
 ```
 
+</details>
 </details>
 </details>
 
