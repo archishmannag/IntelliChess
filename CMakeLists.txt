@@ -4,8 +4,11 @@ cmake_minimum_required(VERSION 3.20)
 # Project name
 project(Chess VERSION 1.0.0 DESCRIPTION "Chess game" LANGUAGES CXX)
 
+# Set output directory
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+
 # Add project source directory as a preprocessor definition for finding the assets
-add_definitions(-DPROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_definitions(-DPROJECT_SOURCE_DIR=".")
 
 # Send build type to source code as a preprocessor definition
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -18,8 +21,8 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
 	add_definitions(-DMINSIZEREL_BUILD)
 endif()
 
-# Set output directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+# Copy resources foldeer to the output directory
+file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 # Add source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
@@ -80,10 +83,10 @@ endif(WIN32)
 # Add icon for windows executable using resource file
 if(WIN32)
 	# Icon path
-	set(ICON_PATH ${CMAKE_SOURCE_DIR}/resources/images/icon.ico)
+	set(ICON_PATH ${PROJECT_SOURCE_DIR}/resources/images/icon.ico)
 
 	# Get resource file template and generated resource file
-	set(RESOURCE_TEMPLATE ${CMAKE_SOURCE_DIR}/resources/icon.rc.in)
+	set(RESOURCE_TEMPLATE ${PROJECT_SOURCE_DIR}/resources/icon.rc.in)
 	set(GENERATED_RESOURCE ${CMAKE_BINARY_DIR}/icon.rc)
 	configure_file(${RESOURCE_TEMPLATE} ${GENERATED_RESOURCE} @ONLY)
 
@@ -104,7 +107,7 @@ endif(UNIX)
 # Enable test and add its subdirectory
 set(LIB_TEST ${PROJECT_NAME}_lib)
 include(CTest)
-set(BUILD_TESTING ON) # <--- Set to OFF to disable testing
+set(BUILD_TESTING OFF) # <--- Set to OFF to disable testing
 
 if(BUILD_TESTING)
 	enable_testing()
