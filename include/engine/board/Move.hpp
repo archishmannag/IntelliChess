@@ -18,8 +18,25 @@ class null_move;
 
 class move
 {
-private:
-	static std::shared_ptr<null_move> null_move_;
+public: // Getters
+	int get_destination_coordinate() const;
+	int get_current_coordinate() const;
+	std::shared_ptr<piece> get_moved_piece() const;
+	std::shared_ptr<board> get_board() const;
+	virtual std::shared_ptr<piece> get_attacked_piece() const;
+	virtual bool is_attack() const;
+	virtual bool is_castling_move() const;
+	virtual std::shared_ptr<board> execute() const;
+	virtual std::string stringify() const;
+	virtual bool operator==(const move &other) const;
+
+	std::shared_ptr<board> undo() const;
+	static std::shared_ptr<move> get_null_move();
+
+protected:
+	move(std::shared_ptr<board> b, int dc);
+	move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
+	std::string disambiguation_file() const;
 
 protected:
 	std::weak_ptr<board> board_;
@@ -27,25 +44,12 @@ protected:
 	const int destination_coordinate_;
 	const bool is_first_move_;
 
-	move(std::shared_ptr<board> b, int dc);
-	move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc);
-	std::string disambiguation_file() const;
-
-public:
-	virtual bool operator==(const move &other) const;
-
-	int get_destination_coordinate() const;
-	int get_current_coordinate() const;
-	std::shared_ptr<piece> get_moved_piece() const;
-	std::shared_ptr<board> get_board() const;
-	std::shared_ptr<board> undo() const;
-	virtual bool is_attack() const;
-	virtual bool is_castling_move() const;
-	virtual std::shared_ptr<piece> get_attacked_piece() const;
-	virtual std::shared_ptr<board> execute() const;
-	virtual std::string stringify() const;
-
-	static std::shared_ptr<move> get_null_move();
+private: // Static members
+	/**
+	 * @brief A null move as a static member so that we do not neet to instantiate null moves every time.
+	 *
+	 */
+	static std::shared_ptr<null_move> null_move_;
 };
 
 class major_move final : public move
@@ -59,24 +63,19 @@ public:
 
 class attack_move : public move
 {
-private:
-	std::shared_ptr<piece> attacked_piece_;
-
 public:
 	bool operator==(const move &other) const override;
 
 	attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc);
 	bool is_attack() const override;
 	std::shared_ptr<piece> get_attacked_piece() const override;
+
+private:
+	std::shared_ptr<piece> attacked_piece_;
 };
 
 class pawn_promotion final : public move
 {
-private:
-	std::shared_ptr<move> input_move_;
-	std::shared_ptr<pawn> promoted_pawn_;
-	std::shared_ptr<piece> promoted_piece_;
-
 public:
 	pawn_promotion(std::shared_ptr<move> im, std::shared_ptr<piece> pp);
 	bool operator==(const move &other) const override;
@@ -85,6 +84,11 @@ public:
 	std::shared_ptr<piece> get_attacked_piece() const override;
 	std::shared_ptr<piece> get_promoted_piece() const;
 	std::string stringify() const override;
+
+private:
+	std::shared_ptr<move> input_move_;
+	std::shared_ptr<pawn> promoted_pawn_;
+	std::shared_ptr<piece> promoted_piece_;
 };
 
 class major_attack_move final : public attack_move
@@ -129,17 +133,17 @@ public:
 
 class castle_move : public move
 {
-protected:
-	std::shared_ptr<rook> castling_rook_;
-	const int castling_rook_start_square_;
-	const int castling_rook_destination_;
-
 public:
 	castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd);
 	bool operator==(const move &other) const override;
 	std::shared_ptr<rook> get_castling_rook() const;
 	bool is_castling_move() const override;
 	std::shared_ptr<board> execute() const override;
+
+protected:
+	std::shared_ptr<rook> castling_rook_;
+	const int castling_rook_start_square_;
+	const int castling_rook_destination_;
 };
 
 class king_side_castle_move final : public castle_move
@@ -172,6 +176,6 @@ namespace move_factory
 {
 	std::shared_ptr<move> create_move(std::shared_ptr<board> b, int cc, int dc);
 	std::shared_ptr<move> create_move(std::shared_ptr<board> b, int cc, int dc, piece_type ppt);
-} // namespace MoveFactory
+} // namespace move_factory
 
-#endif
+#endif // MOVE_HPP

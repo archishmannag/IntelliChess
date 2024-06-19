@@ -64,7 +64,7 @@ namespace
 	}
 
 	std::unordered_map<std::string, int> position_to_coordinate = initialize_position_to_coordinate_map();
-}
+} // namespace
 
 std::array<bool, 64> board_utils::first_column = init_column(0);
 std::array<bool, 64> board_utils::second_column = init_column(1);

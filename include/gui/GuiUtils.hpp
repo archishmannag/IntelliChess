@@ -15,15 +15,12 @@ namespace
 		knight_offset = 8,
 		rook_offset = 16,
 		bishop_offset = 24;
-}
+} // namespace
 
 class move;
 
 class move_log
 {
-private:
-	std::vector<std::shared_ptr<move>> moves_;
-
 public:
 	std::vector<std::shared_ptr<move>> get_moves() const;
 	int get_moves_count() const;
@@ -31,6 +28,9 @@ public:
 	std::shared_ptr<move> remove_move(int index);
 	void remove_move(std::shared_ptr<move> m);
 	void clear_moves();
+
+private:
+	std::vector<std::shared_ptr<move>> moves_;
 };
 
 class hourglass
@@ -43,14 +43,14 @@ public:
 	void update();
 
 private:
+	void update(sf::Vector2f position);
+
+private:
 	sf::Texture texture_;
 	sf::IntRect rect_ = sf::IntRect(0, 0, 48, 48);
 	sf::Sprite sprite_;
 	sf::Clock clock_;
 	bool active_ = false;
-
-private:
-	void update(sf::Vector2f position);
 };
 
-#endif
+#endif // GUI_UTILS_HPP

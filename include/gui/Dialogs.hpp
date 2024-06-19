@@ -15,16 +15,16 @@ public:
 	void set_dialog_text(std::string text);
 
 protected:
+	dialog(std::string heading_text, std::string dialog_text, sf::Vector2f position);
+	void update_text_positions();
+
+protected:
 	sf::RectangleShape dialog_box_,
 		heading_box_;
 	sf::Text heading_text_,
 		dialog_text_;
 	sf::Font font_;
 	bool is_active_ = false;
-
-protected:
-	dialog(std::string heading_text, std::string dialog_text, sf::Vector2f position);
-	void update_text_positions();
 };
 
 class message_dialog final : public dialog
@@ -49,6 +49,10 @@ public:
 	void set_input_text(std::string text);
 
 private:
+	void update_input_text_view();
+	void update_input_text_view(sf::Vector2u window_dimensions);
+
+private:
 	int cursor_position_ = 0;
 	sf::RectangleShape ok_button_,
 		cancel_button_,
@@ -61,10 +65,6 @@ private:
 	sf::Clipboard clipboard_;
 	std::function<void(std::string)> ok_callback_;
 	std::function<void()> cancel_callback_;
-
-private:
-	void update_input_text_view();
-	void update_input_text_view(sf::Vector2u window_dimensions);
 };
 
-#endif
+#endif // DIALOGS_HPP

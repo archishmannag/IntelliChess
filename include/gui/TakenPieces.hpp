@@ -9,6 +9,11 @@ class move_log;
 
 class taken_pieces_block
 {
+public:
+	taken_pieces_block();
+	void redo(move_log &ml);
+	void draw(sf::RenderWindow &window);
+
 private:
 	sf::Vector2f black_piece_area_position_, white_piece_area_position_;
 	sf::RectangleShape taken_piece_area_rect_;
@@ -22,11 +27,6 @@ private:
 		black_knight_sprites_, white_knight_sprites_,
 		black_rook_sprites_, white_rook_sprites_,
 		black_queen_sprites_, white_queen_sprites_;
-
-public:
-	taken_pieces_block();
-	void redo(move_log &ml);
-	void draw(sf::RenderWindow &window);
 };
 
-#endif
+#endif // TAKEN_PIECES_HPP

@@ -1,5 +1,5 @@
-#ifndef WHITEPLAYER_HPP
-#define WHITEPLAYER_HPP
+#ifndef WHITE_PLAYER_HPP
+#define WHITE_PLAYER_HPP
 
 #include "Player.hpp"
 
@@ -14,4 +14,4 @@ public:
 	std::string stringify() const override;
 };
 
-#endif
+#endif // WHITE_PLAYER_HPP

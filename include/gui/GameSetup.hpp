@@ -18,6 +18,21 @@ class game_board;
 
 class game_setup
 {
+public:
+	game_setup(std::function<void()> notify_parent);
+	void update(sf::Event event, sf::Vector2i mouse_position);
+	void draw(sf::RenderWindow &window);
+	void set_active(bool active);
+
+	bool get_active() const;
+	bool is_AI_player(player *p) const;
+	player_type get_white_player_type() const;
+	player_type get_black_player_type() const;
+	unsigned int get_search_depth() const;
+
+private:
+	void update_locations(sf::Vector2u window_size);
+
 private:
 	player_type white_player_ = player_type::human,
 				black_player_ = player_type::human;
@@ -38,20 +53,6 @@ private:
 		 is_black_player_AI_ = false,
 		 is_game_setup_active_ = false;
 	std::function<void()> notify_parent_;
-
-	void update_locations(sf::Vector2u window_size);
-
-public:
-	game_setup(std::function<void()> notify_parent);
-	void update(sf::Event event, sf::Vector2i mouse_position);
-	void draw(sf::RenderWindow &window);
-	void set_active(bool active);
-
-	bool get_active() const;
-	bool is_AI_player(player *p) const;
-	player_type get_white_player_type() const;
-	player_type get_black_player_type() const;
-	unsigned int get_search_depth() const;
 };
 
-#endif
+#endif // GAME_SETUP_HPP

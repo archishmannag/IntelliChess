@@ -1,5 +1,5 @@
-#ifndef MINIMAX_HPP
-#define MINIMAX_HPP
+#ifndef MINI_MAX_HPP
+#define MINI_MAX_HPP
 
 #include <PreCompiledHeaders.hpp>
 
@@ -7,15 +7,16 @@
 
 class mini_max final : public move_strategy
 {
-private:
-	unsigned const search_depth_;
-
-	int min(std::shared_ptr<board> b, unsigned int d);
-	int max(std::shared_ptr<board> b, unsigned int d);
-
 public:
 	mini_max(unsigned int sd);
 	std::shared_ptr<move> execute(std::shared_ptr<board> b) override;
+
+private:
+	int min(std::shared_ptr<board> b, unsigned int d);
+	int max(std::shared_ptr<board> b, unsigned int d);
+
+private:
+	unsigned const search_depth_;
 };
 
-#endif
+#endif // MINI_MAX_HPP

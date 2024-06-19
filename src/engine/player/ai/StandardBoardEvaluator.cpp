@@ -16,7 +16,7 @@ namespace
 		attack_multiplier = 1,
 		two_bishops_bonus = 25,
 		depth_bonus = 100;
-}
+} // namespace
 
 namespace
 {

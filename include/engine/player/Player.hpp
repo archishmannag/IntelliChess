@@ -13,17 +13,6 @@ class piece;
 
 class player
 {
-protected:
-	bool checked_;
-	std::weak_ptr<board> board_;
-	std::shared_ptr<king> player_king_;
-	std::vector<std::shared_ptr<move>> legal_moves_;
-
-	static std::vector<std::shared_ptr<move>> calculate_attacks_on_tile(const int pp, std::vector<std::shared_ptr<move>> om);
-	std::shared_ptr<king> establish_king();
-	bool has_escape_coves() const;
-	bool fifty_move_rule() const;
-
 public:
 	player(std::shared_ptr<board> b);
 	bool is_move_legal(const move *m) const;
@@ -44,6 +33,18 @@ public:
 	virtual std::weak_ptr<player> get_opponent() const;
 	virtual std::vector<std::shared_ptr<move>> calculate_king_castles(const std::vector<std::shared_ptr<move>> &ol) const;
 	virtual std::string stringify() const;
+
+protected:
+	static std::vector<std::shared_ptr<move>> calculate_attacks_on_tile(const int pp, std::vector<std::shared_ptr<move>> om);
+	std::shared_ptr<king> establish_king();
+	bool has_escape_coves() const;
+	bool fifty_move_rule() const;
+
+protected:
+	bool checked_;
+	std::weak_ptr<board> board_;
+	std::shared_ptr<king> player_king_;
+	std::vector<std::shared_ptr<move>> legal_moves_;
 };
 
-#endif
+#endif // PLAYER_HPP

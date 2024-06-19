@@ -1,5 +1,5 @@
-#ifndef GAMEBOARD_HPP
-#define GAMEBOARD_HPP
+#ifndef GAME_BOARD_HPP
+#define GAME_BOARD_HPP
 
 #include <PreCompiledHeaders.hpp>
 
@@ -23,10 +23,6 @@ enum class player_type;
 
 class tile_block
 {
-private:
-	sf::RectangleShape tile_rect_;
-	int tile_id_;
-
 public:
 	tile_block(int t_id);
 	int get_tile_id() const;
@@ -34,10 +30,35 @@ public:
 	void get_tile_rect_scale(float x, float y);
 	void set_tile_rect_position(float x, float y);
 	void set_tile_rect_fill_color(sf::Color color);
+
+private:
+	sf::RectangleShape tile_rect_;
+	int tile_id_;
 };
 
 class game_board
 {
+public:
+	game_board();
+	~game_board();
+	bool is_running() const;
+	void update();
+	void render();
+
+private:
+	void init();
+	void undo_last_move();
+	void undo_all_moves();
+	void process_events();
+	void update_mouse_position();
+	void scale_board();
+	void render_tile_blocks();
+	void render_pawn_promotion_option_pane();
+	void update_tile_blocks();
+	std::vector<int> legal_move_destinations();
+	void move_handler();
+	void observe();
+
 private:
 	// Window and event
 	std::shared_ptr<sf::RenderWindow> window_;
@@ -98,21 +119,6 @@ private:
 	// Hourglass
 	hourglass hourglass_;
 
-	friend bool is_pawn_promotable(game_board &gb);
-
-	void init();
-	void undo_last_move();
-	void undo_all_moves();
-	void process_events();
-	void update_mouse_position();
-	void scale_board();
-	void render_tile_blocks();
-	void render_pawn_promotion_option_pane();
-	void update_tile_blocks();
-	std::vector<int> legal_move_destinations();
-	void move_handler();
-	void observe();
-
 	class ai_move_generator
 	{
 	public:
@@ -127,14 +133,9 @@ private:
 
 	std::unique_ptr<ai_move_generator> ai;
 
-public:
-	game_board();
-	~game_board();
-	bool is_running() const;
-	void update();
-	void render();
+	friend bool is_pawn_promotable(game_board &gb);
 };
 
 bool is_pawn_promotable(game_board &gameBoard);
 
-#endif
+#endif // GAME_BOARD_HPP

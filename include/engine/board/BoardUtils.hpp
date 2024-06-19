@@ -1,5 +1,5 @@
-#ifndef BOARDUTILS_HPP
-#define BOARDUTILS_HPP
+#ifndef BOARD_UTILS_HPP
+#define BOARD_UTILS_HPP
 
 #include <PreCompiledHeaders.hpp>
 
@@ -23,6 +23,6 @@ namespace board_utils
 	bool game_over(const board *b);
 
 	std::string calculate_check_and_checkmate(board *b);
-}
+} // namespace board_utils
 
-#endif
+#endif // BOARD_UTILS_HPP

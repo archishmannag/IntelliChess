@@ -11,4 +11,4 @@ namespace fen_utils
 	std::string board_to_fen(const board &b);
 } // namespace fen_utils
 
-#endif
+#endif // FEN_UTILS_HPP

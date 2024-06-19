@@ -24,6 +24,6 @@ namespace alliance_utils
 	int get_location_bonus(const piece *p);
 
 	std::string stringify(alliance a);
-}
+} // namespace alliance_utils
 
-#endif
+#endif // ALLIANCE_HPP

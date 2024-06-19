@@ -20,14 +20,6 @@ enum class piece_type
 
 class piece : public std::enable_shared_from_this<piece>
 {
-protected:
-	int piece_position_;
-	const alliance piece_alliance_;
-	bool first_move_;
-	const piece_type piece_type_;
-
-	piece(const int pp, const alliance pa, const piece_type pt, bool fm);
-
 public:
 	bool operator==(const piece &other);
 
@@ -41,6 +33,15 @@ public:
 
 	int get_piece_value() const;
 	std::string stringify() const;
+
+protected:
+	piece(const int pp, const alliance pa, const piece_type pt, bool fm);
+
+protected:
+	int piece_position_;
+	const alliance piece_alliance_;
+	bool first_move_;
+	const piece_type piece_type_;
 };
 
-#endif
+#endif // PIECE_HPP

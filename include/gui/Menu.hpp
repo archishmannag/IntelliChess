@@ -13,6 +13,14 @@ typedef struct callback_functions
 
 class menu_bar
 {
+public:
+	menu_bar(sf::RenderWindow &window, callback_functions_t callback_functions);
+	void update_menu_bar(sf::Event event, sf::Vector2i mouse_position);
+	void draw(sf::RenderWindow &window);
+
+private:
+	void update(sf::RenderWindow &window);
+
 private:
 	sf::RectangleShape menu_bar_rect_;
 	sf::Font font_;
@@ -31,13 +39,6 @@ private:
 	sf::Text new_game_text_, undo_move_text_, evaluate_board_text_, current_state_text_, setup_game_text_;
 
 	callback_functions_t callback_functions_;
-
-	void update(sf::RenderWindow &window);
-
-public:
-	menu_bar(sf::RenderWindow &window, callback_functions_t callback_functions);
-	void update_menu_bar(sf::Event event, sf::Vector2i mouse_position);
-	void draw(sf::RenderWindow &window);
 };
 
-#endif
+#endif // MENU_HPP

@@ -1,5 +1,5 @@
-#ifndef BLACKPLAYER_HPP
-#define BLACKPLAYER_HPP
+#ifndef BLACK_PLAYER_HPP
+#define BLACK_PLAYER_HPP
 
 #include "Player.hpp"
 
@@ -14,4 +14,4 @@ public:
 	std::string stringify() const override;
 };
 
-#endif
+#endif // BLACK_PLAYER_HPP

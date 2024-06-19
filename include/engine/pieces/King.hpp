@@ -5,16 +5,6 @@
 
 class king final : public piece
 {
-private:
-	bool castled_,
-		king_side_castle_capable_,
-		queen_side_castle_capable_;
-
-	static const int candidate_move_coordinates[];
-
-	static bool is_first_column_exclusion(const int cp, const int co);
-	static bool is_eighth_column_exclusion(const int cp, const int co);
-
 public:
 	king(const int pp, const alliance pa, const bool fm = true, const bool c = false, const bool ksc = true, const bool qsc = true);
 
@@ -25,6 +15,17 @@ public:
 	bool is_castled() const;
 	bool is_king_side_castle_capable() const;
 	bool is_queen_side_castle_capable() const;
+
+private:
+	static bool is_first_column_exclusion(const int cp, const int co);
+	static bool is_eighth_column_exclusion(const int cp, const int co);
+
+private:
+	bool castled_,
+		king_side_castle_capable_,
+		queen_side_castle_capable_;
+
+	static const int candidate_move_coordinates[];
 };
 
-#endif
+#endif // KING_HPP

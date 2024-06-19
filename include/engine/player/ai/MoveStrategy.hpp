@@ -10,4 +10,4 @@ public:
 	virtual std::shared_ptr<move> execute(std::shared_ptr<board> b) = 0;
 };
 
-#endif
+#endif // MOVE_STRATEGY_HPP
