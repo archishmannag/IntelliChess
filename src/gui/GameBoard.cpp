@@ -147,10 +147,12 @@ void game_board::init()
                 [this](std::string fen)
                 {
                     std::shared_ptr<board> temp_board = board_;
-                    undo_all_moves();
                     try
                     {
                         board_ = fen_utils::fen_to_board(fen);
+                        move_log_.clear_moves();
+                        game_history_block_->redo(board_.get(), move_log_);
+                        taken_pieces_block_->redo(move_log_);
                     }
                     catch (const std::runtime_error &e)
                     {
