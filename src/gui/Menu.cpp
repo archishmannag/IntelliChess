@@ -15,7 +15,7 @@ menu_bar::menu_bar(sf::RenderWindow &window, callback_functions_t callback_funct
     menu_bar_rect_.setFillColor(sf::Color(200, 200, 200, 200));
     menu_bar_rect_.setPosition(0, 0);
 
-    if (!font_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/fonts/arial.ttf"))
+    if (!font_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/fonts/arial.ttf"))
         throw std::runtime_error("Failed to load font!");
 
     file_text_.setFont(font_);

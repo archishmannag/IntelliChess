@@ -74,7 +74,7 @@ void history_row::draw(sf::RenderWindow &window)
 
 game_history_block::game_history_block()
 {
-    if (!font_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/fonts/arial.ttf"))
+    if (!font_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/fonts/arial.ttf"))
         throw std::runtime_error("Failed to load font!");
 
     scroll_percentage_top_ = 0.f;

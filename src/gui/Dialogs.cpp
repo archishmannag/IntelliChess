@@ -11,7 +11,7 @@
 
 dialog::dialog(std::string heading_text, std::string dialog_text, sf::Vector2f position)
 {
-    if (!font_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/fonts/arial.ttf"))
+    if (!font_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/fonts/arial.ttf"))
         throw std::runtime_error("Failed to load font!");
 
     heading_text_.setFont(font_);
@@ -120,7 +120,7 @@ input_dialog::input_dialog(std::string heading_text, std::string dialog_text, sf
       ok_callback_(ok_callback),
       cancel_callback_(cancel_callback)
 {
-    if (!input_text_font_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/fonts/CCNFM.ttf"))
+    if (!input_text_font_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/fonts/CCNFM.ttf"))
         throw std::runtime_error("Failed to load font!");
 
     ok_button_.setSize(sf::Vector2f(100, 30));

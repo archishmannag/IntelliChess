@@ -4,8 +4,9 @@ cmake_minimum_required(VERSION 3.20)
 # Project name
 project(Chess VERSION 1.0.0 DESCRIPTION "Chess game" LANGUAGES CXX)
 
-# Add project source directory as a preprocessor definition for finding the assets
+# Add project source directory and resource directory as a preprocessor definition for finding the assets
 add_definitions(-DPROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_definitions(-DPROJECT_RESOURCE_DIR="${CMAKE_SOURCE_DIR}/resources") # Change this to the path to resource directory when moving resources.
 
 # Send build type to source code as a preprocessor definition
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

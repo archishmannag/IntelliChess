@@ -15,16 +15,16 @@
 taken_pieces_block::taken_pieces_block()
 {
     if (
-        !black_pawn_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackPawn.png") ||
-        !white_pawn_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whitePawn.png") ||
-        !black_bishop_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackBishop.png") ||
-        !white_bishop_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteBishop.png") ||
-        !black_knight_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackKnight.png") ||
-        !white_knight_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteKnight.png") ||
-        !black_rook_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackRook.png") ||
-        !white_rook_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteRook.png") ||
-        !black_queen_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/blackQueen.png") ||
-        !white_queen_texture_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/pieces/whiteQueen.png"))
+        !black_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackPawn.png") ||
+        !white_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whitePawn.png") ||
+        !black_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackBishop.png") ||
+        !white_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteBishop.png") ||
+        !black_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackKnight.png") ||
+        !white_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteKnight.png") ||
+        !black_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackRook.png") ||
+        !white_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteRook.png") ||
+        !black_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackQueen.png") ||
+        !white_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteQueen.png"))
     {
         throw std::runtime_error("Failed to load piece textures");
     }

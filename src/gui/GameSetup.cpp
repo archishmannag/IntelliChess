@@ -26,7 +26,7 @@ std::string to_string(player_type p)
 game_setup::game_setup(std::function<void()> notify_parent)
     : notify_parent_(notify_parent)
 {
-    if (!font_.loadFromFile(std::string(PROJECT_SOURCE_DIR) + "/resources/fonts/arial.ttf"))
+    if (!font_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/fonts/arial.ttf"))
         throw std::runtime_error("Failed to load font!");
 
     game_setup_rect_.setSize(sf::Vector2f(180, 300));
