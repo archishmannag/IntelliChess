@@ -1,3 +1,11 @@
+/**
+ * @file PreCompiledHeaders.hpp
+ * @author your name (you@domain.com)
+ * @brief Precompiled headers
+ * @version
+ *
+ */
+
 #ifndef PRE_COMPILED_HEADERS_HPP
 #define PRE_COMPILED_HEADERS_HPP
 

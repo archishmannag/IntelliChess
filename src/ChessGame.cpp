@@ -1,23 +1,23 @@
-#include <PreCompiledHeaders.hpp>
+/**
+ * @file ChessGame.cpp
+ * @author your name (you@domain.com)
+ * @brief The main file for the chess game
+ * @version 1.0.0
+ *
+ */
 
-#include <gui/GameBoard.hpp>
+#include "PreCompiledHeaders.hpp"
+
+#include "gui/GameBoard.hpp"
 
 int main(int argc, char *argv[])
 {
-	try
-	{
-		game_board gameBoard;
-		while (gameBoard.is_running())
-		{
-			gameBoard.render();
-			gameBoard.update();
-		}
-	}
-	catch (const std::exception &e)
-	{
-		std::cerr << e.what() << '\n';
-		return 1;
-	}
+    game_board gameBoard;
+    while (gameBoard.is_running())
+    {
+        gameBoard.render();
+        gameBoard.update();
+    }
 
-	return 0;
+    return 0;
 }
