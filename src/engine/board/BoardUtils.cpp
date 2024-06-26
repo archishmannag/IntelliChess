@@ -77,7 +77,7 @@ namespace
 
     std::array<std::string, 64> algebraic_notation = initialize_algebraic_notation();
 
-    const std::unordered_map<std::string, int> &initialize_position_to_coordinate_map()
+    const std::unordered_map<std::string, int> initialize_position_to_coordinate_map()
     {
         std::unordered_map<std::string, int> position_to_coordinate;
         for (int i = 0; i < 64; i++)

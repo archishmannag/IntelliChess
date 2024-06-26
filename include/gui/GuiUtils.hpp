@@ -39,7 +39,7 @@ namespace
 class move_log
 {
 public:
-    std::vector<std::shared_ptr<move>> get_moves() const;
+    const std::vector<std::shared_ptr<move>> &get_moves() const;
     int get_moves_count() const;
     void add_move(std::shared_ptr<move> m);
     std::shared_ptr<move> remove_move(int index);

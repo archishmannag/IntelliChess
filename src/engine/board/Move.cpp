@@ -182,7 +182,7 @@ std::shared_ptr<piece> attack_move::get_attacked_piece() const
 pawn_promotion::pawn_promotion(std::shared_ptr<move> im, std::shared_ptr<piece> pp)
     : move(im->get_board(), im->get_moved_piece(), im->get_destination_coordinate()),
       input_move_(std::move(im)),
-      promoted_pawn_(std::dynamic_pointer_cast<pawn>(im->get_moved_piece())),
+      promoted_pawn_(std::dynamic_pointer_cast<pawn>(input_move_->get_moved_piece())),
       promoted_piece_(std::move(pp)) {}
 
 bool pawn_promotion::operator==(const move &other) const

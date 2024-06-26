@@ -13,7 +13,7 @@
 
 /* move_log */
 
-std::vector<std::shared_ptr<move>> move_log::get_moves() const
+const std::vector<std::shared_ptr<move>> &move_log::get_moves() const
 {
     return moves_;
 }

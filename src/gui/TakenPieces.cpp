@@ -120,6 +120,9 @@ void taken_pieces_block::redo(move_log &ml)
             sprite.setPosition(position);
             white_pawn_sprites_.push_back(sprite);
             break;
+        case piece_type::king:
+            // The king cnnot be captured, we get checkmate, so do nothing (this is just to avoid warning)
+            break;
         }
         if (position.x > white_piece_area_position_.x + 0.75f * tile_width)
             position.x = white_piece_area_position_.x + 0.125f * tile_width, position.y += tile_height / 2;
@@ -162,6 +165,9 @@ void taken_pieces_block::redo(move_log &ml)
             sprite.setScale(tile_width / sprite.getLocalBounds().width * 1 / 2, tile_height / sprite.getLocalBounds().height * 1 / 2);
             sprite.setPosition(position);
             black_pawn_sprites_.push_back(sprite);
+            break;
+        case piece_type::king:
+            // The king cnnot be captured, we get checkmate, so do nothing (this is just to avoid warning)
             break;
         }
         if (position.x > black_piece_area_position_.x + 0.75f * tile_width)
