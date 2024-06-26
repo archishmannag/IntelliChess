@@ -1,6 +1,6 @@
 /**
  * @file BlackPlayer.hpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief
  * @version 1.0.0
  *

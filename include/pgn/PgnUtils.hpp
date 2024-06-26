@@ -1,6 +1,6 @@
 /**
  * @file PgnUtils.hpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the PGN utilities
  * @version 1.0.0
  *

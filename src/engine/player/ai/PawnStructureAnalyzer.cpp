@@ -1,6 +1,6 @@
 /**
  * @file PawnStructureAnalyzer.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the pawn structure analyzer class
  * @version 1.0.0
  *

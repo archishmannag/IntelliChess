@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 # Project name
-project(Chess VERSION 1.0.0 DESCRIPTION "Chess game" LANGUAGES CXX)
+project(Chess VERSION 1.0.1 DESCRIPTION "Chess game" LANGUAGES CXX)
 
 # Add project source directory and resource directory as a preprocessor definition for finding the assets
 add_definitions(-DPROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")

@@ -1,6 +1,6 @@
 /**
  * @file Move.hpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for all the moves, its derived classes and the move factory.
  * @version 1.0.0
  *

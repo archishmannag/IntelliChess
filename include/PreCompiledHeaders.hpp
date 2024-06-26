@@ -1,6 +1,6 @@
 /**
  * @file PreCompiledHeaders.hpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Precompiled headers
  * @version
  *

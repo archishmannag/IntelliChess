@@ -1,6 +1,6 @@
 /**
  * @file BoardUtils.hpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header files of utility functions related to the Board
  * @version 1.0.0
  *

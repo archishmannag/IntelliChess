@@ -1,6 +1,6 @@
 /**
  * @file ChessGame.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief The main file for the chess game
  * @version 1.0.0
  *

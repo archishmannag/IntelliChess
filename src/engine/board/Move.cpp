@@ -1,6 +1,6 @@
 /**
  * @file Move.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the move and derived classes
  * @version 1.0.0
  *

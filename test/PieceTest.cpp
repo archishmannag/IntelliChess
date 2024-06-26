@@ -1,6 +1,6 @@
 /**
  * @file PieceTest.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @version 1.0.0
  *
  */

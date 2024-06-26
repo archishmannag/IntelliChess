@@ -1,6 +1,6 @@
 /**
  * @file PawnStructureAnalyzer.hpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the pawn structure analyzer class
  * @version 1.0.0
  *

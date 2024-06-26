@@ -1,6 +1,6 @@
 /**
  * @file Player.hpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the player class
  * @version
  *

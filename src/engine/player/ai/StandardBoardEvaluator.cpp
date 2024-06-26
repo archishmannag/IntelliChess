@@ -1,6 +1,6 @@
 /**
  * @file StandardBoardEvaluator.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the standard board evaluator
  * @version 1.0.0
  *

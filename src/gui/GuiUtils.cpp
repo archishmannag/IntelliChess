@@ -1,6 +1,6 @@
 /**
  * @file GuiUtils.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the GUI utilities
  * @version 0.1
  * @date 25-06-2024

@@ -1,6 +1,6 @@
 /**
  * @file Dialogs.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the dialog classes
  * @version 1.0.0
  *

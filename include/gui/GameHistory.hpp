@@ -1,6 +1,6 @@
 /**
  * @file GameHistory.hpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the game history block
  * @version 1.0.0
  *

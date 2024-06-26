@@ -1,6 +1,6 @@
 /**
  * @file AlphaBeta.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the alpha beta pruning algorithm
  * @version 1.0.0
  *

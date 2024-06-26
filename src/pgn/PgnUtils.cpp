@@ -1,6 +1,6 @@
 /**
  * @file PgnUtils.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the PGN utilities
  * @version 1.0.0
  *

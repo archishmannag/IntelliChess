@@ -1,6 +1,6 @@
 /**
  * @file FenUtils.cpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the FEN utilities
  * @version 1.0.0
  *

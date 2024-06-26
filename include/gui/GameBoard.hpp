@@ -1,6 +1,6 @@
 /**
  * @file GameBoard.hpp
- * @author your name (you@domain.com)
+ * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the game board class
  * @version 1.0.0
  *
