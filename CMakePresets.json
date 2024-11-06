@@ -10,7 +10,7 @@
             "name": "conan-deb",
             "hidden": true,
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/bin",
+            "binaryDir": "${sourceDir}/build",
             "cacheVariables": {
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "YES",
                 "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/conan/debug/conan_toolchain.cmake"
