@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 # Project name
-project(Chess VERSION 1.0.1 DESCRIPTION "Chess game" LANGUAGES CXX)
+project(Chess VERSION 1.1.0 DESCRIPTION "Chess game" LANGUAGES CXX)
 
 # Add project source directory and resource directory as a preprocessor definition for finding the assets
 add_definitions(-DPROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
@@ -25,17 +25,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 # Add source files
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-# Set SFML directory
-if(UNIX)
-	set(SFML_DIR ${CMAKE_SOURCE_DIR}/lib/SFML-Linux/lib/cmake/SFML)
-elseif(WIN32 AND MINGW)
-	set(SFML_DIR ${CMAKE_SOURCE_DIR}/lib/SFML-Windows-MinGW/lib/cmake/SFML)
-elseif(WIN32 AND MSVC)
-	set(SFML_DIR ${CMAKE_SOURCE_DIR}/lib/SFML-Windows-MSVC/lib/cmake/SFML)
-endif(UNIX)
+message(STATUS "Toolchain path: ${CMAKE_TOOLCHAIN_FILE}")
 
 # Find SFML
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+
+# Add pthread library
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 
 # Add executable target
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -46,10 +43,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 	CXX_STANDARD_REQUIRED YES
 	CXX_EXTENSIONS NO
 )
-
-# Add pthread library
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
 
 # Link SFML and pthread
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads PRIVATE sfml-graphics sfml-window sfml-system)
@@ -68,15 +61,6 @@ elseif(WIN32 AND MSVC)
 	# Use MSVC specific flags
 	target_compile_options(${PROJECT_NAME} PRIVATE /W4 /EHsc /std:c++17)
 endif(UNIX OR(WIN32 AND MINGW))
-
-# target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -std=c++17)
-if(WIN32)
-	# Find SFML DLLs
-	file(GLOB SFML_DLLS ${SFML_DIR}/../../../bin/*.dll)
-
-	# Copy the DLLs to the output directory
-	file(COPY ${SFML_DLLS} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-endif(WIN32)
 
 # Add icon for windows executable using resource file
 if(WIN32)
@@ -97,39 +81,16 @@ if(WIN32)
 	set(CMAKE_RC_COMPILER windres)
 endif(WIN32)
 
-# Add install target
-if(UNIX)
-	install(TARGETS ${PROJECT_NAME} DESTINATION bin)
-endif(UNIX)
-
 # Enable test and add its subdirectory
 set(LIB_TEST ${PROJECT_NAME}_lib)
 include(CTest)
 set(BUILD_TESTING ON) # <--- Set to OFF to disable testing
 
 if(BUILD_TESTING)
-	enable_testing()
-
-	# Update googletest submodule before building tests
-	find_package(Git QUIET)
-
-	if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-		option(GIT_SUBMODULE "Check submodules during build" ON)
-
-		if(GIT_SUBMODULE)
-			message(STATUS "Updating git submodules")
-			execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
-				WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-				RESULT_VARIABLE GIT_SUBMOD_RESULT)
-
-			if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-				message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-			endif(NOT GIT_SUBMOD_RESULT EQUAL "0")
-		endif(GIT_SUBMODULE)
-	endif(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+	enable_testing() # Add googletest library
 
 	# Add googletest library
-	add_subdirectory(lib/googletest)
+	find_package(GTest REQUIRED)
 
 	# Add test target
 	add_library(${LIB_TEST} STATIC ${SOURCES})

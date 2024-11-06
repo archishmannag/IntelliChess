@@ -1,0 +1,70 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 20,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "conan-deb",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/bin",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "YES",
+                "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/conan/debug/conan_toolchain.cmake"
+            }
+        },
+        {
+            "name": "conan-release",
+            "inherits": "conan-deb",
+            "description": "Release build using Conan toolchain",
+            "toolchainFile": "${sourceDir}/conan/release/conan_toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "conan-debug",
+            "inherits": "conan-deb",
+            "description": "Debug build using Conan toolchain",
+            "toolchainFile": "${sourceDir}/conan/debug/conan_toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "conan-release",
+            "configurePreset": "conan-release",
+            "description": "Build the project in release mode",
+            "jobs": 12
+        },
+        {
+            "name": "conan-debug",
+            "configurePreset": "conan-debug",
+            "description": "Build the project in debug mode",
+            "jobs": 12
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "conan-release",
+            "configurePreset": "conan-release",
+            "description": "Run tests in release mode",
+            "environment": {
+                "ALSA_CONFIG_DIR": "/home/archishman/.conan2/p/b/libal82673fd85cec3/p/res/alsa"
+            }
+        },
+        {
+            "name": "conan-debug",
+            "configurePreset": "conan-debug",
+            "description": "Run tests in debug mode",
+            "environment": {
+                "ALSA_CONFIG_DIR": "/home/archishman/.conan2/p/b/libal82673fd85cec3/p/res/alsa"
+            }
+        }
+    ]
+}

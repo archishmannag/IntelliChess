@@ -26,7 +26,7 @@ foreach(EXECUTABLE_NAME ${EXECUTABLE_NAMES})
 
 	# Link the executable to the source library and googletest
 	target_link_libraries(${EXECUTABLE_NAME} PUBLIC
-		gtest_main
+		GTest::gtest_main
 		${PROJECT_NAME}_lib
 	)
 
