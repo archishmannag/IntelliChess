@@ -2,7 +2,7 @@
  * @file Tile.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the tile class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -13,19 +13,19 @@
 /* tile */
 
 tile::tile(int c)
-    : tile_coordinate_(c){};
+    : tile_coordinate_(c) {};
 
-std::unordered_map<int, std::shared_ptr<empty_tile>> tile::initialize_all_empty_tiles()
+std::unordered_map<int, std::shared_ptr<empty_tile> > tile::initialize_all_empty_tiles()
 {
-    std::unordered_map<int, std::shared_ptr<empty_tile>> empty_tile_map;
+    std::unordered_map<int, std::shared_ptr<empty_tile> > empty_tile_map;
 
     for (int i = 0; i < 64; i++)
-        empty_tile_map.insert(std::pair<int, std::shared_ptr<empty_tile>>(i, std::make_shared<empty_tile>(i)));
+        empty_tile_map.insert(std::pair<int, std::shared_ptr<empty_tile> >(i, std::make_shared<empty_tile>(i)));
 
     return empty_tile_map;
 }
 
-std::unordered_map<int, std::shared_ptr<empty_tile>> tile::empty_tiles_cache = tile::initialize_all_empty_tiles();
+std::unordered_map<int, std::shared_ptr<empty_tile> > tile::empty_tiles_cache = tile::initialize_all_empty_tiles();
 
 std::shared_ptr<tile> tile::create_tile(int c, std::shared_ptr<piece> p)
 {
@@ -58,7 +58,7 @@ std::string tile::stringify() const
 /* empty_tile */
 
 empty_tile::empty_tile(const int c)
-    : tile(c){};
+    : tile(c) {};
 
 bool empty_tile::is_tile_occupied() const
 {
@@ -79,7 +79,7 @@ std::string empty_tile::stringify() const
 
 occupied_tile::occupied_tile(int c, std::shared_ptr<piece> p)
     : tile(c),
-      piece_on_tile_(p){};
+      piece_on_tile_(p) {};
 
 bool occupied_tile::is_tile_occupied() const
 {

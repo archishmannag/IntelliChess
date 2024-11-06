@@ -2,7 +2,7 @@
  * @file Piece.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the piece class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -12,20 +12,17 @@ piece::piece(const int pp, const alliance pa, const piece_type pt, bool fm)
     : piece_position_(pp),
       piece_alliance_(pa),
       first_move_(fm),
-      piece_type_(pt){};
+      piece_type_(pt) {};
 
 bool piece::operator==(const piece &other)
 {
     if (this == &other)
         return true;
     else
-        return piece_position_ == other.get_piece_position() &&
-               piece_alliance_ == other.get_piece_alliance() &&
-               piece_type_ == other.get_piece_type() &&
-               first_move_ == other.is_first_move();
+        return piece_position_ == other.get_piece_position() && piece_alliance_ == other.get_piece_alliance() && piece_type_ == other.get_piece_type() && first_move_ == other.is_first_move();
 }
 
-std::vector<std::shared_ptr<move>> piece::calculate_legal_moves(std::shared_ptr<board> b)
+std::vector<std::shared_ptr<move> > piece::calculate_legal_moves(std::shared_ptr<board> b)
 {
     throw std::logic_error("This method must be overridden by a subclass.");
 }

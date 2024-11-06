@@ -2,7 +2,7 @@
  * @file PawnStructureAnalyzer.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the pawn structure analyzer class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -29,10 +29,10 @@ public:
     static int pawn_structure_score(const player *p);
 
 private:
-    static std::vector<std::shared_ptr<piece>> calculate_player_pawns(const player *p);
+    static std::vector<std::shared_ptr<piece> > calculate_player_pawns(const player *p);
     static int calculate_pawn_column_stack_penalty(std::array<int, 8> pawns_on_column);
     static int calculate_isolated_pawn_penalty(std::array<int, 8> pawns_on_column);
-    static std::array<int, 8> calculate_pawns_on_column(std::vector<std::shared_ptr<piece>> pawns);
+    static std::array<int, 8> calculate_pawns_on_column(std::vector<std::shared_ptr<piece> > pawns);
 
 private:
     static const int isolated_pawn_penalty = -10;

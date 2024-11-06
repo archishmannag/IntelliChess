@@ -2,7 +2,7 @@
  * @file MiniMax.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the mini max algorithm
- * @version 1.0.0
+ * @version 1.1.0
  * @deprecated This class is deprecated and is replaced by the alpha beta pruning algorithm
  *
  */

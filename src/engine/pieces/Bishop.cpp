@@ -2,15 +2,15 @@
  * @file Bishop.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the bishop class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "engine/pieces/Bishop.hpp"
-#include "engine/board/Move.hpp"
-#include "engine/board/Tile.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
+#include "engine/board/Move.hpp"
+#include "engine/board/Tile.hpp"
 
 /**
  * @var bishop::candidate_move_vector_coordinates
@@ -28,16 +28,16 @@
  *           |_|_|_|_|_|_|_|X|
  *
  */
-const int bishop::candidate_move_vector_coordinates[] = {-9, -7, 7, 9};
+const int bishop::candidate_move_vector_coordinates[] = { -9, -7, 7, 9 };
 
 bishop::bishop(const int pp, const alliance pa, const bool fm)
     : piece(pp, pa, piece_type::bishop, fm)
 {
 }
 
-std::vector<std::shared_ptr<move>> bishop::calculate_legal_moves(std::shared_ptr<board> b)
+std::vector<std::shared_ptr<move> > bishop::calculate_legal_moves(std::shared_ptr<board> b)
 {
-    std::vector<std::shared_ptr<move>> legal_moves;
+    std::vector<std::shared_ptr<move> > legal_moves;
     int candidate_destination_coordinate;
 
     for (const int current_candidate_offset : candidate_move_vector_coordinates)
@@ -47,8 +47,7 @@ std::vector<std::shared_ptr<move>> bishop::calculate_legal_moves(std::shared_ptr
         while (board_utils::is_valid_tile_coordinate(candidate_destination_coordinate))
         {
             // If error(reached edge), break and go for the next offset
-            if (is_first_column_error(candidate_destination_coordinate, current_candidate_offset) ||
-                is_eighth_column_error(candidate_destination_coordinate, current_candidate_offset))
+            if (is_first_column_error(candidate_destination_coordinate, current_candidate_offset) || is_eighth_column_error(candidate_destination_coordinate, current_candidate_offset))
                 break;
 
             candidate_destination_coordinate += current_candidate_offset;

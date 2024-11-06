@@ -2,15 +2,15 @@
  * @file Knight.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the knight class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "engine/pieces/Knight.hpp"
-#include "engine/board/Move.hpp"
-#include "engine/board/Tile.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
+#include "engine/board/Move.hpp"
+#include "engine/board/Tile.hpp"
 
 knight::knight(const int pp, const alliance pa, const bool isFirstMove)
     : piece(pp, pa, piece_type::knight, isFirstMove)
@@ -34,12 +34,12 @@ knight::knight(const int pp, const alliance pa, const bool isFirstMove)
  *              |_|_|_|_|_|_|_|_|
  *
  */
-const int knight::candidate_move_coordinates[] = {-17, -15, -10, -6, 6, 10, 15, 17};
+const int knight::candidate_move_coordinates[] = { -17, -15, -10, -6, 6, 10, 15, 17 };
 
-std::vector<std::shared_ptr<move>> knight::calculate_legal_moves(std::shared_ptr<board> b)
+std::vector<std::shared_ptr<move> > knight::calculate_legal_moves(std::shared_ptr<board> b)
 {
     int candidate_destination_coordinate;
-    std::vector<std::shared_ptr<move>> legal_moves;
+    std::vector<std::shared_ptr<move> > legal_moves;
 
     for (const int current_candidate_offset : candidate_move_coordinates)
     {
@@ -47,10 +47,7 @@ std::vector<std::shared_ptr<move>> knight::calculate_legal_moves(std::shared_ptr
         if (board_utils::is_valid_tile_coordinate(candidate_destination_coordinate))
         {
             // Check for edge cases
-            if (is_first_column_error(piece_position_, current_candidate_offset) ||
-                is_second_column_error(piece_position_, current_candidate_offset) ||
-                is_seventh_column_error(piece_position_, current_candidate_offset) ||
-                is_eighth_column_error(piece_position_, current_candidate_offset))
+            if (is_first_column_error(piece_position_, current_candidate_offset) || is_second_column_error(piece_position_, current_candidate_offset) || is_seventh_column_error(piece_position_, current_candidate_offset) || is_eighth_column_error(piece_position_, current_candidate_offset))
                 continue;
 
             const std::shared_ptr<tile> &candidate_destination_tile = b->get_tile(candidate_destination_coordinate);

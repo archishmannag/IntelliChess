@@ -2,19 +2,19 @@
  * @file Pawn.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the pawn class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "engine/pieces/Pawn.hpp"
-#include "engine/pieces/Queen.hpp"
-#include "engine/pieces/Rook.hpp"
-#include "engine/pieces/Knight.hpp"
-#include "engine/pieces/Bishop.hpp"
-#include "engine/board/Move.hpp"
-#include "engine/board/Tile.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
+#include "engine/board/Move.hpp"
+#include "engine/board/Tile.hpp"
+#include "engine/pieces/Bishop.hpp"
+#include "engine/pieces/Knight.hpp"
+#include "engine/pieces/Queen.hpp"
+#include "engine/pieces/Rook.hpp"
 
 /**
  * @var pawn::candidate_move_coordinates
@@ -35,16 +35,16 @@
  *     It includes the normal move path, the double move path, and the attack move paths.
  *
  */
-const int pawn::candidate_move_coordinates[] = {8, 16, 7, 9};
+const int pawn::candidate_move_coordinates[] = { 8, 16, 7, 9 };
 
 pawn::pawn(const int pp, const alliance pa, const bool fm)
     : piece(pp, pa, piece_type::pawn, fm)
 {
 }
 
-std::vector<std::shared_ptr<move>> pawn::calculate_legal_moves(std::shared_ptr<board> b)
+std::vector<std::shared_ptr<move> > pawn::calculate_legal_moves(std::shared_ptr<board> b)
 {
-    std::vector<std::shared_ptr<move>> legal_moves;
+    std::vector<std::shared_ptr<move> > legal_moves;
     int candidate_destination_coordinate, behind_candidate_destination_coordinate; // Behind coordinate for pawn jumps
     for (const int current_candidate_offset : candidate_move_coordinates)
     {
@@ -91,10 +91,7 @@ std::vector<std::shared_ptr<move>> pawn::calculate_legal_moves(std::shared_ptr<b
         }
 
         // Case 2: Double move - Move forward by 2 tiles if the destination tile is not occupied and the piece is in the starting position
-        else if (current_candidate_offset == 16 &&
-                 is_first_move() &&
-                 ((board_utils::second_row[piece_position_] && alliance_utils::is_black(piece_alliance_)) ||
-                  (board_utils::seventh_row[piece_position_] && alliance_utils::is_white(piece_alliance_))))
+        else if (current_candidate_offset == 16 && is_first_move() && ((board_utils::second_row[piece_position_] && alliance_utils::is_black(piece_alliance_)) || (board_utils::seventh_row[piece_position_] && alliance_utils::is_white(piece_alliance_))))
         {
             behind_candidate_destination_coordinate = piece_position_ + (alliance_utils::get_direction(piece_alliance_) * 8);
             if (!b->get_tile(behind_candidate_destination_coordinate)->is_tile_occupied() && !b->get_tile(candidate_destination_coordinate)->is_tile_occupied())
@@ -102,9 +99,7 @@ std::vector<std::shared_ptr<move>> pawn::calculate_legal_moves(std::shared_ptr<b
         }
 
         // Case 3 and 4: Attack moves - Calculation of promotion, normal and en passant attack moves
-        else if (current_candidate_offset == 7 &&
-                 !((board_utils::eighth_column[piece_position_] && alliance_utils::is_white(piece_alliance_)) ||
-                   (board_utils::first_column[piece_position_] && alliance_utils::is_black(piece_alliance_))))
+        else if (current_candidate_offset == 7 && !((board_utils::eighth_column[piece_position_] && alliance_utils::is_white(piece_alliance_)) || (board_utils::first_column[piece_position_] && alliance_utils::is_black(piece_alliance_))))
         {
             if (b->get_tile(candidate_destination_coordinate)->is_tile_occupied())
             {
@@ -157,9 +152,7 @@ std::vector<std::shared_ptr<move>> pawn::calculate_legal_moves(std::shared_ptr<b
             }
         }
 
-        else if (current_candidate_offset == 9 &&
-                 !((board_utils::eighth_column[piece_position_] && alliance_utils::is_black(piece_alliance_)) ||
-                   (board_utils::first_column[piece_position_] && alliance_utils::is_white(piece_alliance_))))
+        else if (current_candidate_offset == 9 && !((board_utils::eighth_column[piece_position_] && alliance_utils::is_black(piece_alliance_)) || (board_utils::first_column[piece_position_] && alliance_utils::is_white(piece_alliance_))))
         {
             if (b->get_tile(candidate_destination_coordinate)->is_tile_occupied())
             {

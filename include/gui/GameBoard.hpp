@@ -2,7 +2,7 @@
  * @file GameBoard.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the game board class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -13,9 +13,9 @@
 
 #include "gui/GuiUtils.hpp"
 
-#include "SFML/Window.hpp"
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
+#include "SFML/Window.hpp"
 
 // Forward declarations
 class board;

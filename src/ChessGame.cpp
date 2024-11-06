@@ -2,7 +2,7 @@
  * @file ChessGame.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief The main file for the chess game
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 

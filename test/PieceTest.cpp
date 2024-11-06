@@ -1,12 +1,12 @@
 /**
  * @file PieceTest.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
-#include <gtest/gtest.h>
 #include <PreCompiledHeaders.hpp>
+#include <gtest/gtest.h>
 
 #include <engine/Alliance.hpp>
 #include <engine/board/Board.hpp>
@@ -33,7 +33,7 @@ TEST(PieceTest, testMiddleQueenOnEmptyBoard)
     builder.set_piece(std::make_shared<king>(60, alliance::white));
     builder.set_move_maker(alliance::white);
     std::shared_ptr<board> b = builder.build();
-    std::vector<std::shared_ptr<move>> white_legal_moves = b->get_white_player()->get_legal_moves(), black_legal_moves = b->get_black_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > white_legal_moves = b->get_white_player()->get_legal_moves(), black_legal_moves = b->get_black_player()->get_legal_moves();
 
     ASSERT_EQ(31, white_legal_moves.size());
     ASSERT_EQ(5, black_legal_moves.size());
@@ -43,91 +43,104 @@ TEST(PieceTest, testMiddleQueenOnEmptyBoard)
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e7"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e6"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e5"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e3"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e2"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("a4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("b4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("c4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("d4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("f4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("g4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("h4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 }
 
 TEST(PieceTest, testLegalMoveAllAvailable)
@@ -141,7 +154,7 @@ TEST(PieceTest, testLegalMoveAllAvailable)
     builder.set_piece(std::make_shared<king>(60, alliance::white));
     builder.set_move_maker(alliance::white);
     std::shared_ptr<board> b = builder.build();
-    std::vector<std::shared_ptr<move>> white_legal_moves = b->get_white_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > white_legal_moves = b->get_white_player()->get_legal_moves();
     ASSERT_EQ(13, white_legal_moves.size());
 
     std::shared_ptr<move> wm1 = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("d6")),
@@ -157,49 +170,57 @@ TEST(PieceTest, testLegalMoveAllAvailable)
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm1](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm1; }) != white_legal_moves.end());
+                    { return *legal_move == *wm1; })
+                != white_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm2](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm2; }) != white_legal_moves.end());
+                    { return *legal_move == *wm2; })
+                != white_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm3](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm3; }) != white_legal_moves.end());
+                    { return *legal_move == *wm3; })
+                != white_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm4](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm4; }) != white_legal_moves.end());
+                    { return *legal_move == *wm4; })
+                != white_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm5](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm5; }) != white_legal_moves.end());
+                    { return *legal_move == *wm5; })
+                != white_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm6](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm6; }) != white_legal_moves.end());
+                    { return *legal_move == *wm6; })
+                != white_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm7](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm7; }) != white_legal_moves.end());
+                    { return *legal_move == *wm7; })
+                != white_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm8](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm8; }) != white_legal_moves.end());
+                    { return *legal_move == *wm8; })
+                != white_legal_moves.end());
 
     board_builder builder2;
     // Black Layout
@@ -210,7 +231,7 @@ TEST(PieceTest, testLegalMoveAllAvailable)
     builder2.set_piece(std::make_shared<king>(60, alliance::white));
     builder2.set_move_maker(alliance::black);
     std::shared_ptr<board> board2 = builder2.build();
-    std::vector<std::shared_ptr<move>> black_legal_moves = board2->get_black_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > black_legal_moves = board2->get_black_player()->get_legal_moves();
     ASSERT_EQ(13, black_legal_moves.size());
 
     std::shared_ptr<move> bm1 = move_factory::create_move(board2, board_utils::get_coordinate_at_position("e5"), board_utils::get_coordinate_at_position("d7")),
@@ -226,49 +247,57 @@ TEST(PieceTest, testLegalMoveAllAvailable)
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm1](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm1; }) != black_legal_moves.end());
+                    { return *legal_move == *bm1; })
+                != black_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm2](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm2; }) != black_legal_moves.end());
+                    { return *legal_move == *bm2; })
+                != black_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm3](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm3; }) != black_legal_moves.end());
+                    { return *legal_move == *bm3; })
+                != black_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm4](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm4; }) != black_legal_moves.end());
+                    { return *legal_move == *bm4; })
+                != black_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm5](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm5; }) != black_legal_moves.end());
+                    { return *legal_move == *bm5; })
+                != black_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm6](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm6; }) != black_legal_moves.end());
+                    { return *legal_move == *bm6; })
+                != black_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm7](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm7; }) != black_legal_moves.end());
+                    { return *legal_move == *bm7; })
+                != black_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm8](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm8; }) != black_legal_moves.end());
+                    { return *legal_move == *bm8; })
+                != black_legal_moves.end());
 }
 
 TEST(PieceTest, testKnightInCorners)
@@ -282,8 +311,8 @@ TEST(PieceTest, testKnightInCorners)
     builder.set_piece(std::make_shared<king>(60, alliance::white));
     builder.set_move_maker(alliance::white);
     std::shared_ptr<board> b = builder.build();
-    std::vector<std::shared_ptr<move>> white_legal_moves = b->get_white_player()->get_legal_moves(),
-                                       black_legal_moves = b->get_black_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > white_legal_moves = b->get_white_player()->get_legal_moves(),
+                                        black_legal_moves = b->get_black_player()->get_legal_moves();
 
     ASSERT_EQ(7, white_legal_moves.size());
     ASSERT_EQ(7, black_legal_moves.size());
@@ -297,25 +326,29 @@ TEST(PieceTest, testKnightInCorners)
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm1](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm1; }) != white_legal_moves.end());
+                    { return *legal_move == *wm1; })
+                != white_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [wm2](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *wm2; }) != white_legal_moves.end());
+                    { return *legal_move == *wm2; })
+                != white_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm1](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm1; }) != black_legal_moves.end());
+                    { return *legal_move == *bm1; })
+                != black_legal_moves.end());
 
     ASSERT_TRUE(std::find_if(
                     black_legal_moves.begin(),
                     black_legal_moves.end(),
                     [bm2](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *bm2; }) != black_legal_moves.end());
+                    { return *legal_move == *bm2; })
+                != black_legal_moves.end());
 }
 
 TEST(PieceTest, testMiddleBishopOnEmptyBoard)
@@ -328,8 +361,8 @@ TEST(PieceTest, testMiddleBishopOnEmptyBoard)
     builder.set_piece(std::make_shared<king>(60, alliance::white));
     builder.set_move_maker(alliance::white);
     std::shared_ptr<board> b = builder.build();
-    std::vector<std::shared_ptr<move>> white_legal_moves = b->get_white_player()->get_legal_moves(),
-                                       black_legal_moves = b->get_black_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > white_legal_moves = b->get_white_player()->get_legal_moves(),
+                                        black_legal_moves = b->get_black_player()->get_legal_moves();
 
     ASSERT_EQ(18, white_legal_moves.size());
     ASSERT_EQ(5, black_legal_moves.size());
@@ -339,56 +372,64 @@ TEST(PieceTest, testMiddleBishopOnEmptyBoard)
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("d4"), board_utils::get_coordinate_at_position("b6"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("d4"), board_utils::get_coordinate_at_position("c5"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("d4"), board_utils::get_coordinate_at_position("e3"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("d4"), board_utils::get_coordinate_at_position("f2"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("d4"), board_utils::get_coordinate_at_position("g1"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("d4"), board_utils::get_coordinate_at_position("a1"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("d4"), board_utils::get_coordinate_at_position("b2"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 }
 
 TEST(PieceTest, testTopLeftBishopOnEmptyBoard)
@@ -402,8 +443,8 @@ TEST(PieceTest, testTopLeftBishopOnEmptyBoard)
     builder.set_move_maker(alliance::white);
 
     std::shared_ptr<board> b = builder.build();
-    std::vector<std::shared_ptr<move>> white_legal_moves = b->get_white_player()->get_legal_moves(),
-                                       black_legal_moves = b->get_black_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > white_legal_moves = b->get_white_player()->get_legal_moves(),
+                                        black_legal_moves = b->get_black_player()->get_legal_moves();
 
     ASSERT_EQ(b->get_tile(0)->get_piece_on_tile(), b->get_tile(0)->get_piece_on_tile());
     ASSERT_NE(nullptr, b->get_tile(0)->get_piece_on_tile());
@@ -416,43 +457,50 @@ TEST(PieceTest, testTopLeftBishopOnEmptyBoard)
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a8"), board_utils::get_coordinate_at_position("c6"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a8"), board_utils::get_coordinate_at_position("d5"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a8"), board_utils::get_coordinate_at_position("e4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a8"), board_utils::get_coordinate_at_position("f3"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a8"), board_utils::get_coordinate_at_position("g2"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a8"), board_utils::get_coordinate_at_position("h1"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 }
 
 TEST(PieceTest, testTopRightBishopOnEmptyBoard)
@@ -466,8 +514,8 @@ TEST(PieceTest, testTopRightBishopOnEmptyBoard)
     builder.set_move_maker(alliance::white);
 
     std::shared_ptr<board> b = builder.build();
-    std::vector<std::shared_ptr<move>> white_legal_moves = b->get_white_player()->get_legal_moves(),
-                                       black_legal_moves = b->get_black_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > white_legal_moves = b->get_white_player()->get_legal_moves(),
+                                        black_legal_moves = b->get_black_player()->get_legal_moves();
 
     ASSERT_EQ(b->get_tile(7)->get_piece_on_tile(), b->get_tile(7)->get_piece_on_tile());
     ASSERT_NE(nullptr, b->get_tile(7)->get_piece_on_tile());
@@ -480,43 +528,50 @@ TEST(PieceTest, testTopRightBishopOnEmptyBoard)
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h8"), board_utils::get_coordinate_at_position("f6"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h8"), board_utils::get_coordinate_at_position("e5"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h8"), board_utils::get_coordinate_at_position("d4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h8"), board_utils::get_coordinate_at_position("c3"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h8"), board_utils::get_coordinate_at_position("b2"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h8"), board_utils::get_coordinate_at_position("a1"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 }
 
 TEST(PieceTest, testBottomLeftBishopOnEmptyBoard)
@@ -530,8 +585,8 @@ TEST(PieceTest, testBottomLeftBishopOnEmptyBoard)
     builder.set_move_maker(alliance::white);
 
     std::shared_ptr<board> b = builder.build();
-    std::vector<std::shared_ptr<move>> white_legal_moves = b->get_white_player()->get_legal_moves(),
-                                       black_legal_moves = b->get_black_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > white_legal_moves = b->get_white_player()->get_legal_moves(),
+                                        black_legal_moves = b->get_black_player()->get_legal_moves();
 
     ASSERT_EQ(b->get_tile(56)->get_piece_on_tile(), b->get_tile(56)->get_piece_on_tile());
     ASSERT_NE(nullptr, b->get_tile(56)->get_piece_on_tile());
@@ -544,43 +599,50 @@ TEST(PieceTest, testBottomLeftBishopOnEmptyBoard)
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a1"), board_utils::get_coordinate_at_position("c3"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a1"), board_utils::get_coordinate_at_position("d4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a1"), board_utils::get_coordinate_at_position("e5"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a1"), board_utils::get_coordinate_at_position("f6"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a1"), board_utils::get_coordinate_at_position("g7"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("a1"), board_utils::get_coordinate_at_position("h8"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 }
 
 TEST(PieceTest, testBottomRightBishopOnEmptyBoard)
@@ -594,8 +656,8 @@ TEST(PieceTest, testBottomRightBishopOnEmptyBoard)
     builder.set_move_maker(alliance::white);
 
     std::shared_ptr<board> b = builder.build();
-    std::vector<std::shared_ptr<move>> white_legal_moves = b->get_white_player()->get_legal_moves(),
-                                       black_legal_moves = b->get_black_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > white_legal_moves = b->get_white_player()->get_legal_moves(),
+                                        black_legal_moves = b->get_black_player()->get_legal_moves();
 
     ASSERT_EQ(b->get_tile(63)->get_piece_on_tile(), b->get_tile(63)->get_piece_on_tile());
     ASSERT_NE(nullptr, b->get_tile(63)->get_piece_on_tile());
@@ -608,43 +670,50 @@ TEST(PieceTest, testBottomRightBishopOnEmptyBoard)
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h1"), board_utils::get_coordinate_at_position("f3"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h1"), board_utils::get_coordinate_at_position("e4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h1"), board_utils::get_coordinate_at_position("d5"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h1"), board_utils::get_coordinate_at_position("c6"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h1"), board_utils::get_coordinate_at_position("b7"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("h1"), board_utils::get_coordinate_at_position("a8"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 }
 
 TEST(PieceTest, testMiddleRookOnEmptyBoard)
@@ -657,8 +726,8 @@ TEST(PieceTest, testMiddleRookOnEmptyBoard)
     builder.set_piece(std::make_shared<king>(60, alliance::white));
     builder.set_move_maker(alliance::white);
     std::shared_ptr<board> b = builder.build();
-    std::vector<std::shared_ptr<move>> white_legal_moves = b->get_white_player()->get_legal_moves(),
-                                       black_legal_moves = b->get_black_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > white_legal_moves = b->get_white_player()->get_legal_moves(),
+                                        black_legal_moves = b->get_black_player()->get_legal_moves();
 
     ASSERT_EQ(18, white_legal_moves.size());
     ASSERT_EQ(5, black_legal_moves.size());
@@ -668,79 +737,92 @@ TEST(PieceTest, testMiddleRookOnEmptyBoard)
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e7"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e6"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e5"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e3"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("e2"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("a4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("b4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("c4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("d4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("f4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("g4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
     m = move_factory::create_move(b, board_utils::get_coordinate_at_position("e4"), board_utils::get_coordinate_at_position("h4"));
     ASSERT_TRUE(std::find_if(
                     white_legal_moves.begin(),
                     white_legal_moves.end(),
                     [m](std::shared_ptr<move> legal_move) -> bool
-                    { return *legal_move == *m; }) != white_legal_moves.end());
+                    { return *legal_move == *m; })
+                != white_legal_moves.end());
 }
 
 TEST(PieceTest, testPawnPromotion)

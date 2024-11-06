@@ -2,7 +2,7 @@
  * @file Move.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for all the moves, its derived classes and the move factory.
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 

@@ -2,7 +2,7 @@
  * @file Menu.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the menu class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 

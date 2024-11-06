@@ -2,16 +2,16 @@
  * @file PgnUtils.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the PGN utilities
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "pgn/PgnUtils.hpp"
-#include "pgn/FenUtils.hpp"
+#include "engine/Alliance.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/Move.hpp"
 #include "engine/player/Player.hpp"
-#include "engine/Alliance.hpp"
+#include "pgn/FenUtils.hpp"
 
 /**
  * @brief Helper functions to calculate the PGN strings
@@ -61,7 +61,7 @@ namespace
     }
 } // namespace
 
-void pgn_utils::save_game_to_pgn(const std::string &file_path, const std::vector<std::shared_ptr<move>> &moves, const board &b)
+void pgn_utils::save_game_to_pgn(const std::string &file_path, const std::vector<std::shared_ptr<move> > &moves, const board &b)
 {
     std::stringstream pgn;
     pgn

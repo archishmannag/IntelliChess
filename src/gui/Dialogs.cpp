@@ -2,7 +2,7 @@
  * @file Dialogs.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the dialog classes
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 

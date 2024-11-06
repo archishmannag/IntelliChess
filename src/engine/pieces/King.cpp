@@ -2,15 +2,15 @@
  * @file King.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the king class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "engine/pieces/King.hpp"
-#include "engine/board/Move.hpp"
-#include "engine/board/Tile.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
+#include "engine/board/Move.hpp"
+#include "engine/board/Tile.hpp"
 
 /**
  * @var king::candidate_move_coordinates
@@ -29,7 +29,7 @@
  * 		 |_|_|_|_|_|_|_|_|
  *
  */
-const int king::candidate_move_coordinates[] = {-9, -8, -7, -1, 1, 7, 8, 9};
+const int king::candidate_move_coordinates[] = { -9, -8, -7, -1, 1, 7, 8, 9 };
 
 king::king(const int pp, const alliance pa, const bool fm, const bool c, const bool ksc, const bool qsc)
     : piece(pp, pa, piece_type::king, fm),
@@ -39,9 +39,9 @@ king::king(const int pp, const alliance pa, const bool fm, const bool c, const b
 {
 }
 
-std::vector<std::shared_ptr<move>> king::calculate_legal_moves(std::shared_ptr<board> b)
+std::vector<std::shared_ptr<move> > king::calculate_legal_moves(std::shared_ptr<board> b)
 {
-    std::vector<std::shared_ptr<move>> legal_moves;
+    std::vector<std::shared_ptr<move> > legal_moves;
     int candidate_destination_coordinate;
     for (const int current_candidate_offset : candidate_move_coordinates)
     {

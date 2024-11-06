@@ -2,18 +2,18 @@
  * @file MiniMax.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the MiniMax class
- * @version 1.0.0
+ * @version 1.1.0
  *
  * @deprecated This simple minimax algorithm is deprecated in lieu of the alpha-beta pruning algorithm, which is implemented seperately.
  *
  */
 
 #include "engine/player/ai/MiniMax.hpp"
-#include "engine/player/ai/StandardBoardEvaluator.hpp"
 #include "engine/board/Board.hpp"
-#include "engine/player/Player.hpp"
 #include "engine/board/Move.hpp"
 #include "engine/board/MoveTransition.hpp"
+#include "engine/player/Player.hpp"
+#include "engine/player/ai/StandardBoardEvaluator.hpp"
 
 mini_max::mini_max(unsigned int sd)
     : search_depth_(sd)
@@ -32,7 +32,7 @@ std::shared_ptr<move> mini_max::execute(std::shared_ptr<board> b)
     std::cout << b->get_current_player()->stringify() << " THINKING with depth = " << search_depth_ << std::endl;
 #endif // DEBUG_BUILD
 
-    std::vector<std::shared_ptr<move>> moves = b->get_current_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > moves = b->get_current_player()->get_legal_moves();
     for (auto move : moves)
     {
         move_transition transition = b->get_current_player()->make_move(move);

@@ -2,7 +2,7 @@
  * @file PawnStructureAnalyzer.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the pawn structure analyzer class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -25,9 +25,9 @@ int pawn_structure_analyzer::net_doubled_pawn_penalty(const player *p)
     return calculate_pawn_column_stack_penalty(calculate_pawns_on_column(calculate_player_pawns(p)));
 }
 
-std::vector<std::shared_ptr<piece>> pawn_structure_analyzer::calculate_player_pawns(const player *P)
+std::vector<std::shared_ptr<piece> > pawn_structure_analyzer::calculate_player_pawns(const player *P)
 {
-    std::vector<std::shared_ptr<piece>> pawns,
+    std::vector<std::shared_ptr<piece> > pawns,
         pieces = P->get_active_pieces();
     std::copy_if(pieces.begin(), pieces.end(), std::back_inserter(pawns), [](std::shared_ptr<piece> p)
                  { return p->get_piece_type() == piece_type::pawn; });
@@ -56,7 +56,7 @@ int pawn_structure_analyzer::calculate_isolated_pawn_penalty(std::array<int, 8> 
     return isolated_pawn_number * isolated_pawn_penalty;
 }
 
-std::array<int, 8> pawn_structure_analyzer::calculate_pawns_on_column(std::vector<std::shared_ptr<piece>> pawns)
+std::array<int, 8> pawn_structure_analyzer::calculate_pawns_on_column(std::vector<std::shared_ptr<piece> > pawns)
 {
     std::array<int, 8> pawns_om_column{};
     for (std::shared_ptr<piece> p : pawns)

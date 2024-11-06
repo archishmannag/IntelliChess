@@ -2,7 +2,7 @@
  * @file PgnUtils.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the PGN utilities
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -28,7 +28,7 @@ namespace pgn_utils
      * @param moves The moves in order
      * @param b The board
      */
-    void save_game_to_pgn(const std::string &file_path, const std::vector<std::shared_ptr<move>> &moves, const board &b);
+    void save_game_to_pgn(const std::string &file_path, const std::vector<std::shared_ptr<move> > &moves, const board &b);
 } // namespace pgn_utils
 
 #endif // PGN_UTILS_HPP

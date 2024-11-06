@@ -2,15 +2,15 @@
  * @file Rook.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the rook class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "engine/pieces/Rook.hpp"
-#include "engine/board/Move.hpp"
-#include "engine/board/Tile.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
+#include "engine/board/Move.hpp"
+#include "engine/board/Tile.hpp"
 
 /**
  * @var rook::candidate_move_vector_coordinates
@@ -29,16 +29,16 @@
  *             |_|_|_|X|_|_|_|_|
  *
  */
-const int rook::candidate_move_vector_coordinates[] = {-8, -1, 1, 8};
+const int rook::candidate_move_vector_coordinates[] = { -8, -1, 1, 8 };
 
 rook::rook(const int pp, const alliance pa, const bool fm)
     : piece(pp, pa, piece_type::rook, fm)
 {
 }
 
-std::vector<std::shared_ptr<move>> rook::calculate_legal_moves(std::shared_ptr<board> b)
+std::vector<std::shared_ptr<move> > rook::calculate_legal_moves(std::shared_ptr<board> b)
 {
-    std::vector<std::shared_ptr<move>> legal_moves;
+    std::vector<std::shared_ptr<move> > legal_moves;
     int candidate_destination_coordinate;
     for (const int current_candidate_offset : candidate_move_vector_coordinates)
     {
@@ -47,8 +47,7 @@ std::vector<std::shared_ptr<move>> rook::calculate_legal_moves(std::shared_ptr<b
         while (board_utils::is_valid_tile_coordinate(candidate_destination_coordinate))
         {
             // If error(reached edge), break and go for the next offset
-            if (is_first_column_error(candidate_destination_coordinate, current_candidate_offset) ||
-                is_eighth_column_error(candidate_destination_coordinate, current_candidate_offset))
+            if (is_first_column_error(candidate_destination_coordinate, current_candidate_offset) || is_eighth_column_error(candidate_destination_coordinate, current_candidate_offset))
                 break;
             candidate_destination_coordinate += current_candidate_offset;
             if (board_utils::is_valid_tile_coordinate(candidate_destination_coordinate))

@@ -2,15 +2,15 @@
  * @file Move.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the move and derived classes
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
+#include "engine/board/Move.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
-#include "engine/board/Move.hpp"
-#include "engine/pieces/Piece.hpp"
 #include "engine/pieces/Pawn.hpp"
+#include "engine/pieces/Piece.hpp"
 #include "engine/pieces/Rook.hpp"
 #include "engine/player/Player.hpp"
 
@@ -20,13 +20,13 @@ move::move(std::shared_ptr<board> b, int dc)
     : board_(b),
       moved_piece_(nullptr),
       destination_coordinate_(dc),
-      is_first_move_(false){};
+      is_first_move_(false) {};
 
 move::move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc)
     : board_(b),
       moved_piece_(mp),
       destination_coordinate_(dc),
-      is_first_move_(mp->is_first_move()){};
+      is_first_move_(mp->is_first_move()) {};
 
 bool move::operator==(const move &other) const
 {
@@ -34,17 +34,13 @@ bool move::operator==(const move &other) const
         return true;
     if (const move *otherMove = dynamic_cast<const move *>(&other))
         return false;
-    return get_current_coordinate() == other.get_current_coordinate() &&
-           get_destination_coordinate() == other.get_destination_coordinate() &&
-           *get_moved_piece() == *other.get_moved_piece();
+    return get_current_coordinate() == other.get_current_coordinate() && get_destination_coordinate() == other.get_destination_coordinate() && *get_moved_piece() == *other.get_moved_piece();
 }
 
 std::string move::disambiguation_file() const
 {
     for (const std::shared_ptr<move> &m : board_.lock()->get_current_player()->get_legal_moves())
-        if (!(*this == *m) &&
-            m->get_destination_coordinate() == destination_coordinate_ &&
-            moved_piece_->get_piece_type() == m->get_moved_piece()->get_piece_type())
+        if (!(*this == *m) && m->get_destination_coordinate() == destination_coordinate_ && moved_piece_->get_piece_type() == m->get_moved_piece()->get_piece_type())
             // If another move has a similar piece landing on the same destination, then return the current file for disambiguation
             return board_utils::get_position_at_coordinate(moved_piece_->get_piece_position()).substr(0, 1);
     return "";
@@ -135,7 +131,7 @@ std::shared_ptr<move> move::get_null_move()
 /*major_move*/
 
 major_move::major_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc)
-    : move(b, mp, dc){};
+    : move(b, mp, dc) {};
 
 bool major_move::operator==(const move &other) const
 {
@@ -155,15 +151,14 @@ std::string major_move::stringify() const
 
 attack_move::attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc)
     : move(b, mp, dc),
-      attacked_piece_(std::move(ap)){};
+      attacked_piece_(std::move(ap)) {};
 
 bool attack_move::operator==(const move &other) const
 {
     if (this == &other)
         return true;
     if (const attack_move *otherAttackMove = dynamic_cast<const attack_move *>(&other))
-        return move::operator==(other) &&
-               *get_attacked_piece() == *otherAttackMove->get_attacked_piece();
+        return move::operator==(other) && *get_attacked_piece() == *otherAttackMove->get_attacked_piece();
     return false;
 }
 
@@ -190,8 +185,7 @@ bool pawn_promotion::operator==(const move &other) const
     if (this == &other)
         return true;
     if (const pawn_promotion *otherPawnPromotion = dynamic_cast<const pawn_promotion *>(&other))
-        return move::operator==(other) &&
-               *get_promoted_piece() == *otherPawnPromotion->get_promoted_piece();
+        return move::operator==(other) && *get_promoted_piece() == *otherPawnPromotion->get_promoted_piece();
     return false;
 }
 
@@ -243,7 +237,7 @@ std::string pawn_promotion::stringify() const
 /*major_attack_move*/
 
 major_attack_move::major_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc)
-    : attack_move(b, mp, ap, dc){};
+    : attack_move(b, mp, ap, dc) {};
 
 bool major_attack_move::operator==(const move &other) const
 {
@@ -262,7 +256,7 @@ std::string major_attack_move::stringify() const
 /*pawn_move*/
 
 pawn_move::pawn_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc)
-    : move(b, mp, dc){};
+    : move(b, mp, dc) {};
 
 bool pawn_move::operator==(const move &other) const
 {
@@ -281,7 +275,7 @@ std::string pawn_move::stringify() const
 /*pawn_attack_move*/
 
 pawn_attack_move::pawn_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc)
-    : attack_move(b, mp, ap, dc){};
+    : attack_move(b, mp, ap, dc) {};
 
 bool pawn_attack_move::operator==(const move &other) const
 {
@@ -294,14 +288,13 @@ bool pawn_attack_move::operator==(const move &other) const
 
 std::string pawn_attack_move::stringify() const
 {
-    return board_utils::get_position_at_coordinate(moved_piece_->get_piece_position()).substr(0, 1) + "x" +
-           board_utils::get_position_at_coordinate(destination_coordinate_);
+    return board_utils::get_position_at_coordinate(moved_piece_->get_piece_position()).substr(0, 1) + "x" + board_utils::get_position_at_coordinate(destination_coordinate_);
 }
 
 /*pawn_en_passant_attack_move*/
 
 pawn_en_passant_attack_move::pawn_en_passant_attack_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, std::shared_ptr<piece> ap, int dc)
-    : pawn_attack_move(b, mp, ap, dc){};
+    : pawn_attack_move(b, mp, ap, dc) {};
 
 std::shared_ptr<board> pawn_en_passant_attack_move::execute() const
 {
@@ -340,7 +333,7 @@ bool pawn_en_passant_attack_move::operator==(const move &other) const
 /*pawn_jump*/
 
 pawn_jump::pawn_jump(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc)
-    : move(b, mp, dc){};
+    : move(b, mp, dc) {};
 
 std::shared_ptr<board> pawn_jump::execute() const
 {
@@ -382,15 +375,14 @@ castle_move::castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, in
     : move(b, mp, dc),
       castling_rook_(cr),
       castling_rook_start_square_(crss),
-      castling_rook_destination_(crd){};
+      castling_rook_destination_(crd) {};
 
 bool castle_move::operator==(const move &other) const
 {
     if (this == &other)
         return true;
     if (const castle_move *otherCastleMove = dynamic_cast<const castle_move *>(&other))
-        return move::operator==(other) &&
-               *get_castling_rook() == *otherCastleMove->get_castling_rook();
+        return move::operator==(other) && *get_castling_rook() == *otherCastleMove->get_castling_rook();
     return false;
 }
 
@@ -436,7 +428,7 @@ std::shared_ptr<board> castle_move::execute() const
 /*king_side_castle_move*/
 
 king_side_castle_move::king_side_castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd)
-    : castle_move(b, mp, dc, cr, crss, crd){};
+    : castle_move(b, mp, dc, cr, crss, crd) {};
 
 bool king_side_castle_move::operator==(const move &other) const
 {
@@ -455,7 +447,7 @@ std::string king_side_castle_move::stringify() const
 /*queen_side_castle_move*/
 
 queen_side_castle_move::queen_side_castle_move(std::shared_ptr<board> b, std::shared_ptr<piece> mp, int dc, std::shared_ptr<rook> cr, int crss, int crd)
-    : castle_move(b, mp, dc, cr, crss, crd){};
+    : castle_move(b, mp, dc, cr, crss, crd) {};
 
 bool queen_side_castle_move::operator==(const move &other) const
 {
@@ -473,7 +465,8 @@ std::string queen_side_castle_move::stringify() const
 
 /*null_move*/
 
-null_move::null_move() : move(nullptr, -1){};
+null_move::null_move()
+    : move(nullptr, -1) {};
 
 std::shared_ptr<board> null_move::execute() const
 {
@@ -498,10 +491,7 @@ std::shared_ptr<move> move_factory::create_move(std::shared_ptr<board> b, int cc
 std::shared_ptr<move> move_factory::create_move(std::shared_ptr<board> b, int cc, int dc, piece_type ppt)
 {
     for (std::shared_ptr<move> m : b->get_all_legal_moves())
-        if (m->get_current_coordinate() == cc &&
-            m->get_destination_coordinate() == dc &&
-            std::dynamic_pointer_cast<pawn_promotion>(m) &&
-            (std::dynamic_pointer_cast<pawn_promotion>(m))->get_promoted_piece()->get_piece_type() == ppt)
+        if (m->get_current_coordinate() == cc && m->get_destination_coordinate() == dc && std::dynamic_pointer_cast<pawn_promotion>(m) && (std::dynamic_pointer_cast<pawn_promotion>(m))->get_promoted_piece()->get_piece_type() == ppt)
             return m;
     return move::get_null_move();
 }

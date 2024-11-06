@@ -2,13 +2,13 @@
  * @file MoveTransition.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the move transition class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
+#include "engine/board/MoveTransition.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/Move.hpp"
-#include "engine/board/MoveTransition.hpp"
 
 move_transition::move_transition(std::shared_ptr<board> tb, std::shared_ptr<move> m, move_status ms)
     : transition_board_(tb),

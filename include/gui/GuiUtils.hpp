@@ -2,7 +2,7 @@
  * @file GuiUtils.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the GUI utilities
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -39,7 +39,7 @@ namespace
 class move_log
 {
 public:
-    const std::vector<std::shared_ptr<move>> &get_moves() const;
+    const std::vector<std::shared_ptr<move> > &get_moves() const;
     int get_moves_count() const;
     void add_move(std::shared_ptr<move> m);
     std::shared_ptr<move> remove_move(int index);
@@ -47,7 +47,7 @@ public:
     void clear_moves();
 
 private:
-    std::vector<std::shared_ptr<move>> moves_; ///< The moves
+    std::vector<std::shared_ptr<move> > moves_; ///< The moves
 };
 
 /**

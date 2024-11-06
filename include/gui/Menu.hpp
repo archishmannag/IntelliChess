@@ -2,7 +2,7 @@
  * @file Menu.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the menu bar
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 

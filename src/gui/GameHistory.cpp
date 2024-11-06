@@ -2,18 +2,18 @@
  * @file GameHistory.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the game history class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "gui/GameHistory.hpp"
-#include "gui/GuiUtils.hpp"
+#include "engine/Alliance.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
 #include "engine/board/Move.hpp"
 #include "engine/pieces/Piece.hpp"
 #include "engine/player/Player.hpp"
-#include "engine/Alliance.hpp"
+#include "gui/GuiUtils.hpp"
 
 /* history_row */
 
@@ -151,14 +151,10 @@ void game_history_block::redo(board *board, move_log &ml)
 
             // Very ugly code, but it works. Will refactor later
             hr.set_white_move(
-                ml.get_moves()[i]->stringify() +
-                ((past_checks.front() == std::to_string(current_row) + 'W') ? past_checks.pop_front(), "+"
-                                                                            : ""));
+                ml.get_moves()[i]->stringify() + ((past_checks.front() == std::to_string(current_row) + 'W') ? past_checks.pop_front(), "+" : ""));
             if (i + 1 < ml.get_moves().size())
                 hr.set_black_move(
-                    ml.get_moves()[i + 1]->stringify() +
-                    ((past_checks.front() == std::to_string(current_row) + 'B') ? past_checks.pop_front(), "+"
-                                                                                : ""));
+                    ml.get_moves()[i + 1]->stringify() + ((past_checks.front() == std::to_string(current_row) + 'B') ? past_checks.pop_front(), "+" : ""));
             history_rows_.push_back(hr);
             current_row++;
         }
@@ -261,8 +257,7 @@ void game_history_block::update(sf::RenderWindow &window)
 void game_history_block::update_scroll_percentage(sf::Vector2f window_size)
 {
     // Reset view if all rows are visible (Useful when starting a new game and flushing all moves)
-    if (history_rows_.size() == 0 || (history_rows_.front().get_position().y > view_.getCenter().y - view_.getSize().y / 2 &&
-                                      history_rows_.back().get_position().y < view_.getCenter().y + view_.getSize().y / 2))
+    if (history_rows_.size() == 0 || (history_rows_.front().get_position().y > view_.getCenter().y - view_.getSize().y / 2 && history_rows_.back().get_position().y < view_.getCenter().y + view_.getSize().y / 2))
     {
         scroll_percentage_top_ = 0.f;
         scroll_percentage_bottom_ = 100.f;

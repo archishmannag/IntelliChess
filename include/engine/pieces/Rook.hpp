@@ -2,7 +2,7 @@
  * @file Rook.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the rook class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -27,7 +27,7 @@ public:
      */
     rook(const int pp, const alliance pa, const bool fm = true);
 
-    std::vector<std::shared_ptr<move>> calculate_legal_moves(std::shared_ptr<board> b) override;
+    std::vector<std::shared_ptr<move> > calculate_legal_moves(std::shared_ptr<board> b) override;
     std::shared_ptr<piece> move_piece(const move *const m) const override;
 
 private:

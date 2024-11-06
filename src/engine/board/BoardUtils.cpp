@@ -2,7 +2,7 @@
  * @file BoardUtils.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the board utilities class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 #include "engine/board/BoardUtils.hpp"
@@ -10,8 +10,8 @@
 #include "engine/board/Move.hpp"
 #include "engine/board/MoveTransition.hpp"
 #include "engine/board/Tile.hpp"
-#include "engine/pieces/Piece.hpp"
 #include "engine/pieces/King.hpp"
+#include "engine/pieces/Piece.hpp"
 #include "engine/player/Player.hpp"
 
 /**
@@ -72,7 +72,8 @@ namespace
             "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4",
             "a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3",
             "a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2",
-            "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"};
+            "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"
+        };
     }
 
     std::array<std::string, 64> algebraic_notation = initialize_algebraic_notation();
@@ -144,9 +145,7 @@ bool board_utils::is_king_threatened_by_move(std::shared_ptr<move> m)
 bool board_utils::pawn_castle_attack_check(const board *b, const king *k, const int ft)
 {
     const std::shared_ptr<piece> &p = b->get_tile(ft)->get_piece_on_tile();
-    return p &&
-           p->get_piece_type() == piece_type::pawn &&
-           p->get_piece_alliance() != k->get_piece_alliance();
+    return p && p->get_piece_type() == piece_type::pawn && p->get_piece_alliance() != k->get_piece_alliance();
 }
 
 int board_utils::mvv_lva(const move *m)

@@ -2,17 +2,17 @@
  * @file AlphaBeta.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the alpha beta pruning algorithm
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "engine/player/ai/AlphaBeta.hpp"
-#include "engine/player/ai/StandardBoardEvaluator.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
 #include "engine/board/Move.hpp"
 #include "engine/board/MoveTransition.hpp"
 #include "engine/player/Player.hpp"
+#include "engine/player/ai/StandardBoardEvaluator.hpp"
 
 /**
  * @brief Functions to compare and sort moves for the alpha beta pruning algorithm
@@ -44,15 +44,16 @@ namespace move_sorter
         return board_utils::mvv_lva(m1.get()) > board_utils::mvv_lva(m2.get());
     }
 
-    std::vector<std::shared_ptr<move>> sort(const std::vector<std::shared_ptr<move>> &moves)
+    std::vector<std::shared_ptr<move> > sort(const std::vector<std::shared_ptr<move> > &moves)
     {
-        std::vector<std::shared_ptr<move>> sorted_moves = moves;
+        std::vector<std::shared_ptr<move> > sorted_moves = moves;
         std::sort(sorted_moves.begin(), sorted_moves.end(), compare_moves);
         return sorted_moves;
     }
 } // namespace move_sorter
 
-alpha_beta::alpha_beta(const unsigned sd) : search_depth_(sd)
+alpha_beta::alpha_beta(const unsigned sd)
+    : search_depth_(sd)
 {
 }
 
@@ -152,7 +153,7 @@ int alpha_beta::quiescence(std::shared_ptr<board> b, int depth, int alpha, int b
         alpha = stand_pat;
 
     // Check for quiescent attacks
-    std::vector<std::shared_ptr<move>> attack_moves, moves = b->get_current_player()->get_legal_moves();
+    std::vector<std::shared_ptr<move> > attack_moves, moves = b->get_current_player()->get_legal_moves();
     std::copy_if(moves.begin(), moves.end(), std::back_inserter(attack_moves), [](std::shared_ptr<move> m) -> bool
                  { return m->is_attack_move(); });
 

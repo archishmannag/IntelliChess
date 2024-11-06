@@ -2,7 +2,7 @@
  * @file Bishop.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the bishop class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -33,7 +33,7 @@ public:
      * @param b The board on which the moves are to be calculated
      * @return Vector of shared pointers to the legal moves
      */
-    std::vector<std::shared_ptr<move>> calculate_legal_moves(std::shared_ptr<board> b) override;
+    std::vector<std::shared_ptr<move> > calculate_legal_moves(std::shared_ptr<board> b) override;
     std::shared_ptr<piece> move_piece(const move *const m) const override;
 
 private:

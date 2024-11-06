@@ -2,7 +2,7 @@
  * @file Tile.hpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Header file for the tile class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
@@ -57,10 +57,10 @@ private:
      *
      * @return Unordered map of the empty tiles
      */
-    static std::unordered_map<int, std::shared_ptr<empty_tile>> initialize_all_empty_tiles();
+    static std::unordered_map<int, std::shared_ptr<empty_tile> > initialize_all_empty_tiles();
 
 private:
-    static std::unordered_map<int, std::shared_ptr<empty_tile>> empty_tiles_cache; ///< Cache of empty tiles
+    static std::unordered_map<int, std::shared_ptr<empty_tile> > empty_tiles_cache; ///< Cache of empty tiles
 };
 
 /**

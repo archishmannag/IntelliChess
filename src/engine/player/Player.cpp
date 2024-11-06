@@ -2,16 +2,16 @@
  * @file Player.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the player class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "engine/player/Player.hpp"
-#include "engine/board/Move.hpp"
 #include "engine/board/Board.hpp"
-#include "engine/pieces/Piece.hpp"
-#include "engine/pieces/King.hpp"
+#include "engine/board/Move.hpp"
 #include "engine/board/MoveTransition.hpp"
+#include "engine/pieces/King.hpp"
+#include "engine/pieces/Piece.hpp"
 
 player::player(std::shared_ptr<board> b)
     : board_(b)
@@ -38,9 +38,9 @@ bool player::has_escape_coves() const
     return false;
 }
 
-std::vector<std::shared_ptr<move>> player::calculate_attacks_on_tile(const int tc, std::vector<std::shared_ptr<move>> ol)
+std::vector<std::shared_ptr<move> > player::calculate_attacks_on_tile(const int tc, std::vector<std::shared_ptr<move> > ol)
 {
-    std::vector<std::shared_ptr<move>> attack_moves;
+    std::vector<std::shared_ptr<move> > attack_moves;
 
     for (std::shared_ptr<move> m : ol)
         if (tc == m->get_destination_coordinate())
@@ -51,7 +51,8 @@ std::vector<std::shared_ptr<move>> player::calculate_attacks_on_tile(const int t
 bool player::is_move_legal(const move *m) const
 {
     return std::find_if(legal_moves_.begin(), legal_moves_.end(), [m](std::shared_ptr<move> legal_move) -> bool
-                        { return *legal_move == *m; }) != legal_moves_.end();
+                        { return *legal_move == *m; })
+           != legal_moves_.end();
 }
 
 std::shared_ptr<king> player::get_player_king() const
@@ -59,7 +60,7 @@ std::shared_ptr<king> player::get_player_king() const
     return player_king_;
 }
 
-const std::vector<std::shared_ptr<move>> &player::get_legal_moves() const
+const std::vector<std::shared_ptr<move> > &player::get_legal_moves() const
 {
     return legal_moves_;
 }
@@ -109,7 +110,7 @@ move_transition player::make_move(std::shared_ptr<move> m) const
     if (!is_move_legal(m.get()))
         return move_transition(board_.lock(), m, move_status::illegal_move);
     std::shared_ptr<board> transition_board = m->execute();
-    std::vector<std::shared_ptr<move>> king_attacks = player::calculate_attacks_on_tile(transition_board->get_current_player()->get_opponent().lock()->get_player_king()->get_piece_position(), transition_board->get_current_player()->get_legal_moves());
+    std::vector<std::shared_ptr<move> > king_attacks = player::calculate_attacks_on_tile(transition_board->get_current_player()->get_opponent().lock()->get_player_king()->get_piece_position(), transition_board->get_current_player()->get_legal_moves());
     if (!king_attacks.empty())
         return move_transition(board_.lock(), m, move_status::leaves_player_in_check);
     return move_transition(transition_board, m, move_status::done);
@@ -120,7 +121,7 @@ move_transition player::unmake_move(std::shared_ptr<move> m) const
     return move_transition(m->undo(), m, move_status::done);
 }
 
-std::vector<std::shared_ptr<piece>> player::get_active_pieces() const
+std::vector<std::shared_ptr<piece> > player::get_active_pieces() const
 {
     throw std::logic_error("This must be overridden");
 }
@@ -135,7 +136,7 @@ std::weak_ptr<player> player::get_opponent() const
     throw std::logic_error("This function must be overridden!");
 }
 
-std::vector<std::shared_ptr<move>> player::calculate_king_castles(const std::vector<std::shared_ptr<move>> &ol) const
+std::vector<std::shared_ptr<move> > player::calculate_king_castles(const std::vector<std::shared_ptr<move> > &ol) const
 {
     throw std::logic_error("This function must be overridden!");
 }

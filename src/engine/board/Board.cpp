@@ -2,22 +2,22 @@
  * @file Board.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the board and board-builder class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "engine/board/Board.hpp"
-#include "engine/pieces/Piece.hpp"
-#include "engine/pieces/Pawn.hpp"
-#include "engine/pieces/Rook.hpp"
-#include "engine/pieces/Knight.hpp"
-#include "engine/pieces/Bishop.hpp"
-#include "engine/pieces/Queen.hpp"
-#include "engine/pieces/King.hpp"
 #include "engine/board/Move.hpp"
 #include "engine/board/Tile.hpp"
-#include "engine/player/WhitePlayer.hpp"
+#include "engine/pieces/Bishop.hpp"
+#include "engine/pieces/King.hpp"
+#include "engine/pieces/Knight.hpp"
+#include "engine/pieces/Pawn.hpp"
+#include "engine/pieces/Piece.hpp"
+#include "engine/pieces/Queen.hpp"
+#include "engine/pieces/Rook.hpp"
 #include "engine/player/BlackPlayer.hpp"
+#include "engine/player/WhitePlayer.hpp"
 
 /* board_builder */
 
@@ -67,7 +67,7 @@ alliance board_builder::get_next_move_maker() const
     return next_move_maker_;
 }
 
-const std::unordered_map<int, std::shared_ptr<piece>> &board_builder::get_board_config() const
+const std::unordered_map<int, std::shared_ptr<piece> > &board_builder::get_board_config() const
 {
     return board_config_;
 }
@@ -110,8 +110,8 @@ void board::initialize_game_board(const board_builder &b)
     white_pieces_ = board::calculate_active_pieces(game_board_, alliance::white);
     black_pieces_ = board::calculate_active_pieces(game_board_, alliance::black);
 
-    std::vector<std::shared_ptr<move>> white_legal_moves = calculate_legal_moves(white_pieces_),
-                                       black_legal_moves = calculate_legal_moves(black_pieces_);
+    std::vector<std::shared_ptr<move> > white_legal_moves = calculate_legal_moves(white_pieces_),
+                                        black_legal_moves = calculate_legal_moves(black_pieces_);
 
     white_player_ = std::make_shared<white_player>(shared_from_this(), white_legal_moves, black_legal_moves);
     black_player_ = std::make_shared<black_player>(shared_from_this(), white_legal_moves, black_legal_moves);
@@ -120,20 +120,20 @@ void board::initialize_game_board(const board_builder &b)
     full_move_number_ = b.get_full_move_number();
 }
 
-std::vector<std::shared_ptr<move>> board::calculate_legal_moves(const std::vector<std::shared_ptr<piece>> &pieces)
+std::vector<std::shared_ptr<move> > board::calculate_legal_moves(const std::vector<std::shared_ptr<piece> > &pieces)
 {
-    std::vector<std::shared_ptr<move>> legal_moves;
+    std::vector<std::shared_ptr<move> > legal_moves;
     for (const std::shared_ptr<piece> &p : pieces)
     {
-        std::vector<std::shared_ptr<move>> piece_legal_moves = p->calculate_legal_moves(shared_from_this());
+        std::vector<std::shared_ptr<move> > piece_legal_moves = p->calculate_legal_moves(shared_from_this());
         legal_moves.insert(legal_moves.end(), piece_legal_moves.begin(), piece_legal_moves.end());
     }
     return legal_moves;
 }
 
-std::vector<std::shared_ptr<piece>> board::calculate_active_pieces(const std::array<std::shared_ptr<tile>, 64> &gameboard, alliance a)
+std::vector<std::shared_ptr<piece> > board::calculate_active_pieces(const std::array<std::shared_ptr<tile>, 64> &gameboard, alliance a)
 {
-    std::vector<std::shared_ptr<piece>> active_pieces;
+    std::vector<std::shared_ptr<piece> > active_pieces;
     for (const std::shared_ptr<tile> &t : gameboard)
     {
         if (t->is_tile_occupied())
@@ -149,8 +149,8 @@ std::vector<std::shared_ptr<piece>> board::calculate_active_pieces(const std::ar
 std::array<std::shared_ptr<tile>, 64> board::create_game_board(const board_builder &b)
 {
     std::array<std::shared_ptr<tile>, 64> game_board;
-    const std::unordered_map<int, std::shared_ptr<piece>> &board_config = b.get_board_config();
-    std::unordered_map<int, std::shared_ptr<piece>>::const_iterator it;
+    const std::unordered_map<int, std::shared_ptr<piece> > &board_config = b.get_board_config();
+    std::unordered_map<int, std::shared_ptr<piece> >::const_iterator it;
     for (int i = 0; i < 64; i++)
     {
         it = board_config.find(i);
@@ -182,19 +182,19 @@ int board::get_full_move_number() const
     return full_move_number_;
 }
 
-const std::vector<std::shared_ptr<piece>> &board::get_white_pieces() const
+const std::vector<std::shared_ptr<piece> > &board::get_white_pieces() const
 {
     return white_pieces_;
 }
 
-const std::vector<std::shared_ptr<piece>> &board::get_black_pieces() const
+const std::vector<std::shared_ptr<piece> > &board::get_black_pieces() const
 {
     return black_pieces_;
 }
 
-const std::vector<std::shared_ptr<piece>> board::get_all_pieces() const
+const std::vector<std::shared_ptr<piece> > board::get_all_pieces() const
 {
-    std::vector<std::shared_ptr<piece>> all_pieces;
+    std::vector<std::shared_ptr<piece> > all_pieces;
     all_pieces.insert(all_pieces.end(), white_pieces_.begin(), white_pieces_.end());
     all_pieces.insert(all_pieces.end(), black_pieces_.begin(), black_pieces_.end());
     return all_pieces;
@@ -220,9 +220,9 @@ std::shared_ptr<player> board::get_current_player() const
     return current_player_.lock();
 }
 
-std::vector<std::shared_ptr<move>> board::get_all_legal_moves() const
+std::vector<std::shared_ptr<move> > board::get_all_legal_moves() const
 {
-    std::vector<std::shared_ptr<move>> all_legal_moves,
+    std::vector<std::shared_ptr<move> > all_legal_moves,
         whiteLegalMoves = white_player_->get_legal_moves(),
         blackLegalMoves = black_player_->get_legal_moves();
     all_legal_moves.insert(all_legal_moves.end(), whiteLegalMoves.begin(), whiteLegalMoves.end());

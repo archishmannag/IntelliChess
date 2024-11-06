@@ -1,29 +1,29 @@
 /**
  * @file BoardTest.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
-#include <gtest/gtest.h>
 #include <PreCompiledHeaders.hpp>
+#include <gtest/gtest.h>
 
+#include <engine/Alliance.hpp>
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
 #include <engine/board/Move.hpp>
 #include <engine/board/MoveTransition.hpp>
 #include <engine/board/Tile.hpp>
-#include <engine/pieces/Piece.hpp>
 #include <engine/pieces/Bishop.hpp>
 #include <engine/pieces/King.hpp>
 #include <engine/pieces/Knight.hpp>
 #include <engine/pieces/Pawn.hpp>
+#include <engine/pieces/Piece.hpp>
 #include <engine/pieces/Queen.hpp>
 #include <engine/pieces/Rook.hpp>
 #include <engine/player/Player.hpp>
-#include <engine/player/ai/MoveStrategy.hpp>
 #include <engine/player/ai/MiniMax.hpp>
-#include <engine/Alliance.hpp>
+#include <engine/player/ai/MoveStrategy.hpp>
 
 TEST(BoardTest, testInitialBoard)
 {
@@ -45,10 +45,10 @@ TEST(BoardTest, testInitialBoard)
     ASSERT_STREQ("White", alliance_utils::stringify(b->get_current_player()->get_player_alliance()).c_str());
     ASSERT_STREQ("Black", alliance_utils::stringify(b->get_current_player()->get_opponent().lock()->get_player_alliance()).c_str());
 
-    std::vector<std::shared_ptr<piece>> all_pieces = b->get_white_pieces(),
-                                        black_pieces = b->get_black_pieces();
+    std::vector<std::shared_ptr<piece> > all_pieces = b->get_white_pieces(),
+                                         black_pieces = b->get_black_pieces();
     all_pieces.insert(all_pieces.end(), black_pieces.begin(), black_pieces.end());
-    std::vector<std::shared_ptr<move>> all_moves = b->get_all_legal_moves();
+    std::vector<std::shared_ptr<move> > all_moves = b->get_all_legal_moves();
     for (auto m : all_moves)
     {
         ASSERT_FALSE(m->is_attack_move());

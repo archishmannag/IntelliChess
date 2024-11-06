@@ -2,29 +2,20 @@
  * @file TakenPieces.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the taken pieces class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "gui/TakenPieces.hpp"
-#include "gui/GuiUtils.hpp"
+#include "engine/Alliance.hpp"
 #include "engine/board/Move.hpp"
 #include "engine/pieces/Piece.hpp"
-#include "engine/Alliance.hpp"
+#include "gui/GuiUtils.hpp"
 
 taken_pieces_block::taken_pieces_block()
 {
     if (
-        !black_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackPawn.png") ||
-        !white_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whitePawn.png") ||
-        !black_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackBishop.png") ||
-        !white_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteBishop.png") ||
-        !black_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackKnight.png") ||
-        !white_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteKnight.png") ||
-        !black_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackRook.png") ||
-        !white_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteRook.png") ||
-        !black_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackQueen.png") ||
-        !white_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteQueen.png"))
+        !black_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackPawn.png") || !white_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whitePawn.png") || !black_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackBishop.png") || !white_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteBishop.png") || !black_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackKnight.png") || !white_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteKnight.png") || !black_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackRook.png") || !white_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteRook.png") || !black_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackQueen.png") || !white_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteQueen.png"))
     {
         throw std::runtime_error("Failed to load piece textures");
     }
@@ -62,7 +53,7 @@ void taken_pieces_block::redo(move_log &ml)
     black_pawn_sprites_.clear();
     white_pawn_sprites_.clear();
 
-    std::vector<std::shared_ptr<piece>> white_taken_pieces, black_taken_pieces;
+    std::vector<std::shared_ptr<piece> > white_taken_pieces, black_taken_pieces;
 
     for (const std::shared_ptr<move> &move : ml.get_moves())
     {

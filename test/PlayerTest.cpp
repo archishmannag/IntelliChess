@@ -1,21 +1,21 @@
 /**
  * @file PlayerTest.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
-#include <gtest/gtest.h>
 #include <PreCompiledHeaders.hpp>
+#include <gtest/gtest.h>
 
 #include <engine/board/Board.hpp>
 #include <engine/board/BoardUtils.hpp>
 #include <engine/board/Move.hpp>
 #include <engine/board/MoveTransition.hpp>
-#include <engine/player/Player.hpp>
 #include <engine/pieces/Bishop.hpp>
 #include <engine/pieces/King.hpp>
 #include <engine/pieces/Rook.hpp>
+#include <engine/player/Player.hpp>
 
 TEST(PlayerTest, testSimpleEvaluation)
 {

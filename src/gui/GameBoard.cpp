@@ -2,27 +2,27 @@
  * @file GameBoard.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the game board
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "gui/GameBoard.hpp"
-#include "gui/Menu.hpp"
-#include "gui/TakenPieces.hpp"
-#include "gui/GameHistory.hpp"
-#include "gui/GameSetup.hpp"
-#include "gui/Dialogs.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
-#include "engine/board/Tile.hpp"
-#include "engine/pieces/Piece.hpp"
 #include "engine/board/Move.hpp"
 #include "engine/board/MoveTransition.hpp"
-#include "engine/player/Player.hpp"
+#include "engine/board/Tile.hpp"
 #include "engine/pieces/King.hpp"
-#include "engine/player/ai/MoveStrategy.hpp"
+#include "engine/pieces/Piece.hpp"
+#include "engine/player/Player.hpp"
 #include "engine/player/ai/AlphaBeta.hpp"
+#include "engine/player/ai/MoveStrategy.hpp"
 #include "engine/player/ai/StandardBoardEvaluator.hpp"
+#include "gui/Dialogs.hpp"
+#include "gui/GameHistory.hpp"
+#include "gui/GameSetup.hpp"
+#include "gui/Menu.hpp"
+#include "gui/TakenPieces.hpp"
 #include "pgn/FenUtils.hpp"
 #include "pgn/PgnUtils.hpp"
 
@@ -77,12 +77,12 @@ game_board::~game_board() = default;
  */
 namespace
 {
-    void print_vector_pieces(std::vector<std::shared_ptr<piece>> vec)
+    void print_vector_pieces(std::vector<std::shared_ptr<piece> > vec)
     {
         std::sort(vec.begin(), vec.end(), [](std::shared_ptr<piece> a, std::shared_ptr<piece> b)
                   { return a->get_piece_value() < b->get_piece_value(); });
         std::cout << "[";
-        for (std::vector<std::shared_ptr<piece>>::iterator it = vec.begin(); it != vec.end(); it++)
+        for (std::vector<std::shared_ptr<piece> >::iterator it = vec.begin(); it != vec.end(); it++)
         {
             if ((*it)->get_piece_alliance() == alliance::white)
                 std::cout << (*it)->stringify();
@@ -97,10 +97,10 @@ namespace
 
     void print_player_info(player *p)
     {
-        std::vector<std::shared_ptr<move>> legal_moves = p->get_legal_moves();
+        std::vector<std::shared_ptr<move> > legal_moves = p->get_legal_moves();
         std::cout << "Player: " << p->stringify() << '\n'
                   << "Legal moves (" << legal_moves.size() << ") = [";
-        for (std::vector<std::shared_ptr<move>>::iterator it = legal_moves.begin(); it != legal_moves.end(); it++)
+        for (std::vector<std::shared_ptr<move> >::iterator it = legal_moves.begin(); it != legal_moves.end(); it++)
         {
             std::cout << (*it)->stringify();
             if (it != legal_moves.end() - 1)
@@ -235,18 +235,7 @@ void game_board::init()
         tile_blocks_.push_back(tile_block(i));
 
     if (
-        !black_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackPawn.png") ||
-        !white_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whitePawn.png") ||
-        !black_king_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackKing.png") ||
-        !white_king_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteKing.png") ||
-        !black_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackBishop.png") ||
-        !white_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteBishop.png") ||
-        !black_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackKnight.png") ||
-        !white_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteKnight.png") ||
-        !black_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackRook.png") ||
-        !white_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteRook.png") ||
-        !black_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackQueen.png") ||
-        !white_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteQueen.png"))
+        !black_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackPawn.png") || !white_pawn_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whitePawn.png") || !black_king_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackKing.png") || !white_king_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteKing.png") || !black_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackBishop.png") || !white_bishop_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteBishop.png") || !black_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackKnight.png") || !white_knight_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteKnight.png") || !black_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackRook.png") || !white_rook_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteRook.png") || !black_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/blackQueen.png") || !white_queen_texture_.loadFromFile(std::string(PROJECT_RESOURCE_DIR) + "/pieces/whiteQueen.png"))
     {
         throw std::runtime_error("Error loading textures");
     }
@@ -533,9 +522,7 @@ void game_board::observe()
             });
         message_dialog_->set_active(true);
     }
-    else if (game_setup_->is_AI_player(board_->get_current_player().get()) &&
-             !board_->get_current_player()->is_is_checkmate() &&
-             !board_->get_current_player()->is_in_stalemate())
+    else if (game_setup_->is_AI_player(board_->get_current_player().get()) && !board_->get_current_player()->is_is_checkmate() && !board_->get_current_player()->is_in_stalemate())
         ai->run();
 }
 
@@ -590,7 +577,7 @@ std::vector<int> game_board::legal_move_destinations()
     std::vector<int> move_destinations;
     if (moved_piece_ != nullptr && moved_piece_->get_piece_alliance() == board_->get_current_player()->get_player_alliance())
     {
-        std::vector<std::shared_ptr<move>> legal_moves = board_->get_current_player()->get_legal_moves();
+        std::vector<std::shared_ptr<move> > legal_moves = board_->get_current_player()->get_legal_moves();
         legal_moves.erase(
             std::remove_if(
                 legal_moves.begin(),
@@ -808,8 +795,8 @@ game_board::ai_move_generator::ai_move_generator(game_board *parent)
 void game_board::ai_move_generator::run()
 {
     // Run the AI in a separate thread
-    std::future<std::shared_ptr<move>> future = std::async(std::launch::async, [this]() -> std::shared_ptr<move>
-                                                           { return get_best_move(); });
+    std::future<std::shared_ptr<move> > future = std::async(std::launch::async, [this]() -> std::shared_ptr<move>
+                                                            { return get_best_move(); });
     std::future_status move_calculation_status;
     parent_->hourglass_.set_active(true);
     do

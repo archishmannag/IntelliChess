@@ -2,13 +2,13 @@
  * @file GameSetup.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the game setup class
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "gui/GameSetup.hpp"
-#include "engine/player/Player.hpp"
 #include "engine/Alliance.hpp"
+#include "engine/player/Player.hpp"
 
 std::string to_string(player_type p)
 {

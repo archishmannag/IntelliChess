@@ -2,23 +2,23 @@
  * @file FenUtils.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the FEN utilities
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "pgn/FenUtils.hpp"
+#include "engine/Alliance.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"
 #include "engine/board/Tile.hpp"
-#include "engine/pieces/Piece.hpp"
-#include "engine/pieces/Pawn.hpp"
-#include "engine/pieces/Knight.hpp"
 #include "engine/pieces/Bishop.hpp"
-#include "engine/pieces/Rook.hpp"
-#include "engine/pieces/Queen.hpp"
 #include "engine/pieces/King.hpp"
+#include "engine/pieces/Knight.hpp"
+#include "engine/pieces/Pawn.hpp"
+#include "engine/pieces/Piece.hpp"
+#include "engine/pieces/Queen.hpp"
+#include "engine/pieces/Rook.hpp"
 #include "engine/player/Player.hpp"
-#include "engine/Alliance.hpp"
 
 /**
  * @brief Helper functions for the Board to FEN conversion
@@ -174,9 +174,7 @@ namespace
             return nullptr;
         else
         {
-            int en_passant_pawn_position =
-                board_utils::get_coordinate_at_position(s[0] + std::to_string(std::stoi(s.substr(1, 1)) +
-                                                                              alliance_utils::get_direction(b.get_next_move_maker())));
+            int en_passant_pawn_position = board_utils::get_coordinate_at_position(s[0] + std::to_string(std::stoi(s.substr(1, 1)) + alliance_utils::get_direction(b.get_next_move_maker())));
             return std::dynamic_pointer_cast<pawn>(b.get_board_config().at(en_passant_pawn_position));
         }
     }
@@ -278,10 +276,5 @@ std::shared_ptr<board> fen_utils::fen_to_board(const std::string &fen)
 
 std::string fen_utils::board_to_fen(const board &b)
 {
-    return calculate_board_text(b) + " " +
-           calculate_current_player_text(b) + " " +
-           calculate_castling_rights_text(b) + " " +
-           calculate_en_passant_text(b) + " " +
-           calculate_halfmove_clock_text(b) + " " +
-           calculate_fullmove_number_text(b);
+    return calculate_board_text(b) + " " + calculate_current_player_text(b) + " " + calculate_castling_rights_text(b) + " " + calculate_en_passant_text(b) + " " + calculate_halfmove_clock_text(b) + " " + calculate_fullmove_number_text(b);
 }

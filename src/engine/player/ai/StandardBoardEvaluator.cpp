@@ -2,17 +2,17 @@
  * @file StandardBoardEvaluator.cpp
  * @author Archishman Nag (nag.archishman@gmail.com)
  * @brief Implementation of the standard board evaluator
- * @version 1.0.0
+ * @version 1.1.0
  *
  */
 
 #include "engine/player/ai/StandardBoardEvaluator.hpp"
-#include "engine/player/ai/PawnStructureAnalyzer.hpp"
+#include "engine/Alliance.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/Move.hpp"
-#include "engine/player/Player.hpp"
 #include "engine/pieces/Piece.hpp"
-#include "engine/Alliance.hpp"
+#include "engine/player/Player.hpp"
+#include "engine/player/ai/PawnStructureAnalyzer.hpp"
 
 // The following values are used to calculate the score of a player
 namespace
@@ -88,12 +88,7 @@ namespace
 
     int player_score(const player *p, int d)
     {
-        return mobility(p) +
-               king_threats(p, d) +
-               attacks(p) +
-               has_castled(p) +
-               piece_value(p) +
-               pawn_structure(p);
+        return mobility(p) + king_threats(p, d) + attacks(p) + has_castled(p) + piece_value(p) + pawn_structure(p);
     }
 } // namespace
 
@@ -104,18 +99,5 @@ int standard_board_evaluator::evaluate(const board &b, int d)
 
 std::string standard_board_evaluator::evaluation_details(const board &b, const int d)
 {
-    return "White Mobility : " + std::to_string(mobility(b.get_white_player().get())) + '\n' +
-           "White King Threats : " + std::to_string(king_threats(b.get_white_player().get(), d)) + '\n' +
-           "White Attacks : " + std::to_string(attacks(b.get_white_player().get())) + '\n' +
-           "White Castle : " + std::to_string(has_castled(b.get_white_player().get())) + '\n' +
-           "White Piece Value : " + std::to_string(piece_value(b.get_white_player().get())) + '\n' +
-           "White Pawn Structure : " + std::to_string(pawn_structure(b.get_white_player().get())) + '\n' +
-           "------------------------------\n" +
-           "Black Mobility : " + std::to_string(mobility(b.get_black_player().get())) + '\n' +
-           "Black King Threats : " + std::to_string(king_threats(b.get_black_player().get(), d)) + '\n' +
-           "Black Attacks : " + std::to_string(attacks(b.get_black_player().get())) + '\n' +
-           "Black Castle : " + std::to_string(has_castled(b.get_black_player().get())) + '\n' +
-           "Black Piece Value : " + std::to_string(piece_value(b.get_black_player().get())) + '\n' +
-           "Black Pawn Structure : " + std::to_string(pawn_structure(b.get_black_player().get())) + "\n\n" +
-           "Final Score : " + std::to_string(evaluate(b, d));
+    return "White Mobility : " + std::to_string(mobility(b.get_white_player().get())) + '\n' + "White King Threats : " + std::to_string(king_threats(b.get_white_player().get(), d)) + '\n' + "White Attacks : " + std::to_string(attacks(b.get_white_player().get())) + '\n' + "White Castle : " + std::to_string(has_castled(b.get_white_player().get())) + '\n' + "White Piece Value : " + std::to_string(piece_value(b.get_white_player().get())) + '\n' + "White Pawn Structure : " + std::to_string(pawn_structure(b.get_white_player().get())) + '\n' + "------------------------------\n" + "Black Mobility : " + std::to_string(mobility(b.get_black_player().get())) + '\n' + "Black King Threats : " + std::to_string(king_threats(b.get_black_player().get(), d)) + '\n' + "Black Attacks : " + std::to_string(attacks(b.get_black_player().get())) + '\n' + "Black Castle : " + std::to_string(has_castled(b.get_black_player().get())) + '\n' + "Black Piece Value : " + std::to_string(piece_value(b.get_black_player().get())) + '\n' + "Black Pawn Structure : " + std::to_string(pawn_structure(b.get_black_player().get())) + "\n\n" + "Final Score : " + std::to_string(evaluate(b, d));
 }
