@@ -12,16 +12,9 @@ foreach(EXECUTABLE_NAME ${EXECUTABLE_NAMES})
 	# Add the executable
 	add_executable(${EXECUTABLE_NAME} ${EXECUTABLE_NAME}.cpp)
 
-	# Set the C++ standard
-	set_target_properties(${PROJECT_NAME} PROPERTIES
-		CXX_STANDARD 17
-		CXX_STANDARD_REQUIRED YES
-		CXX_EXTENSIONS NO
-	)
-
 	# Include the headers
 	target_include_directories(${EXECUTABLE_NAME}
-		PUBLIC "${PROJECT_SOURCE_DIR}/include"
+		PUBLIC "${CMAKE_SOURCE_DIR}/include"
 	)
 
 	# Link the executable to the source library and googletest
@@ -31,7 +24,10 @@ foreach(EXECUTABLE_NAME ${EXECUTABLE_NAMES})
 	)
 
 	# Add the precompiled headers
-	target_precompile_headers(${EXECUTABLE_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include/PreCompiledHeaders.hpp)
+	target_precompile_headers(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include/PreCompiledHeaders.hpp)
+
+	# Add the compile options
+	target_compile_options(${EXECUTABLE_NAME} PUBLIC ${OPTIONS})
 
 	if(UNIX AND NOT APPLE)
 		add_compile_definitions(UNIX)
