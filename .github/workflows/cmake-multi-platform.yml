@@ -107,8 +107,7 @@ jobs:
               run: conan install ${{ github.workspace }} --build=missing -c tools.system.package_manager:mode=install
 
             - name: Build
-              run: |
-                  conan build ${{ github.workspace }}
+              run: conan build ${{ github.workspace }}
 
             - name: Test
               if: success()
