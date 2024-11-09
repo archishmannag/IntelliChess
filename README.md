@@ -17,6 +17,19 @@ These are the requirements and dependencies of IntelliChess:
 -   Conan - [Download here](https://conan.io/downloads.html)
 -   Ninja (optional) - [Download here](https://github.com/ninja-build/ninja/releases)
 -   A C++ 17 compatible compiler (GCC, Clang, MSVC, etc.) for building from source
+-   Following libraries (and  ther development headers) are required for SFML on Linux:
+    -   freetype
+    -   x11
+    -   xrandr
+    -   udev
+    -   opengl
+    -   flac
+    -   ogg
+    -   vorbis
+    -   vorbisenc
+    -   vorbisfile
+    -   openal
+    -   pthread
 
     Ensure these are present in the `PATH` variable so that the scripts can run the executables.
 

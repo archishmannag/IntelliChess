@@ -16,7 +16,7 @@ fi
 
 # Install dependencies
 echo -e "\033[34mInstalling dependencies...\033[0m"
-sudo conan install . --build missing -c tools.system.package_manager:mode=install || exit 1
+conan install . --build missing -c tools.system.package_manager:mode=install || exit 1
 
 # Build project
 echo -e "\033[34mBuilding project...\033[0m"
