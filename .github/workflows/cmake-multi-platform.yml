@@ -99,7 +99,7 @@ jobs:
               run: conan profile detect
 
             - name: Install dependencies with Conan
-              run: conan install ${{ github.workspace }} --build=missing
+              run: conan install ${{ github.workspace }} --build=missing -c tools.system.package_manager:mode=install
 
             - name: Build
               run: |
