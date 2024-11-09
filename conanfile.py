@@ -1,5 +1,6 @@
 from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
+import os
 
 class IntelliChess(ConanFile):
     name = "IntelliChess"
@@ -17,7 +18,7 @@ class IntelliChess(ConanFile):
 
     def layout(self):
         cmake_layout(self)
-        self.folders.build = "conan/build"
+        self.folders.build = "build"
         self.folders.generators = "conan/debug" if self.settings.build_type == "Debug" else "conan/release"
 
     def generate(self):
@@ -27,7 +28,10 @@ class IntelliChess(ConanFile):
 
     def build(self):
         cmake = CMake(self)
-        cmake.configure()
+        if os.getenv("CI"):
+            cmake.configure(variables={"BUILD_TESTS": "ON"})
+        else:
+            cmake.configure()
         cmake.build()
 
     def package(self):
