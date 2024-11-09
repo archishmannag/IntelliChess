@@ -98,7 +98,12 @@ jobs:
             - name: Configure Conan
               run: conan profile detect
 
-            - name: Install dependencies with Conan
+            - name: Install dependencies with Conan on Linux
+              if: matrix.os == 'ubuntu-latest'
+              run: sudo conan install ${{ github.workspace }} --build=missing -c tools.system.package_manager:mode=install
+
+            - name: Install dependencies with Conan on Windows
+              if: matrix.os == 'windows-latest'
               run: conan install ${{ github.workspace }} --build=missing -c tools.system.package_manager:mode=install
 
             - name: Build
