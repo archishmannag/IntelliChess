@@ -267,11 +267,12 @@ void input_dialog::update_input_text_view()
 {
     // Update the view's centre to display the cursor.
     sf::Vector2f cursor_display_location = input_text_.findCharacterPos(cursor_position_);
-    if (cursor_display_location.x < input_box_.getPosition().x + 4)
-        while (cursor_display_location.x < input_box_.getPosition().x + 4)
+
+    if (cursor_display_location.x < input_text_view_.getCenter().x - input_text_view_.getSize().x / 2 + 4)
+        while (cursor_display_location.x < input_text_view_.getCenter().x - input_text_view_.getSize().x / 2 + 4)
             input_text_view_.move(-8, 0);
-    else if (cursor_display_location.x > input_box_.getPosition().x + input_box_.getSize().x - 4)
-        while (cursor_display_location.x > input_box_.getPosition().x + input_box_.getSize().x - 4)
+    else if (cursor_display_location.x > input_text_view_.getCenter().x + input_text_view_.getSize().x / 2 - 4)
+        while (cursor_display_location.x > input_text_view_.getCenter().x + input_text_view_.getSize().x / 2 - 4)
             input_text_view_.move(8, 0);
 }
 
