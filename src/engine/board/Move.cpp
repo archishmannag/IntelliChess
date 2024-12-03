@@ -37,12 +37,24 @@ bool move::operator==(const move &other) const
     return get_current_coordinate() == other.get_current_coordinate() && get_destination_coordinate() == other.get_destination_coordinate() && *get_moved_piece() == *other.get_moved_piece();
 }
 
-std::string move::disambiguation_file() const
+std::string move::disambiguation_string() const
 {
+    bool flag_rank = false, flag_file = false;
+    std::string disambiguation{ board_utils::get_position_at_coordinate(moved_piece_->get_piece_position()) };
     for (const std::shared_ptr<move> &m : board_.lock()->get_current_player()->get_legal_moves())
-        if (!(*this == *m) && m->get_destination_coordinate() == destination_coordinate_ && moved_piece_->get_piece_type() == m->get_moved_piece()->get_piece_type())
-            // If another move has a similar piece landing on the same destination, then return the current file for disambiguation
-            return board_utils::get_position_at_coordinate(moved_piece_->get_piece_position()).substr(0, 1);
+        if (!(*this == *m) && m->destination_coordinate_ == destination_coordinate_ && moved_piece_->get_piece_type() == m->moved_piece_->get_piece_type())
+        {
+            if (moved_piece_->get_piece_position() % 8 == m->moved_piece_->get_piece_position() % 8)
+                flag_rank = true;
+            else
+                flag_file = true;
+        }
+    if (flag_file and flag_rank)
+        return disambiguation;
+    if (flag_file)
+        return disambiguation.substr(0, 1);
+    if (flag_rank)
+        return disambiguation.substr(1);
     return "";
 }
 
@@ -144,7 +156,7 @@ bool major_move::operator==(const move &other) const
 
 std::string major_move::stringify() const
 {
-    return moved_piece_->stringify() + disambiguation_file() + board_utils::get_position_at_coordinate(destination_coordinate_);
+    return moved_piece_->stringify() + disambiguation_string() + board_utils::get_position_at_coordinate(destination_coordinate_);
 }
 
 /*attack_move*/
@@ -250,7 +262,7 @@ bool major_attack_move::operator==(const move &other) const
 
 std::string major_attack_move::stringify() const
 {
-    return moved_piece_->stringify() + disambiguation_file() + "x" + board_utils::get_position_at_coordinate(destination_coordinate_);
+    return moved_piece_->stringify() + disambiguation_string() + "x" + board_utils::get_position_at_coordinate(destination_coordinate_);
 }
 
 /*pawn_move*/

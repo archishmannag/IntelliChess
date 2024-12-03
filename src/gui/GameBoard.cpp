@@ -389,108 +389,107 @@ void game_board::scale_board()
 
 void game_board::move_handler()
 {
-    if (event_.mouseButton.button == sf::Mouse::Left)
-        if (!game_setup_->is_AI_player(board_->get_current_player().get()))
-            for (tile_block &tile_block : tile_blocks_)
-                if (tile_block.get_tile_rect().getGlobalBounds().contains(mouse_position_.x, mouse_position_.y))
+    if (event_.mouseButton.button == sf::Mouse::Left && !game_setup_->is_AI_player(board_->get_current_player().get()))
+        for (tile_block &tile_block : tile_blocks_)
+            if (tile_block.get_tile_rect().getGlobalBounds().contains(mouse_position_.x, mouse_position_.y))
+            {
+                // First click selects source, second selects destination
+                if (source_tile_ == nullptr)
                 {
-                    // First click selects source, second selects destination
-                    if (source_tile_ == nullptr)
+                    source_tile_ = board_->get_tile(tile_block.get_tile_id());
+                    if ((moved_piece_ = source_tile_->get_piece_on_tile()) == nullptr)
+                        source_tile_ = nullptr;
+                }
+                else
+                {
+                    destination_tile_ = board_->get_tile(tile_block.get_tile_id());
+                    if (source_tile_->get_tile_coordinate() == destination_tile_->get_tile_coordinate())
                     {
-                        source_tile_ = board_->get_tile(tile_block.get_tile_id());
-                        if ((moved_piece_ = source_tile_->get_piece_on_tile()) == nullptr)
-                            source_tile_ = nullptr;
+                        pawn_promotion_ = false;
+                        source_tile_ = nullptr;
+                        destination_tile_ = nullptr;
+                        moved_piece_ = nullptr;
                     }
-                    else
+                    else if (pawn_promotion_ && pawn_promotion_rect_.getGlobalBounds().contains(mouse_position_.x, mouse_position_.y)) // Pawn promotion selection
                     {
-                        destination_tile_ = board_->get_tile(tile_block.get_tile_id());
-                        if (source_tile_->get_tile_coordinate() == destination_tile_->get_tile_coordinate())
+                        pawn_promotion_ = false;
+                        std::shared_ptr<move> m;
+                        if (moved_piece_->get_piece_alliance() == alliance::white)
                         {
-                            pawn_promotion_ = false;
-                            source_tile_ = nullptr;
-                            destination_tile_ = nullptr;
-                            moved_piece_ = nullptr;
+                            switch (tile_block.get_tile_id() / 8)
+                            {
+                            case 0:
+                                m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::queen);
+                                break;
+                            case 1:
+                                m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::knight);
+                                break;
+                            case 2:
+                                m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::rook);
+                                break;
+                            case 3:
+                                m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::bishop);
+                                break;
+                            default:
+                                throw std::runtime_error("Invalid pawn promotion");
+                            }
                         }
-                        else if (pawn_promotion_ && pawn_promotion_rect_.getGlobalBounds().contains(mouse_position_.x, mouse_position_.y)) // Pawn promotion selection
+                        else
                         {
-                            pawn_promotion_ = false;
-                            std::shared_ptr<move> m;
-                            if (moved_piece_->get_piece_alliance() == alliance::white)
+                            switch (tile_block.get_tile_id() / 8)
                             {
-                                switch (tile_block.get_tile_id() / 8)
-                                {
-                                case 0:
-                                    m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::queen);
-                                    break;
-                                case 1:
-                                    m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::knight);
-                                    break;
-                                case 2:
-                                    m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::rook);
-                                    break;
-                                case 3:
-                                    m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8, piece_type::bishop);
-                                    break;
-                                default:
-                                    throw std::runtime_error("Invalid pawn promotion");
-                                }
+                            case 4:
+                                m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::bishop);
+                                break;
+                            case 5:
+                                m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::rook);
+                                break;
+                            case 6:
+                                m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::knight);
+                                break;
+                            case 7:
+                                m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::queen);
+                                break;
+                            default:
+                                throw std::runtime_error("Invalid pawn promotion");
                             }
-                            else
-                            {
-                                switch (tile_block.get_tile_id() / 8)
-                                {
-                                case 4:
-                                    m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::bishop);
-                                    break;
-                                case 5:
-                                    m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::rook);
-                                    break;
-                                case 6:
-                                    m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::knight);
-                                    break;
-                                case 7:
-                                    m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate() % 8 + 56, piece_type::queen);
-                                    break;
-                                default:
-                                    throw std::runtime_error("Invalid pawn promotion");
-                                }
-                            }
-                            move_transition transition = board_->get_current_player()->make_move(m);
-                            if (transition.get_move_status() == move_status::done)
-                            {
-                                board_ = transition.get_transition_board();
-                                move_log_.add_move(m);
-                                is_move_made_ = true;
-                                taken_pieces_block_->redo(move_log_);
-                                game_history_block_->redo(board_.get(), move_log_);
-                            }
-                            source_tile_ = nullptr;
-                            destination_tile_ = nullptr;
-                            moved_piece_ = nullptr;
                         }
-                        else if (moved_piece_->get_piece_type() == piece_type::pawn && is_pawn_promotable(*this)) // Pawn promotion
+                        move_transition transition = board_->get_current_player()->make_move(m);
+                        if (transition.get_move_status() == move_status::done)
                         {
-                            pawn_promotion_ = true;
+                            board_ = transition.get_transition_board();
+                            move_log_.add_move(m);
+                            is_move_made_ = true;
+                            taken_pieces_block_->redo(move_log_);
+                            game_history_block_->redo(board_.get(), move_log_);
                         }
-                        else // Normal move
+                        source_tile_ = nullptr;
+                        destination_tile_ = nullptr;
+                        moved_piece_ = nullptr;
+                    }
+                    else if (moved_piece_->get_piece_type() == piece_type::pawn && is_pawn_promotable(*this)) // Pawn promotion
+                    {
+                        pawn_promotion_ = true;
+                    }
+                    else // Normal move
+                    {
+                        pawn_promotion_ = false;
+                        std::shared_ptr<move> m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate());
+                        move_transition transition = board_->get_current_player()->make_move(m);
+                        if (transition.get_move_status() == move_status::done)
                         {
-                            pawn_promotion_ = false;
-                            std::shared_ptr<move> m = move_factory::create_move(board_, source_tile_->get_tile_coordinate(), destination_tile_->get_tile_coordinate());
-                            move_transition transition = board_->get_current_player()->make_move(m);
-                            if (transition.get_move_status() == move_status::done)
-                            {
-                                board_ = transition.get_transition_board();
-                                move_log_.add_move(m);
-                                is_move_made_ = true;
-                                taken_pieces_block_->redo(move_log_);
-                                game_history_block_->redo(board_.get(), move_log_);
-                            }
-                            source_tile_ = nullptr;
-                            destination_tile_ = nullptr;
-                            moved_piece_ = nullptr;
+                            board_ = transition.get_transition_board();
+                            move_log_.add_move(m);
+                            is_move_made_ = true;
+                            taken_pieces_block_->redo(move_log_);
+                            game_history_block_->redo(board_.get(), move_log_);
                         }
+                        source_tile_ = nullptr;
+                        destination_tile_ = nullptr;
+                        moved_piece_ = nullptr;
                     }
                 }
+            }
 }
 
 void game_board::observe()

@@ -112,7 +112,7 @@ protected:
      *
      * @return The file of the starting coordinate of the moving piece
      */
-    std::string disambiguation_file() const;
+    std::string disambiguation_string() const;
 
 protected:
     std::weak_ptr<board> board_;         ///< The board on which the move is to be executed
