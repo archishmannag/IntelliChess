@@ -6,7 +6,7 @@
  *
  */
 
-#include "pgn/FenUtils.hpp"
+#include "engine/utility/FenUtils.hpp"
 #include "engine/Alliance.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/BoardUtils.hpp"

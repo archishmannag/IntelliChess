@@ -1,11 +1,11 @@
 # CMake minimum version required
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.23)
 
 # Project name
 project(Chess VERSION 1.1.0 DESCRIPTION "Chess game" LANGUAGES CXX)
 
 # Add project source directory and resource directory as a preprocessor definition for finding the assets
-add_definitions(-DPROJECT_RESOURCE_DIR="${CMAKE_SOURCE_DIR}/resources") # Change this to the path to resource directory when moving resources.
+add_compile_definitions(PROJECT_RESOURCE_DIR="${CMAKE_SOURCE_DIR}/resources") # Change this to the path to resource directory when moving resources.
 
 # Send build type to source code as a preprocessor definition
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -31,11 +31,6 @@ elseif(WIN32 AND MSVC)
     set(OPTIONS PRIVATE /W4 /EHsc /std:c++17)
 endif(UNIX OR(WIN32 AND MINGW))
 
-# Add source files
-file(GLOB_RECURSE SOURCES "src/*.cpp")
-
-message(STATUS "Toolchain path: ${CMAKE_TOOLCHAIN_FILE}")
-
 # Find SFML
 find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 
@@ -43,25 +38,16 @@ find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
+add_subdirectory(src)
+
 # Add executable target
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
 
-# Link SFML and pthread
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE Threads::Threads
-    PRIVATE sfml-graphics sfml-window sfml-system
+    PRIVATE Engine
+    PRIVATE GUI
 )
 
-# Add include directories
-target_include_directories(${PROJECT_NAME}
-    PRIVATE include
-    PRIVATE ${SFML_DIR}/../../../include
-)
-
-# Add precompiled header
-target_precompile_headers(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include/PreCompiledHeaders.hpp)
-
-# Add compile options
 target_compile_options(${PROJECT_NAME} ${OPTIONS})
 
 # Add icon for windows executable using resource file
@@ -107,27 +93,6 @@ if(BUILD_TESTS)
 
     # Add googletest library
     find_package(GTest REQUIRED)
-
-    # Add test target
-    add_library(${LIB_TEST} STATIC ${SOURCES})
-
-    # Add include directories
-    target_include_directories(${LIB_TEST}
-        PRIVATE include
-        PRIVATE ${SFML_DIR}/../../../include
-    )
-
-    # Link SFML and pthread
-    target_link_libraries(${LIB_TEST}
-        PRIVATE Threads::Threads
-        PRIVATE sfml-graphics sfml-window sfml-system
-    )
-
-    # Add precompiled header
-    target_precompile_headers(${LIB_TEST} REUSE_FROM ${PROJECT_NAME})
-
-    # Add compile options
-    target_compile_options(${LIB_TEST} ${OPTIONS})
 
     # Include the tests from its subdirectory
     add_subdirectory(test)

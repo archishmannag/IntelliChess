@@ -6,12 +6,12 @@
  *
  */
 
-#include "pgn/PgnUtils.hpp"
+#include "engine/utility/PgnUtils.hpp"
 #include "engine/Alliance.hpp"
 #include "engine/board/Board.hpp"
 #include "engine/board/Move.hpp"
 #include "engine/player/Player.hpp"
-#include "pgn/FenUtils.hpp"
+#include "engine/utility/FenUtils.hpp"
 
 /**
  * @brief Helper functions to calculate the PGN strings

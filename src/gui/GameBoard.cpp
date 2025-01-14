@@ -23,8 +23,8 @@
 #include "gui/GameSetup.hpp"
 #include "gui/Menu.hpp"
 #include "gui/TakenPieces.hpp"
-#include "pgn/FenUtils.hpp"
-#include "pgn/PgnUtils.hpp"
+#include "engine/utility/FenUtils.hpp"
+#include "engine/utility/PgnUtils.hpp"
 
 /* tile_block */
 
