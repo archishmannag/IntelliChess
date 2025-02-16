@@ -1,118 +1,104 @@
 name: CMake on multiple platforms
 
 on:
-    push:
-        branches: ["main"]
-    pull_request:
-        branches: ["main"]
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 jobs:
-    build:
-        runs-on: ${{ matrix.os }}
+  build:
+    runs-on: ${{ matrix.os }}
 
-        strategy:
-            fail-fast: false
+    strategy:
+      fail-fast: false
 
-            matrix:
-                os: [ubuntu-latest, windows-latest]
-                build_type: [Release]
-                cpp_compiler: [g++, clang++, cl, x86_64-w64-mingw32-g++]
-                include:
-                    - os: windows-latest
-                      cpp_compiler: cl
-                    - os: windows-latest
-                      cpp_compiler: x86_64-w64-mingw32-g++
-                    - os: ubuntu-latest
-                      cpp_compiler: g++
-                    - os: ubuntu-latest
-                      cpp_compiler: clang++
-                exclude:
-                    - os: windows-latest
-                      cpp_compiler: g++
-                    - os: windows-latest
-                      cpp_compiler: clang++
-                    - os: ubuntu-latest
-                      cpp_compiler: cl
-                    - os: ubuntu-latest
-                      cpp_compiler: x86_64-w64-mingw32-g++
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        build_type: [Release]
+        cpp_compiler: [g++, clang++, cl, x86_64-w64-mingw32-g++]
+        include:
+          - os: windows-latest
+            cpp_compiler: cl
+          - os: windows-latest
+            cpp_compiler: x86_64-w64-mingw32-g++
+          - os: windows-latest
+            cpp_compiler: clang++
+          - os: ubuntu-latest
+            cpp_compiler: g++
+          - os: ubuntu-latest
+            cpp_compiler: clang++
+        exclude:
+          - os: windows-latest
+            cpp_compiler: g++
+          - os: ubuntu-latest
+            cpp_compiler: cl
+          - os: ubuntu-latest
+            cpp_compiler: x86_64-w64-mingw32-g++
 
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v2
-              with:
-                python-version: '3.x'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Conan
+        id: conan
+        uses: turtlebrowser/get-conan@main
 
-            - name: Set CI environment variable
-              run: echo "CI=true" >> $GITHUB_ENV
+      - name: Set CI environment variable
+        run: echo "CI=true" >> $GITHUB_ENV
 
-            - name: Install dependencies on Linux
-              if: matrix.os == 'ubuntu-latest'
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y g++ clang ninja-build cmake
-                  if ! command -v pip3 &> /dev/null; then
-                    sudo apt-get install -y python3-pip
-                  fi
-                  pip3 install conan
+      - name: Install dependencies on Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ clang ninja-build cmake
 
-            - name: Install dependencies on Windows with MSVC
-              if: matrix.os == 'windows-latest' && matrix.cpp_compiler == 'cl'
-              run: |
-                  choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
-                  choco install ninja
-                  choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --includeOptional --passive --norestart"
-                  if (Get-Command pip -ErrorAction SilentlyContinue) { 
-                    echo "pip is already installed" 
-                  } else { 
-                    echo "Installing pip" 
-                    Invoke-WebRequest -Uri https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py 
-                    python get-pip.py 
-                  }
-                  refreshenv
-                  pip install conan
+      - name: Install dependencies on Windows with MSVC
+        if: matrix.os == 'windows-latest' && matrix.cpp_compiler == 'cl'
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+          choco install ninja
+          choco install visualstudio2022buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --includeOptional --passive --norestart"
 
-            - name: Install dependencies on Windows with MinGW
-              if: matrix.os == 'windows-latest' && matrix.cpp_compiler == 'x86_64-w64-mingw32-g++'
-              run: |
-                  choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
-                  choco install msys2
-                  choco install ninja
-                  refreshenv
-                  C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
-                  C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm mingw-w64-x86_64-toolchain"
-                  echo "C:/tools/msys64/mingw64/bin" >> $GITHUB_PATH
-                  refreshenv
-                  if (Get-Command pip -ErrorAction SilentlyContinue) { 
-                    echo "pip is already installed" 
-                  } else { 
-                    echo "Installing pip" 
-                    Invoke-WebRequest -Uri https://bootstrap.pypa.io/get-pip.py -OutFile get-pip.py 
-                    python get-pip.py 
-                  }
-                  refreshenv
-                  pip install conan
+      - name: Install dependencies on Windows with MinGW
+        if: matrix.os == 'windows-latest' && matrix.cpp_compiler == 'x86_64-w64-mingw32-g++'
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+          choco install msys2
+          choco install ninja
+          refreshenv
+          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
+          C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm mingw-w64-x86_64-toolchain"
+          echo "C:/tools/msys64/mingw64/bin" >> $GITHUB_PATH
+          refreshenv
 
-            - name: Set reusable strings
-              id: strings
-              shell: bash
-              run: |
-                  echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      - name: Set reusable strings
+        id: strings
+        shell: bash
+        run: |
+          echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-            - name: Configure Conan
-              run: conan profile detect
+      - name: Set Conan home
+        if: matrix.os == 'ubuntu-latest'
+        run: echo "CONAN_USER_HOME=$HOME/conan" >> $GITHUB_ENV
 
-            - name: Install dependencies with Conan on Linux
-              if: matrix.os == 'ubuntu-latest'
-              run: sudo -E $(which conan) install ${{ github.workspace }} --build=missing -c tools.system.package_manager:mode=install
+      - name: Set Conan home
+        if: matrix.os == 'windows-latest'
+        run: echo "CONAN_USER_HOME=${{ runner.temp }}\conan" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-            - name: Install dependencies with Conan on Windows
-              if: matrix.os == 'windows-latest'
-              run: conan install ${{ github.workspace }} --build=missing -c tools.system.package_manager:mode=install
+      - name: Configure Conan
+        run: conan profile detect
 
-            - name: Build
-              run: conan build ${{ github.workspace }}
+      - name: Install dependencies with Conan on Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo -E $(which conan) install ${{ github.workspace }} --build=missing -c tools.system.package_manager:mode=install
 
-            - name: Test
-              if: success()
-              working-directory: ${{ steps.strings.outputs.build-output-dir }}
-              run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
+      - name: Install dependencies with Conan on Windows
+        if: matrix.os == 'windows-latest'
+        run: conan install ${{ github.workspace }} --build=missing -c tools.system.package_manager:mode=install
+
+      - name: Build
+        run: conan build ${{ github.workspace }}
+
+      - name: Test
+        if: success()
+        working-directory: ${{ steps.strings.outputs.build-output-dir }}
+        run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
