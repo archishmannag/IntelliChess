@@ -68,7 +68,6 @@ jobs:
           C:\tools\msys64\usr\bin\bash.exe -lc "pacman -Syu --noconfirm"
           C:\tools\msys64\usr\bin\bash.exe -lc "pacman -S --noconfirm mingw-w64-x86_64-toolchain"
           echo "C:/tools/msys64/mingw64/bin" >> $GITHUB_PATH
-          refreshenv
 
       - name: Set reusable strings
         id: strings
